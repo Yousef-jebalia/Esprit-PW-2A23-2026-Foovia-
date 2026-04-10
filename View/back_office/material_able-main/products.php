@@ -38,7 +38,7 @@ $message = match ($status) {
     <link rel="stylesheet" type="text/css" href="assets/icon/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/jquery.mCustomScrollbar.css">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-    <link rel="stylesheet" type="text/css" href="../../../assets/css/marketplace.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/marketplace.css">
 </head>
 <body>
     <div class="theme-loader">
@@ -334,7 +334,7 @@ $message = match ($status) {
     <script src="assets/js/pcoded.min.js"></script>
     <script src="assets/js/vertical/vertical-layout.min.js"></script>
     <script src="assets/js/script.js"></script>
-    <script src="../../../assets/js/backoffice-validation.js"></script>
-    <script src="../../../assets/js/backoffice-actions.js"></script>
+    <script src="../../assets/js/backoffice-validation.js"></script>
+    <script src="../../assets/js/backoffice-actions.js"></script>
 </body>
 </html>

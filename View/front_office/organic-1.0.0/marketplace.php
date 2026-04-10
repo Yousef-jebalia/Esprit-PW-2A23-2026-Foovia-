@@ -18,7 +18,7 @@ $stores = marketplace_fetch_stores();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/vendor.css">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" type="text/css" href="../../../assets/css/marketplace.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/marketplace.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -26,7 +26,7 @@ $stores = marketplace_fetch_stores();
         .foovia-hero::before {
             background:
                 linear-gradient(90deg, rgba(248, 216, 107, 0.94) 0%, rgba(248, 216, 107, 0.92) 34%, rgba(248, 216, 107, 0.18) 58%, rgba(248, 216, 107, 0) 74%),
-                url('../../../assets/imges-autre/background.jpg') center right/cover no-repeat !important;
+                url('../../assets/imges-autre/background.jpg') center right/cover no-repeat !important;
         }
     </style>
 </head>
@@ -233,6 +233,6 @@ $stores = marketplace_fetch_stores();
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../assets/js/frontoffice-filters.js"></script>
+    <script src="../../assets/js/frontoffice-filters.js"></script>
 </body>
 </html>
