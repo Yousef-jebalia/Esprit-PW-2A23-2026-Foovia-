@@ -80,7 +80,13 @@ function delete_exercise($id)
     }
 }
 
-}
+}//the class ends here you can go home now :D
+
+//   /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\
+//   ||  ||  ||  ||  ||  ||  ||  ||  ||  ||  ||
+//   ||  ||  ||  ||  ||  ||  ||  ||  ||  ||  ||
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $action = $_POST['action'] ?? 'add';
@@ -92,22 +98,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    if ($action === 'update') {
-        $exercise = new Exercise(
-            null,
-            $_POST['ex_name']          ?? '',
-            $_POST['ex_type']          ?? '',
-            $_POST['ex_target_muscle'] ?? '',
-            (int)($_POST['ex_calories'] ?? 0),
-            (float)($_POST['ex_fatigue'] ?? 0),
-            0.0,
-            $_POST['ex_description']   ?? '',
-            null
-        );
-        $controller->update_exercise($exercise, (int)$_POST['edit_id']);
-        header('Location: ../view/back_office/form-elements-component.php');
-        exit;
-    }
+   if ($action === 'update') {
+    $muscleRaw = $_POST['ex_target_muscle'] ?? [];
+    $muscle = is_array($muscleRaw) ? implode(',', array_slice($muscleRaw, 0, 3)) : $muscleRaw;
+
+    $exercise = new Exercise(
+        null,
+        $_POST['ex_name']          ?? '',
+        $_POST['ex_type']          ?? '',
+        $muscle,
+        (int)($_POST['ex_calories'] ?? 0),
+        (float)($_POST['ex_fatigue'] ?? 0),
+        0.0,
+        $_POST['ex_description']   ?? '',
+        null
+    );
+    $controller->update_exercise($exercise, (int)$_POST['edit_id']);
+    header('Location: ../view/back_office/form-elements-component.php');
+    exit;
+}
 
     // default: add
     $gif = null;
