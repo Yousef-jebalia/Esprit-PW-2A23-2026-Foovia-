@@ -59,21 +59,21 @@ $exercises = $stmt->fetchAll();
 
 <script>
 function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
-    // highlight selected card
-    document.querySelectorAll('.exercise-card').forEach(c => c.style.background = 'white');
-    document.getElementById('card-' + id).style.background = '#e8f0fe';
-
-    // fill the form
     document.getElementById('form-action').value = 'update';
     document.getElementById('edit-id').value = id;
     document.getElementById('ex_name').value = name;
     document.getElementById('ex_type').value = type;
-    document.getElementById('ex_target_muscle').value = muscle;
     document.getElementById('ex_calories').value = cal;
     document.getElementById('ex_fatigue').value = fatigue;
     document.getElementById('ex_description').value = description;
 
-    // scroll to form
+    // handle multiple muscles
+    // handle multiple muscles
+    const muscles = muscle.split(',');
+    document.querySelectorAll('input[name="ex_target_muscle[]"]').forEach(cb => {
+        cb.checked = muscles.includes(cb.value);
+    });
+
     document.getElementById('exercise-form').scrollIntoView({ behavior: 'smooth' });
 }
 </script>
@@ -548,9 +548,17 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                         <span style="background: #e8f0fe; color: #4099ff; padding: 2px 8px; border-radius: 20px;">
                             <?= htmlspecialchars($ex['type_ex']) ?>
                         </span>
-                        <span style="background: #e8f7ee; color: #28a745; padding: 2px 8px; border-radius: 20px;">
-                            <?= htmlspecialchars($ex['muscle_ex']) ?>
+                        <div style="font-size: 12px; color: #666; display: flex; gap: 8px; flex-wrap: wrap;">
+                        <span style="background: #e8f0fe; color: #4099ff; padding: 2px 8px; border-radius: 20px;">
+                            <?= htmlspecialchars($ex['type_ex']) ?>
                         </span>
+                        <?php foreach(explode(',', $ex['muscle_ex']) as $m): ?>
+                            <span style="background: #e8f7ee; color: #28a745; padding: 2px 8px; border-radius: 20px;">
+                                <?= htmlspecialchars(trim($m)) ?>
+                            </span>
+                        <?php endforeach; ?>
+                        <span style="color: #999;">🔥 <?= (int)$ex['cal_ex'] ?> cal</span>
+                    </div>
                         <span style="color: #999;">🔥 <?= (int)$ex['cal_ex'] ?> cal</span>
                         <span style="background: #e8f7ee; color: red ; padding: 2px 8px; border-radius: 20px;">
                             <?= htmlspecialchars($ex['fatigue_ex']/100) ?>
@@ -633,25 +641,13 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
 
                                                 <div style="display: flex; flex-direction: column;">
                                                     <label style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">Target Muscle</label>
-                                                    <select name="ex_target_muscle" id="ex_target_muscle" class="form-select"  style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                                        <option value="">Select Muscle</option>
-                                                        <option value="calves">Calves</option>
-                                                        <option value="hamstrings">Hamstrings</option>
-                                                        <option value="quadriceps">Quadriceps</option>
-                                                        <option value="adductors">Adductors</option>
-                                                        <option value="glutes">Glutes</option>
-                                                        <option value="abs">Abs</option>
-                                                        <option value="obliques">Obliques</option>
-                                                        <option value="lower_back">Lower Back</option>
-                                                        <option value="lats">Lats</option>
-                                                        <option value="traps">Traps</option>
-                                                        <option value="chest">Chest</option>
-                                                        <option value="delts">Delts</option>
-                                                        <option value="biceps">Biceps</option>
-                                                        <option value="triceps">Triceps</option>
-                                                        <option value="forearms">Forearms</option>
-                                                        <option value="neck">Neck</option>
-                                                    </select>
+                                                    <div id="ex_target_muscle" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                                                        <?php foreach(['calves','hamstrings','quadriceps','adductors','glutes','abs','obliques','lower_back','lats','traps','chest','delts','biceps','triceps','forearms','neck'] as $m): ?>
+                                                            <label style="display: flex; align-items: center; gap: 4px; font-size: 13px; cursor: pointer;">
+                                                                <input type="checkbox" name="ex_target_muscle[]" value="<?= $m ?>"> <?= ucfirst($m) ?>
+                                                            </label>
+                                                        <?php endforeach; ?>
+                                                    </div>
                                                 </div>
 
                                                 <div style="display: flex; flex-direction: column;">
