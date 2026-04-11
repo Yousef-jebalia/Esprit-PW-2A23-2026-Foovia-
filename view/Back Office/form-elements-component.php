@@ -5,7 +5,11 @@ $error = "";
 $success = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (
+    if (isset($_POST["delete_id_rec"]) && !empty($_POST["delete_id_rec"])) {
+        $controller = new Controller_menu();
+        $controller->delete_recipe((int)$_POST["delete_id_rec"]);
+        $success = "Recipe deleted successfully.";
+    } elseif (
         isset($_POST["id_rec"]) && isset($_POST["nom_rec"]) && isset($_POST["categorie_rec"]) &&
         isset($_POST["description_rec"]) && isset($_POST["prot_rec"]) && isset($_POST["fat_rec"]) &&
         isset($_POST["carb_rec"]) && isset($_POST["cal_rec"]) && isset($_POST["instructions_rec"]) &&
@@ -17,22 +21,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             !empty($_POST["carb_rec"]) && !empty($_POST["cal_rec"]) && !empty($_POST["instructions_rec"]) &&
             !empty($_POST["origin_rec"])
         ) {
-            $recipe = new Recipe(
-                (int)$_POST['id_rec'],
-                $_POST['nom_rec'],
-                $_POST['categorie_rec'],
-                $_POST['description_rec'],
-                (float)$_POST['prot_rec'],
-                (float)$_POST['fat_rec'],
-                (float)$_POST['carb_rec'],
-                (float)$_POST['cal_rec'],
-                $_POST['instructions_rec'],
-                $_POST['origin_rec'],
-                isset($_POST['imag_rec']) ? $_POST['imag_rec'] : ""
-            );
-            $controller = new Controller_menu();
-            $controller->add_recipe($recipe);
-            $success = "Recipe added successfully.";
+            $imagePath = "";
+            
+            // Handle image file upload
+            if (isset($_FILES['imag_rec']) && $_FILES['imag_rec']['error'] == 0) {
+                $uploadDir = 'assets/images/recipes/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                
+                $fileName = basename($_FILES['imag_rec']['name']);
+                $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
+                $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                
+                if (in_array(strtolower($fileExt), $allowedExts)) {
+                    $newFileName = uniqid('recipe_') . '.' . $fileExt;
+                    $uploadPath = $uploadDir . $newFileName;
+                    
+                    if (move_uploaded_file($_FILES['imag_rec']['tmp_name'], $uploadPath)) {
+                        $imagePath = $uploadPath;
+                    } else {
+                        $error = "Failed to upload image file.";
+                    }
+                } else {
+                    $error = "Invalid image file format. Only JPG, PNG, GIF, WebP allowed.";
+                }
+            }
+            
+            if (empty($error)) {
+                $recipe = new Recipe(
+                    (int)$_POST['id_rec'],
+                    $_POST['nom_rec'],
+                    $_POST['categorie_rec'],
+                    $_POST['description_rec'],
+                    (float)$_POST['prot_rec'],
+                    (float)$_POST['fat_rec'],
+                    (float)$_POST['carb_rec'],
+                    (float)$_POST['cal_rec'],
+                    $_POST['instructions_rec'],
+                    $_POST['origin_rec'],
+                    $imagePath
+                );
+                $controller = new Controller_menu();
+                $controller->add_recipe($recipe);
+                $success = "Recipe added successfully.";
+            }
         } else {
             $error = "All fields are required.";
         }
@@ -40,6 +73,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Missing form data.";
     }
 }
+
+$controller = new Controller_menu();
+$recipes = $controller->list_recipe();
 ?>
 
 <!DOCTYPE html>
@@ -395,11 +431,74 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <div class="col-sm-12">
                                                 <div class="card">
                                                     <div class="card-header">
-                                                        <h5>Recipe Form</h5>
+                                                        <h5>Recipe List</h5>
+                                                    </div>
+                                                    <div class="card-block table-border-style">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-striped table-bordered">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Image</th>
+                                                                        <th>Name</th>
+                                                                        <th>ID</th>
+                                                                        <th>Category</th>
+                                                                        <th>Description</th>
+                                                                        <th>Protein</th>
+                                                                        <th>Fat</th>
+                                                                        <th>Carbs</th>
+                                                                        <th>Calories</th>
+                                                                        <th>Instructions</th>
+                                                                        <th>Origin</th>
+                                                                        <th>Action</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <?php if (!empty($recipes)): ?>
+                                                                        <?php foreach ($recipes as $recipe): ?>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <?php if (!empty($recipe['img_rec'])): ?>
+                                                                                        <img src="<?php echo htmlspecialchars($recipe['img_rec']); ?>" alt="Recipe image" style="width:60px;height:60px;object-fit:cover;border-radius:6px;">
+                                                                                    <?php else: ?>
+                                                                                        No image
+                                                                                    <?php endif; ?>
+                                                                                </td>
+                                                                                <td><?php echo htmlspecialchars($recipe['name_rec']); ?></td>
+                                                                                <td><?php echo htmlspecialchars($recipe['id_rec']); ?></td>
+                                                                                <td><?php echo htmlspecialchars($recipe['categorie_rec']); ?></td>
+                                                                                <td><?php echo htmlspecialchars($recipe['description_rec']); ?></td>
+                                                                                <td><?php echo htmlspecialchars($recipe['prot_rec']); ?></td>
+                                                                                <td><?php echo htmlspecialchars($recipe['fat_rec']); ?></td>
+                                                                                <td><?php echo htmlspecialchars($recipe['carb_rec']); ?></td>
+                                                                                <td><?php echo htmlspecialchars($recipe['cal_rec']); ?></td>
+                                                                                <td><?php echo htmlspecialchars($recipe['instruction_rec']); ?></td>
+                                                                                <td><?php echo htmlspecialchars($recipe['origin_rec']); ?></td>
+                                                                                <td>
+                                                                                    <form method="POST" action="" onsubmit="return confirm('Delete this recipe?');" style="margin:0;">
+                                                                                        <input type="hidden" name="delete_id_rec" value="<?php echo (int)$recipe['id_rec']; ?>">
+                                                                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                                                    </form>
+                                                                                    <a href="edit-recipe.php?id_rec=<?php echo (int)$recipe['id_rec']; ?>" class="btn btn-primary btn-sm" style="margin-top:8px;display:inline-block;">Edit</a>
+                                                                                </td>
+                                                                            </tr>
+                                                                        <?php endforeach; ?>
+                                                                    <?php else: ?>
+                                                                        <tr>
+                                                                            <td colspan="12" class="text-center">No recipes found.</td>
+                                                                        </tr>
+                                                                    <?php endif; ?>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <h5>ADD Recipe</h5>
                                                     </div>
                                                     <div class="card-block">
                                                         <h4 class="sub-title">Recipe Information</h4>
-                                                        <form method="POST" action="">
+                                                        <form method="POST" action="" enctype="multipart/form-data">
                                                             <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Recipe ID</label>
                                                                 <div class="col-sm-10">
@@ -460,12 +559,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                     <input type="text" name="origin_rec" class="form-control" placeholder="Recipe origin">
                                                                 </div>
                                                             </div>
-                                                            <!-- <div class="form-group row">
+                                                            <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Image</label>
                                                                 <div class="col-sm-10">
-                                                                    <input type="text" name="imag_rec" class="form-control" placeholder="Image path or URL">
+                                                                    <input type="file" name="imag_rec" id="imageInput" class="form-control-file" accept="image/*">
+                                                                    <small class="form-text text-muted">Supported formats: JPG, PNG, GIF, WebP (Max 5MB)</small>
+                                                                    <div id="imagePreview" class="mt-3" style="display:none;">
+                                                                        <img id="previewImg" style="width:120px;height:120px;object-fit:cover;border-radius:6px;border:1px solid #ddd;">
+                                                                    </div>
                                                                 </div>
-                                                            </div> -->
+                                                            </div>
+                                                            <script>
+                                                                document.getElementById('imageInput').addEventListener('change', function(e) {
+                                                                    const file = e.target.files[0];
+                                                                    if (file && file.type.startsWith('image/')) {
+                                                                        const reader = new FileReader();
+                                                                        reader.onload = function(event) {
+                                                                            document.getElementById('previewImg').src = event.target.result;
+                                                                            document.getElementById('imagePreview').style.display = 'block';
+                                                                        };
+                                                                        reader.readAsDataURL(file);
+                                                                    } else if (file) {
+                                                                        alert('Please select a valid image file');
+                                                                    }
+                                                                });
+                                                            </script>
                                                             <div class="form-group row">
                                                                 <div class="col-sm-10 offset-sm-2">
                                                                     <button type="submit" class="btn btn-primary">Save Recipe</button>
