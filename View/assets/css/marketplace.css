@@ -12,28 +12,56 @@
   position: sticky;
   top: 0;
   z-index: 1000;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
 }
 
 .foovia-brand {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.35rem;
   font-size: 2rem;
   font-weight: 800;
   color: #111827;
   text-decoration: none;
 }
 
+.foovia-brand-col {
+  margin-left: -3rem;
+}
+
+.foovia-brand > span {
+  display: none;
+}
+
 .foovia-brand-mark {
   color: var(--market-primary);
   font-size: 2.2rem;
   line-height: 1;
+  display: none;
+}
+
+.foovia-logo-img {
+  width: auto !important;
+  height: 22px !important;
+  max-width: none !important;
+  max-height: 22px !important;
+  object-fit: contain !important;
+  flex-shrink: 0;
+}
+
+.foovia-name-img {
+  width: auto !important;
+  height: 12px !important;
+  max-height: 12px !important;
+  object-fit: contain !important;
+  display: block;
 }
 
 .foovia-searchbar {
   background: #f8f8f8;
-  border-radius: 20px;
-  padding: 0.4rem;
+  border-radius: 14px;
+  padding: 0.1rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -47,8 +75,8 @@
 }
 
 .foovia-searchbar button {
-  width: 48px;
-  height: 48px;
+  width: 26px;
+  height: 26px;
   border: 0;
   border-radius: 16px;
   background: #fff;
@@ -72,7 +100,7 @@
   align-items: center;
   gap: 1rem;
   color: #111827;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .foovia-icons span,
@@ -86,6 +114,19 @@
   background: #f8d86b;
   overflow: hidden;
   position: relative;
+  min-height: calc(100vh - 36px);
+  display: flex;
+  align-items: stretch;
+}
+
+.foovia-hero > .container-fluid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.foovia-hero-main {
+  flex: 1 1 auto;
 }
 
 .foovia-hero::before {
@@ -94,17 +135,17 @@
   inset: 0;
   background:
     linear-gradient(90deg, rgba(248, 216, 107, 0.94) 0%, rgba(248, 216, 107, 0.92) 34%, rgba(248, 216, 107, 0.18) 58%, rgba(248, 216, 107, 0) 74%),
-    url('../imges-autre/background.jpg') center right/cover no-repeat;
+    url('../imges-autre/background.jpg') center right/contain no-repeat;
 }
 
 .foovia-hero-copy {
-  padding: 6rem 3rem 3rem;
+  padding: 4rem 3rem 2rem;
   position: relative;
   z-index: 2;
 }
 
 .foovia-hero-copy h1 {
-  font-size: clamp(3rem, 5vw, 5.5rem);
+  font-size: clamp(2.75rem, 4.4vw, 4.9rem);
   line-height: 1.03;
   color: #18202f;
   margin-bottom: 1.5rem;
@@ -124,7 +165,7 @@
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .foovia-btn-primary,
@@ -170,19 +211,19 @@
 }
 
 .foovia-hero-image {
-  min-height: 720px;
+  min-height: 100%;
   background: transparent;
 }
 
 .foovia-feature-strip {
-  margin-top: 2.5rem;
+  margin-top: 0;
   position: relative;
   z-index: 2;
 }
 
 .foovia-feature-card {
-  min-height: 142px;
-  padding: 1.75rem 2rem;
+  min-height: 118px;
+  padding: 1.25rem 1.75rem;
   display: flex;
   align-items: flex-start;
   gap: 1.2rem;
@@ -231,7 +272,7 @@
 .foovia-admin-brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.35rem;
   text-decoration: none;
   font-weight: 800;
   font-size: 1.6rem;
@@ -254,6 +295,28 @@
   color: #fff;
   font-size: 1.2rem;
   line-height: 1;
+}
+
+.foovia-admin-logo-img {
+  width: auto !important;
+  height: 22px !important;
+  max-width: none !important;
+  max-height: 22px !important;
+  object-fit: contain !important;
+  flex-shrink: 0;
+}
+
+.foovia-admin-name,
+.foovia-admin-brand-mark {
+  display: none;
+}
+
+.foovia-admin-name-img {
+  width: auto !important;
+  height: 12px !important;
+  max-height: 12px !important;
+  object-fit: contain !important;
+  display: block;
 }
 
 .foovia-admin-name {
@@ -372,6 +435,14 @@
   text-align: center;
 }
 
+.foovia-catalog-section .container-lg {
+  padding-left: 3rem;
+}
+
+.foovia-catalog-section {
+  padding-top: 2rem;
+}
+
 .admin-stat-card {
   border-radius: 20px;
   min-height: 100%;
@@ -436,13 +507,29 @@
     padding: 2.5rem 1.5rem;
   }
 
+  .foovia-hero {
+    min-height: auto;
+  }
+
   .foovia-hero-image {
     min-height: 300px;
     background-position: center;
   }
 
+  .foovia-feature-strip {
+    position: relative;
+  }
+
   .foovia-nav {
     gap: 1rem;
     flex-wrap: wrap;
+  }
+
+  .foovia-brand-col {
+    margin-left: 0;
+  }
+
+  .foovia-catalog-section .container-lg {
+    padding-left: 1rem;
   }
 }

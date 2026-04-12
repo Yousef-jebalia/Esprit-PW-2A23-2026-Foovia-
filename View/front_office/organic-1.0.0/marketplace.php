@@ -28,6 +28,9 @@ $stores = marketplace_fetch_stores();
                 linear-gradient(90deg, rgba(248, 216, 107, 0.94) 0%, rgba(248, 216, 107, 0.92) 34%, rgba(248, 216, 107, 0.18) 58%, rgba(248, 216, 107, 0) 74%),
                 url('../../assets/imges-autre/background.jpg') center right/cover no-repeat !important;
         }
+        .foovia-brand-mark {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -43,13 +46,14 @@ $stores = marketplace_fetch_stores();
         </defs>
     </svg>
 
-    <header class="foovia-topbar py-3">
+    <header class="foovia-topbar">
         <div class="container-lg">
             <div class="row align-items-center g-3">
-                <div class="col-lg-2 col-md-4">
+                <div class="col-lg-2 col-md-4 foovia-brand-col">
                     <a href="marketplace.php" class="foovia-brand">
+                        <img src="../../assets/imges-autre/pic_logo.png" class="foovia-logo-img" style="height: 42px; width: auto; max-height: 42px;" alt="Foovia logo">
+                        <img src="../../assets/imges-autre/pic_name.png" class="foovia-name-img" style="height: 22px; width: auto; max-height: 22px;" alt="Foovia">
                         <span class="foovia-brand-mark">❦</span>
-                        <span>Foovia</span>
                     </a>
                 </div>
                 <div class="col-lg-4 col-md-8">
@@ -92,11 +96,11 @@ $stores = marketplace_fetch_stores();
     <main>
         <section class="foovia-hero">
             <div class="container-fluid px-0">
-                <div class="row g-0 align-items-stretch">
+                <div class="row g-0 align-items-stretch foovia-hero-main">
                     <div class="col-lg-6">
                         <div class="foovia-hero-copy container-lg">
                             <h1><span class="foovia-accent">Foovia</span> Foods at your Doorsteps</h1>
-                            <p>Dignissim massa diam elementum.</p>
+                            <p>Find fresh food, wellness items, and local store offers in one simple marketplace.</p>
                             <div class="foovia-hero-actions">
                                 <a href="#products" class="foovia-btn-primary">START SHOPPING</a>
                                 <a href="../../back_office/material_able-main/products.php" class="foovia-btn-dark">JOIN NOW</a>
@@ -130,7 +134,7 @@ $stores = marketplace_fetch_stores();
                                 </div>
                                 <div>
                                     <h3>Fresh from farm</h3>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                                    <p>Products selected from trusted local stores and prepared for everyday healthy choices.</p>
                                 </div>
                             </div>
                         </div>
@@ -141,7 +145,7 @@ $stores = marketplace_fetch_stores();
                                 </div>
                                 <div>
                                     <h3>100% Organic</h3>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                                    <p>Carefully chosen goods for a cleaner, fresher, and more balanced lifestyle.</p>
                                 </div>
                             </div>
                         </div>
@@ -152,7 +156,7 @@ $stores = marketplace_fetch_stores();
                                 </div>
                                 <div>
                                     <h3>Free delivery</h3>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                                    <p>Fast access to store products so your favorite essentials are always within reach.</p>
                                 </div>
                             </div>
                         </div>
@@ -161,7 +165,7 @@ $stores = marketplace_fetch_stores();
             </div>
         </section>
 
-        <section class="pb-5" id="products">
+        <section class="pb-5 foovia-catalog-section" id="products">
             <div class="container-lg">
                 <div class="row justify-content-between align-items-end mb-4">
                     <div class="col-lg-6">

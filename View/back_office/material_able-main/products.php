@@ -62,8 +62,8 @@ $message = match ($status) {
                             <i class="ti-menu"></i>
                         </a>
                         <a href="products.php" class="foovia-admin-brand">
-                            <span class="foovia-admin-brand-mark">F</span>
-                            <span class="foovia-admin-name">Foovia</span>
+                            <img src="../../assets/imges-autre/pic_logo.png" class="foovia-admin-logo-img" style="height: 22px; width: auto; max-height: 22px;" alt="Foovia logo">
+                            <img src="../../assets/imges-autre/pic_name.png" class="foovia-admin-name-img" style="height: 12px; width: auto; max-height: 12px;" alt="Foovia">
                         </a>
                     </div>
                     <div class="navbar-container container-fluid">
