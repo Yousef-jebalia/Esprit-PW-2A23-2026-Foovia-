@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../Model/Marchandise.php';
 
+
 $action = (string) ($_GET['action'] ?? $_POST['action'] ?? 'index');
 
 if ($action === 'save' && $_SERVER['REQUEST_METHOD'] === 'POST') {
