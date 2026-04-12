@@ -514,7 +514,7 @@ $ingrediants = $controller->list_ingrediants();
                                                             <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Ingrediant ID</label>
                                                                 <div class="col-sm-10">
-                                                                    <input type="number" name="id_ing" class="form-control" placeholder="Ingrediant ID (optional)">
+                                                                    <input type="text" name="id_ing" class="form-control" placeholder="Ingrediant ID">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">
@@ -526,7 +526,7 @@ $ingrediants = $controller->list_ingrediants();
                                                             <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Protein</label>
                                                                 <div class="col-sm-10">
-                                                                    <input type="number" step="0.01" name="prot_ing" class="form-control" placeholder="Protein in grams">
+                                                                    <input type="text" name="prot_ing" class="form-control" placeholder="Protein in grams">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">
@@ -550,7 +550,7 @@ $ingrediants = $controller->list_ingrediants();
                                                             <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Image</label>
                                                                 <div class="col-sm-10">
-                                                                    <input type="file" name="img_ing" id="imageInputIng" class="form-control-file" accept="image/*" required>
+                                                                    <input type="file" name="img_ing" id="imageInputIng" class="form-control-file" accept="image/*">
                                                                     <small class="form-text text-muted">Supported formats: JPG, PNG, GIF, WebP (Max 5MB)</small>
                                                                     <div id="imagePreviewIng" class="mt-3" style="display:none;">
                                                                         <img id="previewImgIng" style="width:120px;height:120px;object-fit:cover;border-radius:6px;border:1px solid #ddd;">
@@ -576,6 +576,115 @@ $ingrediants = $controller->list_ingrediants();
                                                                         document.getElementById('imagePreviewIng').style.display = 'none';
                                                                     }
                                                                 });
+
+                                                                (function() {
+                                                                    const form = document.querySelector('form[enctype="multipart/form-data"]');
+                                                                    if (!form) return;
+
+                                                                    const idInput = form.querySelector('input[name="id_ing"]');
+                                                                    const nameInput = form.querySelector('input[name="name_ing"]');
+                                                                    const protInput = form.querySelector('input[name="prot_ing"]');
+                                                                    const fatInput = form.querySelector('input[name="fat_ing"]');
+                                                                    const carbInput = form.querySelector('input[name="carb_ing"]');
+                                                                    const calInput = form.querySelector('input[name="cal_ing"]');
+                                                                    const floatFields = [protInput, fatInput, carbInput, calInput];
+
+                                                                    const restrictDigits = function(input, maxLength) {
+                                                                        input.addEventListener('input', function() {
+                                                                            this.value = this.value.replace(/\D/g, '').slice(0, maxLength);
+                                                                        });
+                                                                    };
+
+                                                                    const restrictText = function(input, maxLength) {
+                                                                        input.addEventListener('input', function() {
+                                                                            this.value = this.value.replace(/[^A-Za-z\s]/g, '').slice(0, maxLength);
+                                                                        });
+                                                                    };
+
+                                                                    const restrictFloatField = function(input) {
+                                                                        input.addEventListener('input', function() {
+                                                                            let value = this.value.replace(',', '.').replace(/[^0-9.]/g, '');
+
+                                                                            const firstDotIndex = value.indexOf('.');
+                                                                            if (firstDotIndex !== -1) {
+                                                                                value = value.slice(0, firstDotIndex + 1) + value.slice(firstDotIndex + 1).replace(/\./g, '');
+                                                                            }
+
+                                                                            const parts = value.split('.');
+                                                                            if (parts.length > 1) {
+                                                                                parts[1] = parts[1].slice(0, 2);
+                                                                                value = parts[0] + '.' + parts[1];
+                                                                            }
+
+                                                                            if (value !== '' && Number(value) > 2000) {
+                                                                                value = '2000';
+                                                                            }
+
+                                                                            this.value = value;
+                                                                        });
+                                                                    };
+
+                                                                    const isValidStep001 = function(value) {
+                                                                        const scaled = Number(value) * 100;
+                                                                        return Math.abs(scaled - Math.round(scaled)) < 1e-9;
+                                                                    };
+
+                                                                    const isTextValue = function(value) {
+                                                                        return /[A-Za-z]/.test(value);
+                                                                    };
+
+                                                                    restrictDigits(idInput, 4);
+                                                                    restrictText(nameInput, 20);
+                                                                    floatFields.forEach(restrictFloatField);
+
+                                                                    form.addEventListener('submit', function(e) {
+                                                                        const errors = [];
+
+                                                                        const idRaw = idInput.value.trim();
+                                                                        if (!idRaw) {
+                                                                            errors.push('ID is required.');
+                                                                        } else if (!/^\d{1,4}$/.test(idRaw)) {
+                                                                            errors.push('ID must be a number between 0001 and 9999.');
+                                                                        } else {
+                                                                            const idNumber = Number(idRaw);
+                                                                            if (idNumber < 1 || idNumber > 9999) {
+                                                                                errors.push('ID must be a number between 0001 and 9999.');
+                                                                            }
+                                                                        }
+
+                                                                        const nameRaw = nameInput.value.trim();
+                                                                        if (nameRaw.length > 20) {
+                                                                            errors.push('Name max length is 20.');
+                                                                        }
+                                                                        if (nameRaw && !isTextValue(nameRaw)) {
+                                                                            errors.push('Name must be a string value.');
+                                                                        }
+
+                                                                        floatFields.forEach(function(field) {
+                                                                            const label = field.name === 'prot_ing' ? 'Protein' :
+                                                                                field.name === 'fat_ing' ? 'Fat' :
+                                                                                field.name === 'carb_ing' ? 'Carbs' : 'Calories';
+                                                                            const raw = field.value.trim();
+                                                                            const val = Number(raw);
+
+                                                                            if (raw === '' || !Number.isFinite(val)) {
+                                                                                errors.push(label + ' must be a float value.');
+                                                                                return;
+                                                                            }
+                                                                            if (!isValidStep001(raw)) {
+                                                                                errors.push(label + ' must use a 0.01 step.');
+                                                                            }
+                                                                            if (val > 2000) {
+                                                                                errors.push(label + ' max value is 2000.');
+                                                                            }
+                                                                        });
+
+                                                                        if (errors.length > 0) {
+                                                                            e.preventDefault();
+                                                                            alert(errors.join('\n'));
+                                                                        }
+                                                                    });
+                                                                })();
                                                             </script>
                                                             <div class="form-group row">
                                                                 <div class="col-sm-10 offset-sm-2">

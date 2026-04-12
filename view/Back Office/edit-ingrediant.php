@@ -111,28 +111,28 @@ if ($ingrediantData === null) {
 
                         <div class="form-group">
                             <label>Ingrediant Name</label>
-                            <input type="text" name="name_ing" class="form-control" value="<?php echo htmlspecialchars($ingrediantData['name_ing']); ?>" required>
+                            <input type="text" name="name_ing" class="form-control" value="<?php echo htmlspecialchars($ingrediantData['name_ing']); ?>">
                         </div>
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label>Protein</label>
-                                <input type="number" step="0.01" name="prot_ing" class="form-control" value="<?php echo htmlspecialchars($ingrediantData['prot_ing']); ?>" required>
+                                <input type="text" name="prot_ing" class="form-control" value="<?php echo htmlspecialchars($ingrediantData['prot_ing']); ?>">
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Fat</label>
-                                <input type="text" name="fat_ing" class="form-control" value="<?php echo htmlspecialchars($ingrediantData['fat_ing']); ?>" required>
+                                <input type="text" name="fat_ing" class="form-control" value="<?php echo htmlspecialchars($ingrediantData['fat_ing']); ?>">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label>Carbs</label>
-                            <input type="text" name="carb_ing" class="form-control" value="<?php echo htmlspecialchars($ingrediantData['carb_ing']); ?>" required>
+                            <input type="text" name="carb_ing" class="form-control" value="<?php echo htmlspecialchars($ingrediantData['carb_ing']); ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Calories</label>
-                            <input type="text" name="cal_ing" class="form-control" value="<?php echo htmlspecialchars($ingrediantData['cal_ing']); ?>" required>
+                            <input type="text" name="cal_ing" class="form-control" value="<?php echo htmlspecialchars($ingrediantData['cal_ing']); ?>">
                         </div>
 
                         <div class="form-group">
@@ -146,7 +146,7 @@ if ($ingrediantData === null) {
 
                         <div class="form-group">
                             <label>Upload New Image (optional)</label>
-                            <input type="file" name="img_ing" id="imageInputIngEdit" class="form-control" accept="image/*">
+                            <input type="file" name="img_ing" id="imageInputIngEdit" class="form-control">
                             <small class="form-text text-muted">Choose a new image to replace the current one.</small>
                             <div id="imagePreviewIngEdit" class="mt-3" style="display:none;">
                                 <img id="previewImgIngEdit" style="width:120px;height:120px;object-fit:cover;border-radius:6px;border:1px solid #ddd;">
@@ -181,6 +181,115 @@ if ($ingrediantData === null) {
                 }
             });
         }
+
+        (function() {
+            const form = document.querySelector('form[enctype="multipart/form-data"]');
+            if (!form) return;
+
+            const idInput = form.querySelector('input[name="id_ing"]');
+            const nameInput = form.querySelector('input[name="name_ing"]');
+            const protInput = form.querySelector('input[name="prot_ing"]');
+            const fatInput = form.querySelector('input[name="fat_ing"]');
+            const carbInput = form.querySelector('input[name="carb_ing"]');
+            const calInput = form.querySelector('input[name="cal_ing"]');
+            const floatFields = [protInput, fatInput, carbInput, calInput];
+
+            const restrictDigits = function(input, maxLength) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '').slice(0, maxLength);
+                });
+            };
+
+            const restrictText = function(input, maxLength) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^A-Za-z\s]/g, '').slice(0, maxLength);
+                });
+            };
+
+            const restrictFloatField = function(input) {
+                input.addEventListener('input', function() {
+                    let value = this.value.replace(',', '.').replace(/[^0-9.]/g, '');
+
+                    const firstDotIndex = value.indexOf('.');
+                    if (firstDotIndex !== -1) {
+                        value = value.slice(0, firstDotIndex + 1) + value.slice(firstDotIndex + 1).replace(/\./g, '');
+                    }
+
+                    const parts = value.split('.');
+                    if (parts.length > 1) {
+                        parts[1] = parts[1].slice(0, 2);
+                        value = parts[0] + '.' + parts[1];
+                    }
+
+                    if (value !== '' && Number(value) > 2000) {
+                        value = '2000';
+                    }
+
+                    this.value = value;
+                });
+            };
+
+            const isValidStep001 = function(value) {
+                const scaled = Number(value) * 100;
+                return Math.abs(scaled - Math.round(scaled)) < 1e-9;
+            };
+
+            const isTextValue = function(value) {
+                return /[A-Za-z]/.test(value);
+            };
+
+            restrictDigits(idInput, 4);
+            restrictText(nameInput, 20);
+            floatFields.forEach(restrictFloatField);
+
+            form.addEventListener('submit', function(e) {
+                const errors = [];
+
+                const idRaw = idInput.value.trim();
+                if (!idRaw) {
+                    errors.push('ID is required.');
+                } else if (!/^\d{1,4}$/.test(idRaw)) {
+                    errors.push('ID must be a number between 0001 and 9999.');
+                } else {
+                    const idNumber = Number(idRaw);
+                    if (idNumber < 1 || idNumber > 9999) {
+                        errors.push('ID must be a number between 0001 and 9999.');
+                    }
+                }
+
+                const nameRaw = nameInput.value.trim();
+                if (nameRaw.length > 20) {
+                    errors.push('Name max length is 20.');
+                }
+                if (nameRaw && !isTextValue(nameRaw)) {
+                    errors.push('Name must be a string value.');
+                }
+
+                floatFields.forEach(function(field) {
+                    const label = field.name === 'prot_ing' ? 'Protein' :
+                        field.name === 'fat_ing' ? 'Fat' :
+                        field.name === 'carb_ing' ? 'Carbs' : 'Calories';
+                    const raw = field.value.trim();
+                    const val = Number(raw);
+
+                    if (raw === '' || !Number.isFinite(val)) {
+                        errors.push(label + ' must be a float value.');
+                        return;
+                    }
+                    if (!isValidStep001(raw)) {
+                        errors.push(label + ' must use a 0.01 step.');
+                    }
+                    if (val > 2000) {
+                        errors.push(label + ' max value is 2000.');
+                    }
+                });
+
+                if (errors.length > 0) {
+                    e.preventDefault();
+                    alert(errors.join('\n'));
+                }
+            });
+        })();
     </script>
 </body>
 </html>

@@ -352,7 +352,7 @@ $recipes = $controller->list_recipe();
                             <div class="pcoded-navigation-label">Forms</div>
                             <ul class="pcoded-item pcoded-left-item">
                                 <li class="active">
-                                    <a href="form-elements-component.html" class="waves-effect waves-dark">
+                                    <a href="form-elements-component.php" class="waves-effect waves-dark">
                                         <span class="pcoded-micon"><i class="ti-layers"></i><b>FC</b></span>
                                         <span class="pcoded-mtext">Recipe</span>
                                         <span class="pcoded-mcaret"></span>
@@ -509,7 +509,7 @@ $recipes = $controller->list_recipe();
                                                             <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Recipe ID</label>
                                                                 <div class="col-sm-10">
-                                                                    <input type="number" name="id_rec" class="form-control" placeholder="Recipe ID">
+                                                                    <input type="text" name="id_rec" class="form-control" placeholder="Recipe ID">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">
@@ -533,25 +533,25 @@ $recipes = $controller->list_recipe();
                                                             <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Protein</label>
                                                                 <div class="col-sm-10">
-                                                                    <input type="number" step="0.01" name="prot_rec" class="form-control" placeholder="Protein in grams">
+                                                                    <input type="text" name="prot_rec" class="form-control" placeholder="Protein in grams">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Fat</label>
                                                                 <div class="col-sm-10">
-                                                                    <input type="number" step="0.01" name="fat_rec" class="form-control" placeholder="Fat in grams">
+                                                                    <input type="text" name="fat_rec" class="form-control" placeholder="Fat in grams">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Carbs</label>
                                                                 <div class="col-sm-10">
-                                                                    <input type="number" step="0.01" name="carb_rec" class="form-control" placeholder="Carbs in grams">
+                                                                    <input type="text" name="carb_rec" class="form-control" placeholder="Carbs in grams">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Calories</label>
                                                                 <div class="col-sm-10">
-                                                                    <input type="number" step="0.01" name="cal_rec" class="form-control" placeholder="Calories">
+                                                                    <input type="text" name="cal_rec" class="form-control" placeholder="Calories">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">
@@ -590,6 +590,145 @@ $recipes = $controller->list_recipe();
                                                                         alert('Please select a valid image file');
                                                                     }
                                                                 });
+
+                                                                (function() {
+                                                                    const form = document.querySelector('form[enctype="multipart/form-data"]');
+                                                                    if (!form) return;
+
+                                                                    const idInput = form.querySelector('input[name="id_rec"]');
+                                                                    const nameInput = form.querySelector('input[name="nom_rec"]');
+                                                                    const protInput = form.querySelector('input[name="prot_rec"]');
+                                                                    const fatInput = form.querySelector('input[name="fat_rec"]');
+                                                                    const carbInput = form.querySelector('input[name="carb_rec"]');
+                                                                    const calInput = form.querySelector('input[name="cal_rec"]');
+                                                                    const originInput = form.querySelector('input[name="origin_rec"]');
+                                                                    const descInput = form.querySelector('textarea[name="description_rec"]');
+                                                                    const instInput = form.querySelector('textarea[name="instructions_rec"]');
+
+                                                                    const floatFields = [protInput, fatInput, carbInput, calInput];
+
+                                                                    const restrictDigits = function(input, maxLength) {
+                                                                        input.addEventListener('input', function() {
+                                                                            this.value = this.value.replace(/\D/g, '').slice(0, maxLength);
+                                                                        });
+                                                                    };
+
+                                                                    const restrictText = function(input, maxLength) {
+                                                                        input.addEventListener('input', function() {
+                                                                            this.value = this.value.replace(/[^A-Za-z\s]/g, '').slice(0, maxLength);
+                                                                        });
+                                                                    };
+
+                                                                    const restrictMaxLength = function(input, maxLength) {
+                                                                        input.addEventListener('input', function() {
+                                                                            if (this.value.length > maxLength) {
+                                                                                this.value = this.value.slice(0, maxLength);
+                                                                            }
+                                                                        });
+                                                                    };
+
+                                                                    const restrictFloatField = function(input) {
+                                                                        input.addEventListener('input', function() {
+                                                                            let value = this.value.replace(',', '.').replace(/[^0-9.]/g, '');
+
+                                                                            const firstDotIndex = value.indexOf('.');
+                                                                            if (firstDotIndex !== -1) {
+                                                                                value = value.slice(0, firstDotIndex + 1) + value.slice(firstDotIndex + 1).replace(/\./g, '');
+                                                                            }
+
+                                                                            const parts = value.split('.');
+                                                                            if (parts.length > 1) {
+                                                                                parts[1] = parts[1].slice(0, 2);
+                                                                                value = parts[0] + '.' + parts[1];
+                                                                            }
+
+                                                                            if (value !== '' && Number(value) > 2000) {
+                                                                                value = '2000';
+                                                                            }
+
+                                                                            this.value = value;
+                                                                        });
+                                                                    };
+
+                                                                    restrictDigits(idInput, 4);
+                                                                    restrictText(nameInput, 20);
+                                                                    restrictText(originInput, 20);
+                                                                    restrictMaxLength(descInput, 500);
+                                                                    restrictMaxLength(instInput, 500);
+                                                                    floatFields.forEach(restrictFloatField);
+
+                                                                    const isValidStep001 = function(value) {
+                                                                        const scaled = Number(value) * 100;
+                                                                        return Math.abs(scaled - Math.round(scaled)) < 1e-9;
+                                                                    };
+
+                                                                    const isTextValue = function(value) {
+                                                                        return /[A-Za-z]/.test(value);
+                                                                    };
+
+                                                                    form.addEventListener('submit', function(e) {
+                                                                        const errors = [];
+
+                                                                        const idRaw = idInput.value.trim();
+                                                                        if (!idRaw) {
+                                                                            errors.push('ID is required.');
+                                                                        } else if (!/^\d{1,4}$/.test(idRaw)) {
+                                                                            errors.push('ID must be a number between 0001 and 9999.');
+                                                                        } else {
+                                                                            const idNumber = Number(idRaw);
+                                                                            if (idNumber < 1 || idNumber > 9999) {
+                                                                                errors.push('ID must be a number between 0001 and 9999.');
+                                                                            }
+                                                                        }
+
+                                                                        const nameRaw = nameInput.value.trim();
+                                                                        if (nameRaw.length > 20) {
+                                                                            errors.push('Name max length is 20.');
+                                                                        }
+                                                                        if (nameRaw && !isTextValue(nameRaw)) {
+                                                                            errors.push('Name must be a string value.');
+                                                                        }
+
+                                                                        floatFields.forEach(function(field) {
+                                                                            const label = field.name === 'prot_rec' ? 'Protein' :
+                                                                                field.name === 'fat_rec' ? 'Fat' :
+                                                                                field.name === 'carb_rec' ? 'Carbs' : 'Calories';
+                                                                            const raw = field.value.trim();
+                                                                            const val = Number(raw);
+
+                                                                            if (raw === '' || !Number.isFinite(val)) {
+                                                                                errors.push(label + ' must be a float value.');
+                                                                                return;
+                                                                            }
+                                                                            if (!isValidStep001(raw)) {
+                                                                                errors.push(label + ' must use a 0.01 step.');
+                                                                            }
+                                                                            if (val > 2000) {
+                                                                                errors.push(label + ' max value is 2000.');
+                                                                            }
+                                                                        });
+
+                                                                        const originRaw = originInput.value.trim();
+                                                                        if (originRaw.length > 20) {
+                                                                            errors.push('Origin max length is 20.');
+                                                                        }
+                                                                        if (originRaw && !isTextValue(originRaw)) {
+                                                                            errors.push('Origin must be a string value.');
+                                                                        }
+
+                                                                        if (descInput.value.trim().length > 500) {
+                                                                            errors.push('Description max length is 500.');
+                                                                        }
+                                                                        if (instInput.value.trim().length > 500) {
+                                                                            errors.push('Instructions max length is 500.');
+                                                                        }
+
+                                                                        if (errors.length > 0) {
+                                                                            e.preventDefault();
+                                                                            alert(errors.join('\n'));
+                                                                        }
+                                                                    });
+                                                                })();
                                                             </script>
                                                             <div class="form-group row">
                                                                 <div class="col-sm-10 offset-sm-2">
