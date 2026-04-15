@@ -381,17 +381,55 @@
   .how .section-title { color: #fff; }
 
   .steps {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
+    position: relative;
     margin-top: 20px;
+    height: 360px;
+    overflow: hidden;
   }
   .step {
-    padding: 36px 28px;
-    border-right: 1px solid rgba(255,255,255,.1);
-    position: relative;
+    padding: 32px 24px;
+    border: 2px solid rgba(255,255,255,.4);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 260px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    transform: translate(calc(-50% + 260px), -50%);
+    transition: none;
+    animation: stepCarousel 12s ease-in-out infinite;
+    animation-fill-mode: both;
   }
-  .step:last-child { border-right: none; }
+  .step:nth-child(1) { animation-delay: 0s; }
+  .step:nth-child(2) { animation-delay: 3s; }
+  .step:nth-child(3) { animation-delay: 6s; }
+  .step:nth-child(4) { animation-delay: 9s; }
+  
+  @keyframes stepCarousel {
+    0% {
+      opacity: 0;
+      transform: translate(calc(-50% + 260px), -50%);
+    }
+    8% {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+    25% {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+    33% {
+      opacity: 0;
+      transform: translate(calc(-50% - 260px), -50%);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(calc(-50% - 260px), -50%);
+    }
+  }
   .step-num {
     font-family: 'Boldonse', sans-serif;
     font-size: 4rem; font-weight: 800;
@@ -585,8 +623,8 @@
     .section { padding: 64px 28px; }
     .feat-grid { grid-template-columns: 1fr 1fr; }
     .feat-card.wide { grid-column: span 2; }
-    .steps { grid-template-columns: 1fr 1fr; }
-    .step { border-right: none; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .steps { height: 320px; }
+    .step { width: 220px; min-height: 220px; padding: 24px 20px; }
     .marketplace { grid-template-columns: 1fr; }
     .mkt-text { padding: 60px 28px; }
     .mkt-visual { padding: 40px 28px; }
@@ -598,7 +636,12 @@
   @media (max-width: 600px) {
     .feat-grid { grid-template-columns: 1fr; }
     .feat-card.wide { grid-column: span 1; }
-    .steps { grid-template-columns: 1fr; }
+    .steps { height: 280px; }
+    .step {
+      width: 200px;
+      min-height: 200px;
+      padding: 20px 16px;
+    }
     .stats { grid-template-columns: 1fr 1fr; }
   }
 </style>
