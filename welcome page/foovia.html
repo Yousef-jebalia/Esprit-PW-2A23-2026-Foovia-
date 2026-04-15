@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FOOVIA — Eat Smart. Live Bold.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: 'Boldonse';
+    src: url('assets/Boldonse-Regular.ttf') format('truetype');
+  }
+
+  :root {
+    --yellow:  #F5C842;
+    --green:   #4BAE52;
+    --orange:  #D94F00;
+    --yellow-mid: #F0A830;
+    --green-light: #A8C45A;
+    --peach:   #F2A98A;
+    --orange2: #E8701A;
+    --forest:  #2E4A28;
+    --red:     #C0381A;
+    --off-white: #FDF8EE;
+    --dark:    #111008;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Boldonse', sans-serif;
+    background: var(--off-white);
+    color: var(--dark);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; width: 100%;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(253,248,238,.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1.5px solid rgba(75,174,82,.18);
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.5rem;
+    letter-spacing: .04em;
+    color: var(--dark);
+    text-decoration: none;
+  }
+  .nav-logo svg { width: 36px; height: 36px; }
+  .nav-links {
+    display: flex; gap: 36px; list-style: none;
+  }
+  .nav-links a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem; font-weight: 500;
+    color: var(--dark); text-decoration: none;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--green); }
+  .nav-cta {
+    background: var(--green); color: #fff;
+    padding: 10px 26px; border-radius: 100px;
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: .9rem; text-decoration: none;
+    transition: background .2s, transform .15s;
+  }
+  .nav-cta:hover { background: var(--forest); transform: scale(1.04); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 120px 64px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* big decorative blob background */
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 720px; height: 720px;
+    background: radial-gradient(circle at 60% 40%, var(--yellow) 0%, var(--green) 55%, transparent 75%);
+    border-radius: 50%;
+    right: -120px; top: -80px;
+    opacity: .22;
+    animation: pulse 6s ease-in-out infinite alternate;
+  }
+  @keyframes pulse {
+    from { transform: scale(1) rotate(0deg); }
+    to   { transform: scale(1.08) rotate(6deg); }
+  }
+
+  .hero-text { position: relative; z-index: 2; }
+
+  .hero-eyebrow {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--dark);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: .78rem;
+    letter-spacing: .14em; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 100px;
+    margin-bottom: 28px;
+    animation: fadeUp .7s .1s both;
+  }
+
+  .hero-title {
+    font-family: 'Boldonse', sans-serif;
+    font-size: clamp(3rem, 6vw, 5.2rem);
+    font-weight: 800;
+    line-height: 1.5;
+    letter-spacing: -.02em;
+    margin-bottom: 24px;
+    animation: fadeUp .7s .25s both;
+  }
+  .hero-title span.accent { color: var(--green); }
+  .hero-title span.accent2 { color: var(--orange); }
+
+  .hero-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.7;
+    color: #444;
+    max-width: 460px;
+    margin-bottom: 44px;
+    animation: fadeUp .7s .4s both;
+  }
+
+  .hero-actions {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    animation: fadeUp .7s .55s both;
+  }
+  .btn-primary {
+    background: var(--orange);
+    color: #fff;
+    padding: 16px 38px;
+    border-radius: 100px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    text-decoration: none;
+    transition: background .2s, transform .15s;
+    box-shadow: 0 8px 28px rgba(217,79,0,.3);
+  }
+  .btn-primary:hover { background: var(--red); transform: translateY(-2px); }
+  .btn-secondary {
+    border: 2px solid var(--dark);
+    color: var(--dark);
+    padding: 14px 34px;
+    border-radius: 100px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    text-decoration: none;
+    transition: background .2s, color .2s;
+  }
+  .btn-secondary:hover { background: var(--dark); color: var(--off-white); }
+
+  /* hero visual */
+  .hero-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    animation: fadeUp .8s .3s both;
+  }
+  .hero-visual:hover .hero-card-stack {
+    transform: translateY(-10px) rotate(-1deg);
+    filter: drop-shadow(0 26px 44px rgba(0,0,0,.22));
+  }
+  .hero-visual:hover .hcard { box-shadow: 0 28px 56px rgba(0,0,0,.18); }
+
+  .hero-card-stack {
+    position: relative;
+    width: 340px; height: 420px;
+    transition: transform .35s ease, filter .35s ease;
+    will-change: transform;
+  }
+  .hcard {
+    position: absolute;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 20px 48px rgba(0,0,0,.12);
+    transition: box-shadow .35s ease;
+  }
+  .hcard-main {
+    background: var(--dark);
+    width: 280px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    text-align: center;
+    padding: 36px 28px;
+  }
+  .hcard-main .logo-in-card {
+    width: 90px; height: 90px;
+    background: var(--yellow);
+    border-radius: 50%;
+    margin: 0 auto 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hcard-main .logo-in-card img { width: 54px; height: 54px; object-fit: contain; }
+  .hcard-main h3 {
+    font-family: 'Boldonse', sans-serif;
+    font-size: 1.5rem; font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .hcard-main p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(255,255,255,.6);
+    line-height: 1.6;
+  }
+
+  .hcard-pill {
+    width: 160px;
+    padding: 14px 18px;
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Boldonse', sans-serif;
+    font-weight: 700; font-size: .8rem;
+    transition: transform .25s ease, box-shadow .25s ease;
+    will-change: transform;
+  }
+  .hcard-pill:hover { z-index: 6; box-shadow: 0 18px 32px rgba(0,0,0,.18); }
+  .hcard-pill .dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  .pill-1 { background: var(--yellow); top: 12px; left: -20px; transform: rotate(-6deg); }
+  .pill-1:hover { transform: translateY(-8px) rotate(-6deg) scale(1.06); }
+  .pill-1 .dot { background: var(--orange); }
+  .pill-2 { background: var(--green); color: #fff; bottom: 45px; right: -30px; transform: rotate(5deg); }
+  .pill-2:hover { transform: translateY(-8px) rotate(5deg) scale(1.06); }
+  .pill-2 .dot { background: #fff; }
+  .pill-3 { background: var(--peach); bottom: 10px; left: 0px; transform: rotate(-3deg); }
+  .pill-3:hover { transform: translateY(-8px) rotate(-3deg) scale(1.06); }
+  .pill-3 .dot { background: var(--orange); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── FEATURES STRIP ── */
+  .features-strip {
+    background: var(--dark);
+    overflow: hidden;
+    padding: 14px 0;
+    border-top: 3px solid var(--yellow);
+    border-bottom: 3px solid var(--green);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 48px;
+    animation: marquee 22s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-track span {
+    font-family: 'Boldonse', sans-serif;
+    font-size: .9rem; font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--yellow);
+    flex-shrink: 0;
+  }
+  .marquee-track span.sep { color: var(--green); }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ── FEATURES GRID ── */
+  .section {
+    padding: 100px 64px;
+  }
+  .section-label {
+    font-family: 'Boldonse', sans-serif;
+    font-weight: 700; font-size: .75rem;
+    text-transform: uppercase; letter-spacing: .18em;
+    color: var(--green);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Boldonse', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 60px;
+    max-width: 540px;
+  }
+  .features-title {
+    line-height: 1.35;
+  }
+  .how-title {
+    line-height: 1.35;
+  }
+  .cta-title {
+    line-height: 2.15;
+  }
+
+  .feat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .feat-card {
+    border-radius: 20px;
+    padding: 36px 30px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .feat-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(0,0,0,.12); }
+
+  .feat-card.c-yellow { background: var(--yellow); }
+  .feat-card.c-green  { background: var(--green); color: #fff; }
+  .feat-card.c-orange { background: var(--orange); color: #fff; }
+  .feat-card.c-dark   { background: var(--dark); color: #fff; }
+  .feat-card.c-light  { background: var(--off-white); border: 2px solid var(--yellow-mid); }
+  .feat-card.c-forest { background: var(--forest); color: #fff; }
+
+  .feat-icon {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .feat-num {
+    font-family: 'Boldonse', sans-serif;
+    font-size: .7rem; font-weight: 800;
+    letter-spacing: .14em; text-transform: uppercase;
+    opacity: .45;
+    margin-bottom: 6px;
+  }
+  .feat-card h3 {
+    font-family: 'Boldonse', sans-serif;
+    font-size: 1.25rem; font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .feat-card p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.65;
+    opacity: .85;
+  }
+  .feat-tag {
+    margin-top: 20px;
+    display: inline-block;
+    font-family: 'Syne', sans-serif;
+    font-size: .72rem; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    background: rgba(255,255,255,.18);
+    padding: 4px 12px; border-radius: 100px;
+  }
+  .feat-card.c-yellow .feat-tag,
+  .feat-card.c-light .feat-tag { background: rgba(0,0,0,.1); }
+
+  /* big span card */
+  .feat-card.wide { grid-column: span 2; }
+
+  /* ── HOW IT WORKS ── */
+  .how {
+    background: var(--dark);
+    padding: 100px 64px;
+    color: #fff;
+  }
+  .how .section-label { color: var(--yellow); }
+  .how .section-title { color: #fff; }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 20px;
+  }
+  .step {
+    padding: 36px 28px;
+    border-right: 1px solid rgba(255,255,255,.1);
+    position: relative;
+  }
+  .step:last-child { border-right: none; }
+  .step-num {
+    font-family: 'Boldonse', sans-serif;
+    font-size: 4rem; font-weight: 800;
+    color: var(--yellow);
+    line-height: 1;
+    margin-bottom: 16px;
+    opacity: .25;
+  }
+  .step h3 {
+    font-family: 'Boldonse', sans-serif;
+    font-size: 1.1rem; font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .step p { font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 400; line-height: 1.65; opacity: .65; }
+  .step-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--green);
+    position: absolute; top: 36px; right: 28px;
+  }
+
+  /* ── MARKETPLACE HIGHLIGHT ── */
+  .marketplace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 460px;
+  }
+  .mkt-text {
+    padding: 80px 64px;
+    background: var(--green);
+    color: #fff;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .mkt-text .section-label { color: var(--yellow); }
+  .mkt-text .section-title { color: #fff; margin-bottom: 24px; }
+  .mkt-text p { font-family: 'DM Sans', sans-serif; font-size: 1.15rem; font-weight: 400; line-height: 1.7; opacity: .88; max-width: 420px; margin-bottom: 36px; }
+
+  .mkt-visual {
+    background: var(--yellow);
+    display: flex; align-items: center; justify-content: center;
+    padding: 60px;
+    position: relative; overflow: hidden;
+  }
+  .mkt-visual::before {
+    content: '';
+    position: absolute;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: var(--orange);
+    opacity: .15;
+    bottom: -80px; right: -80px;
+  }
+  .mkt-cards {
+    display: flex; flex-direction: column; gap: 14px;
+    position: relative; z-index: 2;
+  }
+  .mkt-item {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px 22px;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.08);
+    min-width: 260px;
+  }
+  .mkt-item-icon {
+    font-size: 1.6rem;
+    width: 44px; height: 44px;
+    background: var(--yellow);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .mkt-item-body { flex: 1; }
+  .mkt-item-body strong {
+    font-family: 'Boldonse', sans-serif;
+    font-size: .92rem; display: block; margin-bottom: 2px;
+  }
+  .mkt-item-body span { font-size: .78rem; color: #888; }
+  .mkt-item-price {
+    font-family: 'Boldonse', sans-serif;
+    font-weight: 800; font-size: 1rem;
+    color: var(--green);
+  }
+
+  /* ── STATS ── */
+  .stats {
+    padding: 80px 64px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: var(--yellow-mid);
+  }
+  .stat {
+    background: var(--off-white);
+    padding: 40px 30px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Boldonse', sans-serif;
+    font-size: 3rem; font-weight: 800;
+    color: var(--orange);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-label {
+    font-size: .85rem; color: #666;
+    font-weight: 500;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    padding: 100px 64px;
+    text-align: center;
+    background: var(--off-white);
+  }
+  .cta-section .section-label { text-align: center; }
+  .cta-section h2 {
+    font-family: 'Boldonse', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.05;
+    max-width: 640px;
+    margin: 0 auto 32px;
+  }
+  .cta-section h2 em { font-style: normal; color: var(--green); }
+  .cta-section p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: #666;
+    max-width: 480px;
+    margin: 0 auto 44px;
+    line-height: 1.7;
+  }
+  .store-btns {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .store-btn {
+    background: var(--dark);
+    color: #fff;
+    padding: 14px 32px;
+    border-radius: 14px;
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none;
+    transition: background .2s;
+  }
+  .store-btn:hover { background: var(--forest); }
+  .store-btn-icon { font-size: 1.6rem; }
+  .store-btn-text small { display: block; font-size: .7rem; opacity: .6; }
+  .store-btn-text strong {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark);
+    color: rgba(255,255,255,.5);
+    padding: 40px 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .footer-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--yellow);
+    display: flex; align-items: center; gap: 10px;
+  }
+  footer p { font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 400; }
+  .footer-links {
+    display: flex; gap: 24px; list-style: none;
+  }
+  .footer-links a {
+    color: rgba(255,255,255,.45);
+    font-size: .82rem; text-decoration: none;
+    transition: color .2s;
+  }
+  .footer-links a:hover { color: var(--yellow); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 14px 24px; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 100px 28px 60px; }
+    .hero-visual { display: none; }
+    .section { padding: 64px 28px; }
+    .feat-grid { grid-template-columns: 1fr 1fr; }
+    .feat-card.wide { grid-column: span 2; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .step { border-right: none; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .marketplace { grid-template-columns: 1fr; }
+    .mkt-text { padding: 60px 28px; }
+    .mkt-visual { padding: 40px 28px; }
+    .stats { grid-template-columns: 1fr 1fr; padding: 40px 28px; }
+    .how { padding: 64px 28px; }
+    .cta-section { padding: 64px 28px; }
+    footer { padding: 32px 24px; }
+  }
+  @media (max-width: 600px) {
+    .feat-grid { grid-template-columns: 1fr; }
+    .feat-card.wide { grid-column: span 1; }
+    .steps { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="assets/Plan de travail 1 no bg (3) (1).png" alt="FOOVIA Logo" style="height: 50px; width: auto;">
+    FOOVIA
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#marketplace">Marketplace</a></li>
+    <li><a href="#community">Community</a></li>
+  </ul>
+  <a href="#" class="nav-cta">Get Started</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    
+    <h1 class="hero-title">
+      Eat smart.<br>
+      Train <span class="accent">better.</span><br>
+      Waste <span class="accent2">nothing.</span>
+    </h1>
+    
+    <div class="hero-actions">
+      <a href="#" class="btn-primary">Start for free</a>
+      <a href="#features" class="btn-secondary">Explore features ↓</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-card-stack">
+      <div class="hcard hcard-pill pill-1">
+        <div class="dot"></div>
+        Macros tracked ✓
+      </div>
+      <div class="hcard hcard-main">
+        <div class="logo-in-card">
+          <img src="assets/Plan de travail 1 no bg (3) (1).png" alt="FOOVIA logo">
+        </div>
+        <h3>FOOVIA</h3>
+        <p>Your personalised nutrition & fitness guide, available 24/7.</p>
+      </div>
+      <div class="hcard hcard-pill pill-2">
+        <div class="dot"></div>
+        Workout ready 💪
+      </div>
+      <div class="hcard hcard-pill pill-3">
+        <div class="dot"></div>
+        Market fresh 🛒
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="features-strip">
+  <div class="marquee-track">
+    <span>Recipes & Ingredients</span><span class="sep">✦</span>
+    <span>Macro Tracking</span><span class="sep">✦</span>
+    <span>AI Workout Plans</span><span class="sep">✦</span>
+    <span>Fresh Marketplace</span><span class="sep">✦</span>
+    <span>Personalised Goals</span><span class="sep">✦</span>
+    <span>Community Support</span><span class="sep">✦</span>
+    <span>Zero Food Waste</span><span class="sep">✦</span>
+    <span>Smart Reminders</span><span class="sep">✦</span>
+    <!-- duplicate for seamless loop -->
+    <span>Recipes & Ingredients</span><span class="sep">✦</span>
+    <span>Macro Tracking</span><span class="sep">✦</span>
+    <span>AI Workout Plans</span><span class="sep">✦</span>
+    <span>Fresh Marketplace</span><span class="sep">✦</span>
+    <span>Personalised Goals</span><span class="sep">✦</span>
+    <span>Community Support</span><span class="sep">✦</span>
+    <span>Zero Food Waste</span><span class="sep">✦</span>
+    <span>Smart Reminders</span><span class="sep">✦</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <p class="section-label">What we offer</p>
+  <h2 class="section-title features-title">Every tool you need,  in one <br>plate.</h2>
+
+  <div class="feat-grid">
+
+    <div class="feat-card c-yellow wide">
+      <span class="feat-icon">🍽️</span>
+      <div class="feat-num">01 — Recipes</div>
+      <h3>Recipes from your fridge</h3>
+      <p>Snap a photo of your ingredients and Foovia generates personalised recipes instantly. Meals adapted to your dietary goals, allergies, and preferences — no guesswork needed.</p>
+      <span class="feat-tag">AI-powered</span>
+    </div>
+
+    <div class="feat-card c-green">
+      <span class="feat-icon">📊</span>
+      <div class="feat-num">02 — Track</div>
+      <h3>Goals & Macros</h3>
+      <p>Track macros, exercises, and supplements. Photograph your meal for instant nutritional estimates. Get hydration and medicine reminders.</p>
+      <span class="feat-tag">Smart reminders</span>
+    </div>
+
+    <div class="feat-card c-dark">
+      <span class="feat-icon">🏋️</span>
+      <div class="feat-num">03 — Sport</div>
+      <h3>Body-mapped workouts</h3>
+      <p>Select the body part you want to train on an interactive mannequin. Get plans tailored to your injuries, fitness level, and ambitions.</p>
+      <span class="feat-tag">Injury-aware</span>
+    </div>
+
+    <div class="feat-card c-orange">
+      <span class="feat-icon">🛒</span>
+      <div class="feat-num">04 — Marketplace</div>
+      <h3>Fresh. Local. Zero-waste.</h3>
+      <p>Connect directly with local producers. Buy surplus food before it's wasted — win for your wallet, win for the planet.</p>
+      <span class="feat-tag">Eco-friendly</span>
+    </div>
+
+    <div class="feat-card c-light">
+      <span class="feat-icon">👤</span>
+      <div class="feat-num">05 — Onboarding</div>
+      <h3>Built around you</h3>
+      <p>Our intake survey understands your goals, health challenges, and lifestyle before your first session. Secured with 2FA from day one.</p>
+      <span class="feat-tag">Personalised</span>
+    </div>
+
+    <div class="feat-card c-forest">
+      <span class="feat-icon">💬</span>
+      <div class="feat-num">06 — Community</div>
+      <h3>Support that never sleeps</h3>
+      <p>Ticket-based issue tracking, AI chatbot, and user-led discussion threads. Earn rewards for being a helpful community member.</p>
+      <span class="feat-tag">Hybrid support</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <p class="section-label">How it works</p>
+  <h2 class="section-title how-title">From signup to your first meal in<br> minutes.</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-dot"></div>
+      <div class="step-num">01</div>
+      <h3>Create your profile</h3>
+      <p>Complete a short health survey. We map your goals, restrictions, and challenges to build your personalised plan.</p>
+    </div>
+    <div class="step">
+      <div class="step-dot" style="background:var(--yellow)"></div>
+      <div class="step-num">02</div>
+      <h3>Snap & track</h3>
+      <p>Photograph ingredients or meals. Foovia calculates macros and suggests what to cook next based on your goals.</p>
+    </div>
+    <div class="step">
+      <div class="step-dot" style="background:var(--orange)"></div>
+      <div class="step-num">03</div>
+      <h3>Train smarter</h3>
+      <p>Tap the mannequin, pick your target muscles, and get a workout plan built for your body and today's energy level.</p>
+    </div>
+    <div class="step">
+      <div class="step-dot" style="background:var(--peach)"></div>
+      <div class="step-num">04</div>
+      <h3>Shop & connect</h3>
+      <p>Browse the marketplace for fresh, local, and surplus produce — reducing waste while fuelling your healthy lifestyle.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MARKETPLACE -->
+<section class="marketplace" id="marketplace">
+  <div class="mkt-text">
+    <p class="section-label">Marketplace</p>
+    <h2 class="section-title">Fresh from producer to plate.</h2>
+    <p>Our marketplace connects you directly with local farmers and food producers. Buy surplus items at great prices — tackling food waste while keeping your kitchen stocked with quality ingredients.</p>
+    <a href="#" class="btn-primary" style="align-self:flex-start">Browse the market</a>
+  </div>
+  <div class="mkt-visual">
+    <div class="mkt-cards">
+      <div class="mkt-item">
+        <div class="mkt-item-icon">🥦</div>
+        <div class="mkt-item-body">
+          <strong>Organic Broccoli</strong>
+          <span>Local Farm — 800g</span>
+        </div>
+        <div class="mkt-item-price">0.90 DT</div>
+      </div>
+      <div class="mkt-item">
+        <div class="mkt-item-icon">🍅</div>
+        <div class="mkt-item-body">
+          <strong>Sun-dried Tomatoes</strong>
+          <span>Surplus — 500g</span>
+        </div>
+        <div class="mkt-item-price">1.20 DT</div>
+      </div>
+      <div class="mkt-item">
+        <div class="mkt-item-icon">🥚</div>
+        <div class="mkt-item-body">
+          <strong>Free-range Eggs</strong>
+          <span>Ferme Nahli — 12 pcs</span>
+        </div>
+        <div class="mkt-item-price">4.50 DT</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">6+</div>
+    <div class="stat-label">Core features</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">AI</div>
+    <div class="stat-label">Macro scan from photo</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">0</div>
+    <div class="stat-label">Food waste goal</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">24/7</div>
+    <div class="stat-label">Community support</div>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta-section" id="community">
+  <p class="section-label">Ready to start?</p>
+  <h2 class="cta-title">Your healthiest chapter<br><em>starts here.</em></h2>
+  <p>Join Foovia and get a personalised nutrition, fitness, and shopping experience — all in one place.</p>
+  <div class="store-btns">
+    <a href="#" class="store-btn">
+      <div class="store-btn-icon">🍎</div>
+      <div class="store-btn-text">
+        <small>Download on the</small>
+        <strong>App Store</strong>
+      </div>
+    </a>
+    <a href="#" class="store-btn">
+      <div class="store-btn-icon">▶</div>
+      <div class="store-btn-text">
+        <small>Get it on</small>
+        <strong>Google Play</strong>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <img src="assets/Plan de travail 1 no bg (3) (1).png" alt="FOOVIA Logo" style="height: 36px; width: auto;">
+    FOOVIA
+  </div>
+  <p>© 2026 Foovia. All rights reserved.</p>
+  <ul class="footer-links">
+    <li><a href="#">Privacy</a></li>
+    <li><a href="#">Terms</a></li>
+    <li><a href="#">Support</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+</footer>
+
+</body>
+</html>
