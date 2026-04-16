@@ -119,6 +119,15 @@ nav {
   color: var(--page-bg);
   transform: translateY(-1px);
 }
+.nav-backoffice {
+  background: #2f6df6;
+  color: #fff;
+  border: 1.5px solid transparent;
+}
+.nav-backoffice:hover {
+  background: #1f56cd;
+  transform: translateY(-1px);
+}
 .nav-signup {
   background: var(--green);
   color: #fff;
