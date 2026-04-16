@@ -506,8 +506,11 @@ $reclamations = $controller->get_reclamations();
                 <h2 class="mb-0">Liste des Reclamations</h2>
                 <a href="add_rec_page.php" class="btn btn-success" title="Ajouter Reclamation">Ajouter Reclamation</a>
             </div>
+            <div class="mb-3">
+                <input id="reclamation-search" type="text" class="form-control" placeholder="Rechercher dans la liste des réclamations...">
+            </div>
             <div class="table-responsive">
-                <table class="table table-bordered table-striped">
+                <table class="table table-bordered table-striped" id="reclamation-table">
                     <thead class="table-light">
                         <tr>
                             <th>Description</th>
@@ -799,5 +802,16 @@ $reclamations = $controller->get_reclamations();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
     <script src="js/plugins.js"></script>
     <script src="js/script.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#reclamation-search').on('keyup', function() {
+                var query = $(this).val().toLowerCase();
+                $('#reclamation-table tbody tr').each(function() {
+                    var rowText = $(this).text().toLowerCase();
+                    $(this).toggle(rowText.indexOf(query) !== -1);
+                });
+            });
+        });
+    </script>
   </body>
 </html>

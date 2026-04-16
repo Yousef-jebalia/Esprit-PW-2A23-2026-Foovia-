@@ -442,6 +442,9 @@ $reclamations = $reclamationController->get_reclamations();
                                                     <?php if (!empty($success)): ?>
                                                         <div class="alert alert-success" role="alert"><?php echo htmlspecialchars($success); ?></div>
                                                     <?php endif; ?>
+                                                    <div class="mb-3">
+                                                        <input id="traitement-search" type="text" class="form-control" placeholder="Rechercher dans la liste des traitements...">
+                                                    </div>
                                                     <div class="table-responsive">
                                                         <table class="table table-striped table-bordered">
                                                             <thead>
@@ -495,6 +498,9 @@ $reclamations = $reclamationController->get_reclamations();
                                                     </div>
                                                 </div>
                                                 <div class="card-block">
+                                                    <div class="mb-3">
+                                                        <input id="reclamation-search" type="text" class="form-control" placeholder="Rechercher dans la liste des réclamations...">
+                                                    </div>
                                                     <div class="table-responsive">
                                                         <table class="table table-striped table-bordered">
                                                             <thead>
@@ -610,6 +616,23 @@ $reclamations = $reclamationController->get_reclamations();
     <script src="assets/js/jquery.mCustomScrollbar.concat.min.js"></script>
     <!-- Custom js -->
     <script type="text/javascript" src="assets/js/script.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function attachSearch(inputSelector) {
+                $(inputSelector).on('keyup', function() {
+                    var query = $(this).val().toLowerCase();
+                    var table = $(this).closest('.card-block').find('table').first();
+                    table.find('tbody tr').each(function() {
+                        var rowText = $(this).text().toLowerCase();
+                        $(this).toggle(rowText.indexOf(query) !== -1);
+                    });
+                });
+            }
+
+            attachSearch('#traitement-search');
+            attachSearch('#reclamation-search');
+        });
+    </script>
 </body>
 
 </html>
