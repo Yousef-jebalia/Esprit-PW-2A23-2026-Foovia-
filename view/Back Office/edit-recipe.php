@@ -118,7 +118,34 @@ if ($recipeData === null) {
 
                         <div class="form-group">
                             <label>Category</label>
-                            <input type="text" name="categorie_rec" class="form-control" value="<?php echo htmlspecialchars($recipeData['categorie_rec']); ?>">
+                            <select name="categorie_rec" class="form-control">
+                                <?php
+                                $recipeCategories = [
+                                    'Breakfast',
+                                    'Lunch',
+                                    'Dinner',
+                                    'Appetizer',
+                                    'Main Course',
+                                    'Side Dish',
+                                    'Soup',
+                                    'Salad',
+                                    'Dessert',
+                                    'Snack',
+                                    'Drink',
+                                    'Vegetarian',
+                                    'Vegan',
+                                    'Gluten-Free',
+                                    'High Protein',
+                                    'Low Carb'
+                                ];
+                                ?>
+                                <option value="">Select category</option>
+                                <?php foreach ($recipeCategories as $category): ?>
+                                    <option value="<?php echo htmlspecialchars($category); ?>" <?php echo ($recipeData['categorie_rec'] === $category) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($category); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
 
                         <div class="form-group">

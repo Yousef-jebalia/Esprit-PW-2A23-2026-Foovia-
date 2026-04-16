@@ -521,7 +521,25 @@ $recipes = $controller->list_recipe();
                                                             <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Category</label>
                                                                 <div class="col-sm-10">
-                                                                    <input type="text" name="categorie_rec" class="form-control" placeholder="Recipe category">
+                                                                    <select name="categorie_rec" class="form-control">
+                                                                        <option value="">Select category</option>
+                                                                        <option value="Breakfast">Breakfast</option>
+                                                                        <option value="Lunch">Lunch</option>
+                                                                        <option value="Dinner">Dinner</option>
+                                                                        <option value="Appetizer">Appetizer</option>
+                                                                        <option value="Main Course">Main Course</option>
+                                                                        <option value="Side Dish">Side Dish</option>
+                                                                        <option value="Soup">Soup</option>
+                                                                        <option value="Salad">Salad</option>
+                                                                        <option value="Dessert">Dessert</option>
+                                                                        <option value="Snack">Snack</option>
+                                                                        <option value="Drink">Drink</option>
+                                                                        <option value="Vegetarian">Vegetarian</option>
+                                                                        <option value="Vegan">Vegan</option>
+                                                                        <option value="Gluten-Free">Gluten-Free</option>
+                                                                        <option value="High Protein">High Protein</option>
+                                                                        <option value="Low Carb">Low Carb</option>
+                                                                    </select>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">
