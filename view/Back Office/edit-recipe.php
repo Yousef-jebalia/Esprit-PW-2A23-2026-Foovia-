@@ -1,19 +1,46 @@
 <?php
 include '../../controle/controle_Menu.php';
+include '../../controle/controle_categ_rec.php';
 
 $controller = new Controller_menu();
+$categoryController = new controle_categ_rec();
 $error = "";
 $recipeData = null;
+$selectedCategoryIds = [];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (
-        isset($_POST["id_rec"], $_POST["nom_rec"], $_POST["categorie_rec"], $_POST["description_rec"], $_POST["prot_rec"],
+        isset($_POST["id_rec"], $_POST["nom_rec"], $_POST["description_rec"], $_POST["prot_rec"],
               $_POST["fat_rec"], $_POST["carb_rec"], $_POST["cal_rec"], $_POST["instructions_rec"], $_POST["origin_rec"])
     ) {
         $id = (int)$_POST["id_rec"];
         $imagePath = isset($_POST["current_img_rec"]) ? $_POST["current_img_rec"] : "";
+        $postedCategoryIds = [];
+        if (isset($_POST['categorie_rec']) && is_array($_POST['categorie_rec'])) {
+            foreach ($_POST['categorie_rec'] as $categoryIdRaw) {
+                $categoryId = (int)$categoryIdRaw;
+                if ($categoryId > 0) {
+                    $postedCategoryIds[$categoryId] = $categoryId;
+                }
+            }
+        }
 
-        if (isset($_FILES['imag_rec']) && $_FILES['imag_rec']['error'] === 0) {
+        $postedCategoryNames = [];
+        foreach ($postedCategoryIds as $categoryId) {
+            $categoryRow = $categoryController->get_categ_rec_by_id($categoryId);
+            if (!empty($categoryRow) && isset($categoryRow['nom_categ'])) {
+                $categoryName = trim($categoryRow['nom_categ']);
+                if ($categoryName !== '') {
+                    $postedCategoryNames[] = $categoryName;
+                }
+            }
+        }
+
+        if (empty($postedCategoryNames)) {
+            $error = "Please select at least one valid category.";
+        }
+
+        if (empty($error) && isset($_FILES['imag_rec']) && $_FILES['imag_rec']['error'] === 0) {
             $uploadDir = 'assets/images/recipes/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
@@ -40,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $recipe = new Recipe(
                 $id,
                 trim($_POST["nom_rec"]),
-                trim($_POST["categorie_rec"]),
+                implode(', ', $postedCategoryNames),
                 trim($_POST["description_rec"]),
                 (float)$_POST["prot_rec"],
                 (float)$_POST["fat_rec"],
@@ -52,6 +79,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             );
 
             $controller->update_recipe($recipe);
+
+            $categoryController->delete_affecter_categ_rec_by_recipe($id);
+            foreach ($postedCategoryIds as $categoryId) {
+                $categoryController->affecter_categ_rec($id, (int)$categoryId);
+            }
+
             header('Location: form-elements-component.php');
             exit;
         }
@@ -59,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $recipeData = [
             'id_rec' => $id,
             'name_rec' => $_POST["nom_rec"],
-            'categorie_rec' => $_POST["categorie_rec"],
+            'categorie_rec' => implode(', ', $postedCategoryNames),
             'description_rec' => $_POST["description_rec"],
             'prot_rec' => $_POST["prot_rec"],
             'fat_rec' => $_POST["fat_rec"],
@@ -81,9 +114,17 @@ if ($recipeData === null) {
         $recipeData = $controller->get_recipe_by_id((int)$_GET["id_rec"]);
         if (!$recipeData) {
             $error = "Recipe not found.";
+        } else {
+            $selectedCategoryIds = $categoryController->get_rec_cat_ids((int)$recipeData['id_rec']);
         }
     }
 }
+
+if ($recipeData !== null && empty($selectedCategoryIds)) {
+    $selectedCategoryIds = $categoryController->get_rec_cat_ids((int)$recipeData['id_rec']);
+}
+
+$recipeCategories = $categoryController->list_categ_rec();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -112,40 +153,37 @@ if ($recipeData === null) {
                         <input type="hidden" name="current_img_rec" value="<?php echo htmlspecialchars($recipeData['img_rec']); ?>">
 
                         <div class="form-group">
+                            <label>Recipe ID</label>
+                            <input type="text" class="form-control" value="<?php echo (int)$recipeData['id_rec']; ?>" readonly>
+                        </div>
+
+                        <div class="form-group">
                             <label>Recipe Name</label>
                             <input type="text" name="nom_rec" class="form-control" value="<?php echo htmlspecialchars($recipeData['name_rec']); ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Category</label>
-                            <select name="categorie_rec" class="form-control">
-                                <?php
-                                $recipeCategories = [
-                                    'Breakfast',
-                                    'Lunch',
-                                    'Dinner',
-                                    'Appetizer',
-                                    'Main Course',
-                                    'Side Dish',
-                                    'Soup',
-                                    'Salad',
-                                    'Dessert',
-                                    'Snack',
-                                    'Drink',
-                                    'Vegetarian',
-                                    'Vegan',
-                                    'Gluten-Free',
-                                    'High Protein',
-                                    'Low Carb'
-                                ];
-                                ?>
-                                <option value="">Select category</option>
-                                <?php foreach ($recipeCategories as $category): ?>
-                                    <option value="<?php echo htmlspecialchars($category); ?>" <?php echo ($recipeData['categorie_rec'] === $category) ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($category); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                            <div class="border rounded p-2" style="max-height:180px;overflow-y:auto;">
+                                <?php if (!empty($recipeCategories)): ?>
+                                    <?php foreach ($recipeCategories as $dbCategory): ?>
+                                        <?php
+                                        $categoryName = isset($dbCategory['nom_categ']) ? trim($dbCategory['nom_categ']) : '';
+                                        $categoryId = isset($dbCategory['id_categ_rec']) ? (int)$dbCategory['id_categ_rec'] : 0;
+                                        if ($categoryName === '' || $categoryId <= 0) {
+                                            continue;
+                                        }
+                                        ?>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" name="categorie_rec[]" id="edit_categ_rec_<?php echo $categoryId; ?>" value="<?php echo $categoryId; ?>" <?php echo in_array($categoryId, array_map('intval', $selectedCategoryIds), true) ? 'checked' : ''; ?>>
+                                            <label class="form-check-label" for="edit_categ_rec_<?php echo $categoryId; ?>"><?php echo htmlspecialchars($categoryName); ?></label>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <p class="mb-0 text-muted">No categories available.</p>
+                                <?php endif; ?>
+                            </div>
+                            <small class="form-text text-muted">You can select multiple categories.</small>
                         </div>
 
                         <div class="form-group">
@@ -207,7 +245,6 @@ if ($recipeData === null) {
             const form = document.querySelector('form[enctype="multipart/form-data"]');
             if (!form) return;
 
-            const idInput = form.querySelector('input[name="id_rec"]');
             const nameInput = form.querySelector('input[name="nom_rec"]');
             const protInput = form.querySelector('input[name="prot_rec"]');
             const fatInput = form.querySelector('input[name="fat_rec"]');
@@ -216,6 +253,7 @@ if ($recipeData === null) {
             const originInput = form.querySelector('input[name="origin_rec"]');
             const descInput = form.querySelector('textarea[name="description_rec"]');
             const instInput = form.querySelector('textarea[name="instructions_rec"]');
+            const categoryChecks = form.querySelectorAll('input[name="categorie_rec[]"]');
 
             const floatFields = [protInput, fatInput, carbInput, calInput];
 
@@ -271,7 +309,6 @@ if ($recipeData === null) {
                 return /[A-Za-z]/.test(value);
             };
 
-            restrictDigits(idInput, 4);
             restrictText(nameInput, 20);
             restrictText(originInput, 20);
             restrictMaxLength(descInput, 500);
@@ -280,18 +317,6 @@ if ($recipeData === null) {
 
             form.addEventListener('submit', function(e) {
                 const errors = [];
-
-                const idRaw = idInput.value.trim();
-                if (!idRaw) {
-                    errors.push('ID is required.');
-                } else if (!/^\d{1,4}$/.test(idRaw)) {
-                    errors.push('ID must be a number between 0001 and 9999.');
-                } else {
-                    const idNumber = Number(idRaw);
-                    if (idNumber < 1 || idNumber > 9999) {
-                        errors.push('ID must be a number between 0001 and 9999.');
-                    }
-                }
 
                 const nameRaw = nameInput.value.trim();
                 if (nameRaw.length > 20) {
@@ -333,6 +358,13 @@ if ($recipeData === null) {
                 }
                 if (instInput.value.trim().length > 500) {
                     errors.push('Instructions max length is 500.');
+                }
+
+                const checkedCategories = Array.from(categoryChecks).filter(function(checkbox) {
+                    return checkbox.checked;
+                });
+                if (checkedCategories.length === 0) {
+                    errors.push('Select at least one category.');
                 }
 
                 if (errors.length > 0) {

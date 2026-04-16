@@ -1,30 +1,121 @@
 <?php
 include '../../controle/controle_Menu.php';
+include '../../controle/controle_categ_rec.php';
 
 $error = "";
 $success = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["delete_id_rec"]) && !empty($_POST["delete_id_rec"])) {
+    if (isset($_POST['form_type']) && $_POST['form_type'] === 'add_category') {
+        $categoryName = isset($_POST['name_cat_rec']) ? trim($_POST['name_cat_rec']) : '';
+        $categoryColor = isset($_POST['color_cat_rec']) ? trim($_POST['color_cat_rec']) : '';
+        $categoryImagePath = isset($_POST['img_cat_rec']) ? trim($_POST['img_cat_rec']) : '';
+
+        if ($categoryName !== '' && $categoryColor !== '') {
+            if (isset($_FILES['img_cat_file']) && $_FILES['img_cat_file']['error'] === 0) {
+                $uploadDir = 'assets/images/categories/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+
+                $fileName = basename($_FILES['img_cat_file']['name']);
+                $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
+                $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+                if (in_array(strtolower($fileExt), $allowedExts)) {
+                    $newFileName = uniqid('category_') . '.' . $fileExt;
+                    $uploadPath = $uploadDir . $newFileName;
+
+                    if (move_uploaded_file($_FILES['img_cat_file']['tmp_name'], $uploadPath)) {
+                        $categoryImagePath = $uploadPath;
+                    } else {
+                        $error = "Failed to upload category image.";
+                    }
+                } else {
+                    $error = "Invalid category image format. Only JPG, PNG, GIF, WebP allowed.";
+                }
+            }
+
+            if ($categoryImagePath === '' && empty($error)) {
+                $error = "Please import a category image or provide an image path.";
+            }
+
+            if (empty($error)) {
+            $category = new categ_rec(
+                0,
+                $categoryName,
+                $categoryImagePath,
+                $categoryColor
+            );
+            $categoryController = new controle_categ_rec();
+            if ($categoryController->add_categ_rec($category)) {
+                $success = "Category added successfully.";
+            } else {
+                $error = "Failed to add category.";
+            }
+            }
+        } else {
+            $error = "Category name and color are required.";
+        }
+    } elseif (isset($_POST["delete_id_rec"]) && !empty($_POST["delete_id_rec"])) {
         $controller = new Controller_menu();
         $controller->delete_recipe((int)$_POST["delete_id_rec"]);
         $success = "Recipe deleted successfully.";
-    } elseif (
-        isset($_POST["id_rec"]) && isset($_POST["nom_rec"]) && isset($_POST["categorie_rec"]) &&
-        isset($_POST["description_rec"]) && isset($_POST["prot_rec"]) && isset($_POST["fat_rec"]) &&
-        isset($_POST["carb_rec"]) && isset($_POST["cal_rec"]) && isset($_POST["instructions_rec"]) &&
-        isset($_POST["origin_rec"])
-    ) {
-        if (
-            !empty($_POST["id_rec"]) && !empty($_POST["nom_rec"]) && !empty($_POST["categorie_rec"]) &&
-            !empty($_POST["description_rec"]) && !empty($_POST["prot_rec"]) && !empty($_POST["fat_rec"]) &&
-            !empty($_POST["carb_rec"]) && !empty($_POST["cal_rec"]) && !empty($_POST["instructions_rec"]) &&
-            !empty($_POST["origin_rec"])
-        ) {
+    } elseif (isset($_POST['form_type']) && $_POST['form_type'] === 'add_recipe') {
+        $requiredFields = [
+            'nom_rec' => 'Recipe Name',
+            'description_rec' => 'Description',
+            'prot_rec' => 'Protein',
+            'fat_rec' => 'Fat',
+            'carb_rec' => 'Carbs',
+            'cal_rec' => 'Calories',
+            'instructions_rec' => 'Instructions',
+            'origin_rec' => 'Origin'
+        ];
+
+        $missingFields = [];
+        foreach ($requiredFields as $fieldKey => $fieldLabel) {
+            if (!isset($_POST[$fieldKey]) || trim((string)$_POST[$fieldKey]) === '') {
+                $missingFields[] = $fieldLabel;
+            }
+        }
+
+        if (!empty($missingFields)) {
+            $error = 'Please fill: ' . implode(', ', $missingFields) . '.';
+        }
+
+        if (empty($error)) {
             $imagePath = "";
+            $selectedCategoryIds = [];
+            if (isset($_POST['categorie_rec']) && is_array($_POST['categorie_rec'])) {
+                foreach ($_POST['categorie_rec'] as $categoryIdRaw) {
+                    $categoryId = (int)$categoryIdRaw;
+                    if ($categoryId > 0) {
+                        $selectedCategoryIds[$categoryId] = $categoryId;
+                    }
+                }
+            }
+            $categoryController = new controle_categ_rec();
+            $selectedCategoryNames = [];
+
+            foreach ($selectedCategoryIds as $categoryId) {
+                $selectedCategory = $categoryController->get_categ_rec_by_id($categoryId);
+                if (!empty($selectedCategory) && isset($selectedCategory['nom_categ'])) {
+                    $selectedCategoryName = trim($selectedCategory['nom_categ']);
+                    if ($selectedCategoryName !== '') {
+                        $selectedCategoryNames[] = $selectedCategoryName;
+                    }
+                }
+            }
+
+            if (empty($selectedCategoryNames)) {
+                $error = "Please select at least one valid category.";
+            }
+
+            $selectedCategoryName = implode(', ', $selectedCategoryNames);
             
             // Handle image file upload
-            if (isset($_FILES['imag_rec']) && $_FILES['imag_rec']['error'] == 0) {
+            if (empty($error) && isset($_FILES['imag_rec']) && $_FILES['imag_rec']['error'] == 0) {
                 $uploadDir = 'assets/images/recipes/';
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
@@ -50,9 +141,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             if (empty($error)) {
                 $recipe = new Recipe(
-                    (int)$_POST['id_rec'],
+                    0,
                     $_POST['nom_rec'],
-                    $_POST['categorie_rec'],
+                    $selectedCategoryName,
                     $_POST['description_rec'],
                     (float)$_POST['prot_rec'],
                     (float)$_POST['fat_rec'],
@@ -63,11 +154,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $imagePath
                 );
                 $controller = new Controller_menu();
-                $controller->add_recipe($recipe);
-                $success = "Recipe added successfully.";
+                $newRecipeId = $controller->add_recipe($recipe);
+                if (!$newRecipeId) {
+                    $error = "Failed to add recipe. Please check that Recipe ID is unique and all values are valid.";
+                } else {
+                    foreach ($selectedCategoryIds as $categoryId) {
+                        if (!$categoryController->affecter_categ_rec((int)$newRecipeId, (int)$categoryId)) {
+                            $error = "Recipe saved, but failed to link one or more categories.";
+                            break;
+                        }
+                    }
+                }
+
+                if (empty($error)) {
+                    $success = "Recipe added successfully.";
+                }
             }
-        } else {
-            $error = "All fields are required.";
         }
     } else {
         $error = "Missing form data.";
@@ -76,6 +178,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $controller = new Controller_menu();
 $recipes = $controller->list_recipe();
+$categoryController = new controle_categ_rec();
+$recipeCategories = $categoryController->list_categ_rec();
 ?>
 
 <!DOCTYPE html>
@@ -436,6 +540,16 @@ $recipes = $controller->list_recipe();
                                     <div class="page-body">
                                         <div class="row">
                                             <div class="col-sm-12">
+                                                <?php if (!empty($error)): ?>
+                                                    <div class="alert alert-danger" role="alert" style="margin-bottom: 15px;">
+                                                        <?php echo htmlspecialchars($error); ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                                <?php if (!empty($success)): ?>
+                                                    <div class="alert alert-success" role="alert" style="margin-bottom: 15px;">
+                                                        <?php echo htmlspecialchars($success); ?>
+                                                    </div>
+                                                <?php endif; ?>
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <h5>Recipe List</h5>
@@ -482,6 +596,7 @@ $recipes = $controller->list_recipe();
                                                                                 <td><?php echo htmlspecialchars($recipe['origin_rec']); ?></td>
                                                                                 <td>
                                                                                     <form method="POST" action="" onsubmit="return confirm('Delete this recipe?');" style="margin:0;">
+                                                                                        <input type="hidden" name="form_type" value="delete_recipe">
                                                                                         <input type="hidden" name="delete_id_rec" value="<?php echo (int)$recipe['id_rec']; ?>">
                                                                                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                                                                     </form>
@@ -506,12 +621,7 @@ $recipes = $controller->list_recipe();
                                                     <div class="card-block">
                                                         <h4 class="sub-title">Recipe Information</h4>
                                                         <form method="POST" action="" enctype="multipart/form-data">
-                                                            <div class="form-group row">
-                                                                <label class="col-sm-2 col-form-label">Recipe ID</label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" name="id_rec" class="form-control" placeholder="Recipe ID">
-                                                                </div>
-                                                            </div>
+                                                            <input type="hidden" name="form_type" value="add_recipe">
                                                             <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Recipe Name</label>
                                                                 <div class="col-sm-10">
@@ -521,25 +631,26 @@ $recipes = $controller->list_recipe();
                                                             <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Category</label>
                                                                 <div class="col-sm-10">
-                                                                    <select name="categorie_rec" class="form-control">
-                                                                        <option value="">Select category</option>
-                                                                        <option value="Breakfast">Breakfast</option>
-                                                                        <option value="Lunch">Lunch</option>
-                                                                        <option value="Dinner">Dinner</option>
-                                                                        <option value="Appetizer">Appetizer</option>
-                                                                        <option value="Main Course">Main Course</option>
-                                                                        <option value="Side Dish">Side Dish</option>
-                                                                        <option value="Soup">Soup</option>
-                                                                        <option value="Salad">Salad</option>
-                                                                        <option value="Dessert">Dessert</option>
-                                                                        <option value="Snack">Snack</option>
-                                                                        <option value="Drink">Drink</option>
-                                                                        <option value="Vegetarian">Vegetarian</option>
-                                                                        <option value="Vegan">Vegan</option>
-                                                                        <option value="Gluten-Free">Gluten-Free</option>
-                                                                        <option value="High Protein">High Protein</option>
-                                                                        <option value="Low Carb">Low Carb</option>
-                                                                    </select>
+                                                                    <div class="border rounded p-2" style="max-height:180px;overflow-y:auto;">
+                                                                        <?php if (!empty($recipeCategories)): ?>
+                                                                            <?php foreach ($recipeCategories as $dbCategory): ?>
+                                                                                <?php
+                                                                                $categoryName = isset($dbCategory['nom_categ']) ? trim($dbCategory['nom_categ']) : '';
+                                                                                $categoryId = isset($dbCategory['id_categ_rec']) ? (int)$dbCategory['id_categ_rec'] : 0;
+                                                                                if ($categoryName === '' || $categoryId <= 0) {
+                                                                                    continue;
+                                                                                }
+                                                                                ?>
+                                                                                <div class="form-check mb-2">
+                                                                                    <input class="form-check-input" type="checkbox" name="categorie_rec[]" id="categ_rec_<?php echo $categoryId; ?>" value="<?php echo $categoryId; ?>">
+                                                                                    <label class="form-check-label" for="categ_rec_<?php echo $categoryId; ?>"><?php echo htmlspecialchars($categoryName); ?></label>
+                                                                                </div>
+                                                                            <?php endforeach; ?>
+                                                                        <?php else: ?>
+                                                                            <p class="mb-0 text-muted">No categories available.</p>
+                                                                        <?php endif; ?>
+                                                                    </div>
+                                                                    <small class="form-text text-muted">You can select multiple categories.</small>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">
@@ -613,7 +724,6 @@ $recipes = $controller->list_recipe();
                                                                     const form = document.querySelector('form[enctype="multipart/form-data"]');
                                                                     if (!form) return;
 
-                                                                    const idInput = form.querySelector('input[name="id_rec"]');
                                                                     const nameInput = form.querySelector('input[name="nom_rec"]');
                                                                     const protInput = form.querySelector('input[name="prot_rec"]');
                                                                     const fatInput = form.querySelector('input[name="fat_rec"]');
@@ -622,6 +732,7 @@ $recipes = $controller->list_recipe();
                                                                     const originInput = form.querySelector('input[name="origin_rec"]');
                                                                     const descInput = form.querySelector('textarea[name="description_rec"]');
                                                                     const instInput = form.querySelector('textarea[name="instructions_rec"]');
+                                                                    const categoryChecks = form.querySelectorAll('input[name="categorie_rec[]"]');
 
                                                                     const floatFields = [protInput, fatInput, carbInput, calInput];
 
@@ -668,7 +779,6 @@ $recipes = $controller->list_recipe();
                                                                         });
                                                                     };
 
-                                                                    restrictDigits(idInput, 4);
                                                                     restrictText(nameInput, 20);
                                                                     restrictText(originInput, 20);
                                                                     restrictMaxLength(descInput, 500);
@@ -686,18 +796,6 @@ $recipes = $controller->list_recipe();
 
                                                                     form.addEventListener('submit', function(e) {
                                                                         const errors = [];
-
-                                                                        const idRaw = idInput.value.trim();
-                                                                        if (!idRaw) {
-                                                                            errors.push('ID is required.');
-                                                                        } else if (!/^\d{1,4}$/.test(idRaw)) {
-                                                                            errors.push('ID must be a number between 0001 and 9999.');
-                                                                        } else {
-                                                                            const idNumber = Number(idRaw);
-                                                                            if (idNumber < 1 || idNumber > 9999) {
-                                                                                errors.push('ID must be a number between 0001 and 9999.');
-                                                                            }
-                                                                        }
 
                                                                         const nameRaw = nameInput.value.trim();
                                                                         if (nameRaw.length > 20) {
@@ -741,6 +839,15 @@ $recipes = $controller->list_recipe();
                                                                             errors.push('Instructions max length is 500.');
                                                                         }
 
+                                                                        if (categoryChecks.length > 0) {
+                                                                            const selectedCategories = Array.from(categoryChecks).filter(function(checkbox) {
+                                                                                return checkbox.checked;
+                                                                            });
+                                                                            if (selectedCategories.length === 0) {
+                                                                                errors.push('Select at least one category.');
+                                                                            }
+                                                                        }
+
                                                                         if (errors.length > 0) {
                                                                             e.preventDefault();
                                                                             alert(errors.join('\n'));
@@ -751,6 +858,42 @@ $recipes = $controller->list_recipe();
                                                             <div class="form-group row">
                                                                 <div class="col-sm-10 offset-sm-2">
                                                                     <button type="submit" class="btn btn-primary">Save Recipe</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <h5>ADD Category</h5>
+                                                    </div>
+                                                    <div class="card-block">
+                                                        <h4 class="sub-title">Category Information</h4>
+                                                        <form method="POST" action="" enctype="multipart/form-data">
+                                                            <input type="hidden" name="form_type" value="add_category">
+                                                            <div class="form-group row">
+                                                                <label class="col-sm-2 col-form-label">Category Name</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" name="name_cat_rec" class="form-control" placeholder="Category name" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-sm-2 col-form-label">Category Image</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="file" name="img_cat_file" class="form-control-file" accept="image/*">
+                                                                    <small class="form-text text-muted">Use the import button above to upload an image, or fill an existing path below.</small>
+                                                                    <input type="text" name="img_cat_rec" class="form-control mt-2" placeholder="Optional image path or URL">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-sm-2 col-form-label">Category Color</label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="color" name="color_cat_rec" class="form-control" value="#f59e0b" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-10 offset-sm-2">
+                                                                    <button type="submit" class="btn btn-success">Save Category</button>
                                                                 </div>
                                                             </div>
                                                         </form>

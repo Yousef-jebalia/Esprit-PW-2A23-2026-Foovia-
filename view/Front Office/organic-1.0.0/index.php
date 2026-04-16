@@ -1,15 +1,24 @@
 <?php
 require_once __DIR__ . '/../../../controle/controle_Menu.php';
+require_once __DIR__ . '/../../../controle/controle_categ_rec.php';
 
 $controller = new Controller_menu();
 $recipes = $controller->list_recipe();
+$categoryController = new controle_categ_rec();
+$categoryRows = $categoryController->list_categ_rec();
+$db = config::getConnexion();
 $categories = [];
-foreach ($recipes as $recipe) {
-  $categoryName = trim($recipe['categorie_rec'] ?? '');
-  if ($categoryName === '') {
+foreach ($categoryRows as $categoryRow) {
+  $categoryId = isset($categoryRow['id_categ_rec']) ? (int)$categoryRow['id_categ_rec'] : 0;
+  $categoryName = isset($categoryRow['nom_categ']) ? trim($categoryRow['nom_categ']) : '';
+  if ($categoryId <= 0 || $categoryName === '') {
     continue;
   }
-  $categories[$categoryName] = ($categories[$categoryName] ?? 0) + 1;
+
+  $query = $db->prepare("SELECT COUNT(*) FROM affecter_categ_rec WHERE id_categ_rec = :id_categ_rec");
+  $query->execute(['id_categ_rec' => $categoryId]);
+
+  $categories[$categoryName] = (int)$query->fetchColumn();
 }
 ksort($categories);
 ?>
@@ -34,6 +43,315 @@ ksort($categories);
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+    <style>
+      :root {
+        --foovia-bg: #f7f5ef;
+        --foovia-surface: #ffffff;
+        --foovia-surface-soft: #f3f4f6;
+        --foovia-text: #111827;
+        --foovia-muted: #6b7280;
+        --foovia-border: rgba(15, 23, 42, 0.08);
+        --foovia-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+      }
+
+      html[data-theme="dark"] {
+        --foovia-bg: #0b0f19;
+        --foovia-surface: #111827;
+        --foovia-surface-soft: #1f2937;
+        --foovia-text: #e5e7eb;
+        --foovia-muted: #9ca3af;
+        --foovia-border: rgba(255, 255, 255, 0.08);
+        --foovia-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+      }
+
+      html,
+      body {
+        background: var(--foovia-bg);
+        color: var(--foovia-text);
+        transition: background-color 0.25s ease, color 0.25s ease;
+      }
+
+      body {
+        min-height: 100vh;
+      }
+
+      .section-title,
+      .widget-title,
+      .footer-menu h5,
+      .footer-menu p,
+      .copyright p,
+      .credit-link p,
+      .credit-link a,
+      .section-header,
+      .category-title {
+        color: var(--foovia-text);
+      }
+
+      .text-body-secondary,
+      .footer-menu .text-body-secondary {
+        color: var(--foovia-muted) !important;
+      }
+
+      .product-item,
+      .card,
+      .footer-menu,
+      .search-bar,
+      .bg-warning.pt-5.rounded-5 {
+        background: var(--foovia-surface) !important;
+        color: var(--foovia-text);
+        border-color: var(--foovia-border) !important;
+        box-shadow: var(--foovia-shadow);
+      }
+
+      .search-bar,
+      .form-control,
+      .form-select {
+        background-color: var(--foovia-surface) !important;
+        color: var(--foovia-text) !important;
+        border-color: var(--foovia-border) !important;
+      }
+
+      .form-control::placeholder {
+        color: var(--foovia-muted);
+      }
+
+      footer,
+      #footer-bottom {
+        background: var(--foovia-surface-soft);
+        color: var(--foovia-text);
+      }
+
+      .badge.bg-warning,
+      .btn-warning {
+        background-color: #f59e0b !important;
+        color: #111827 !important;
+      }
+
+      html[data-theme="dark"] .btn-dark {
+        background-color: #f3f4f6;
+        color: #111827;
+        border-color: #f3f4f6;
+      }
+
+      html[data-theme="dark"] .product-item h3,
+      html[data-theme="dark"] .product-item .badge,
+      html[data-theme="dark"] .product-item .button-area .btn,
+      html[data-theme="dark"] .product-item .text-center,
+      html[data-theme="dark"] .product-item .text-center * {
+        color: #ffffff !important;
+      }
+
+      html[data-theme="dark"] .product-item .badge.bg-warning {
+        background-color: #fbbf24 !important;
+        color: #111827 !important;
+      }
+
+      html[data-theme="dark"] .product-item .button-area {
+        background: rgba(255, 255, 255, 0.04);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 0 0 0.5rem 0.5rem;
+      }
+
+      html[data-theme="dark"] .product-item .button-area .btn-primary {
+        background-color: #f3f4f6 !important;
+        border-color: #f3f4f6 !important;
+        color: #111827 !important;
+      }
+
+      html[data-theme="dark"] .product-item .button-area .btn-primary:hover,
+      html[data-theme="dark"] .product-item .button-area .btn-primary:focus-visible {
+        background-color: #ffffff !important;
+        border-color: #ffffff !important;
+        color: #111827 !important;
+      }
+
+      .foovia-nav {
+        position: sticky;
+        top: 0;
+        z-index: 1030;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.95rem 1.5rem;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(18px);
+        border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+        font-family: 'DM Sans', sans-serif;
+      }
+
+      .foovia-nav[data-theme="dark"] {
+        background: rgba(11, 15, 25, 0.92);
+        border-bottom-color: rgba(255, 255, 255, 0.08);
+      }
+
+      .foovia-nav .nav-logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: inherit;
+        text-decoration: none;
+        font-family: 'Syne', sans-serif;
+        font-size: 1.05rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .foovia-nav .nav-logo img {
+        height: 50px;
+        width: auto;
+        display: block;
+      }
+
+      .foovia-nav .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .foovia-nav .nav-links a {
+        color: inherit;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        opacity: 0.86;
+      }
+
+      .foovia-nav .nav-links a:hover,
+      .foovia-nav .nav-links a:focus-visible {
+        opacity: 1;
+      }
+
+      .foovia-nav .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        flex-wrap: wrap;
+      }
+
+      .foovia-nav .nav-btn,
+      .foovia-nav .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        text-decoration: none;
+        transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      }
+
+      .foovia-nav .nav-btn {
+        padding: 0.55rem 1rem;
+        font-size: 0.92rem;
+        font-weight: 700;
+      }
+
+      .foovia-nav .nav-backoffice {
+        background: #111827;
+        color: #fff;
+      }
+
+      .foovia-nav[data-theme="dark"] .nav-backoffice {
+        background: #f8fafc;
+        color: #111827;
+      }
+
+      .foovia-nav .nav-signin {
+        background: rgba(245, 158, 11, 0.14);
+        color: #9a5b00;
+        border-color: rgba(245, 158, 11, 0.28);
+      }
+
+      .foovia-nav[data-theme="dark"] .nav-signin {
+        background: rgba(245, 158, 11, 0.22);
+        color: #ffd28a;
+      }
+
+      .foovia-nav .nav-signup {
+        background: #f59e0b;
+        color: #111827;
+      }
+
+      .foovia-nav .theme-toggle {
+        width: 42px;
+        height: 42px;
+        border-color: rgba(15, 23, 42, 0.12);
+        background: rgba(15, 23, 42, 0.04);
+        color: inherit;
+        cursor: pointer;
+      }
+
+      .foovia-nav[data-theme="dark"] .theme-toggle {
+        border-color: rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .foovia-nav .theme-toggle svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .foovia-nav .icon-moon {
+        display: none;
+      }
+
+      .foovia-nav[data-theme="dark"] .icon-sun {
+        display: none;
+      }
+
+      .foovia-nav[data-theme="dark"] .icon-moon {
+        display: block;
+      }
+
+      .foovia-nav .nav-btn:hover,
+      .foovia-nav .theme-toggle:hover {
+        transform: translateY(-1px);
+      }
+
+      @media (max-width: 991.98px) {
+        .foovia-nav {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .foovia-nav .nav-links {
+          order: 3;
+          width: 100%;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 0.95rem 1.25rem;
+        }
+      }
+
+      @media (max-width: 575.98px) {
+        .foovia-nav {
+          padding-inline: 1rem;
+        }
+
+        .foovia-nav .nav-actions {
+          justify-content: center;
+        }
+
+        .foovia-nav .nav-btn {
+          padding-inline: 0.85rem;
+        }
+      }
+    </style>
 
   </head>
   <body>
@@ -145,223 +463,38 @@ ksort($categories);
       </div>
     </div>
     
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar">
+    <nav class="foovia-nav" data-theme="light" aria-label="Main navigation">
+      <a href="../foovia.html" class="nav-logo">
+        <img src="../assets/Plan de travail 1 no bg (3) (1).png" alt="FOOVIA Logo">
+        FOOVIA
+      </a>
 
-      <div class="offcanvas-header justify-content-between">
-        <h4 class="fw-normal text-uppercase fs-6">Menu</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <ul class="nav-links">
+        <li><a href="../foovia.html">Home</a></li>
+        <li><a href="#categories">Categories</a></li>
+        <li><a href="#recipes">Recipes</a></li>
+        <li><a href="#community">Community</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="../../Back Office/index.html" class="nav-btn nav-backoffice">Backoffice</a>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"></path>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
+          </svg>
+        </button>
+        <a href="../../Back Office/auth-normal-sign-in.html" class="nav-btn nav-signin">Sign In</a>
+        <a href="../../Back Office/auth-sign-up.html" class="nav-btn nav-signup">Sign Up</a>
       </div>
-
-      <div class="offcanvas-body">
-    
-        <ul class="navbar-nav justify-content-end menu-list list-unstyled d-flex gap-md-3 mb-0">
-          <li class="nav-item border-dashed active">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#fruits"></use></svg>
-              <span>Fruits and vegetables</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#dairy"></use></svg>
-              <span>Dairy and Eggs</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#meat"></use></svg>
-              <span>Meat and Poultry</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#seafood"></use></svg>
-              <span>Seafood</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#bakery"></use></svg>
-              <span>Bakery and Bread</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#canned"></use></svg>
-              <span>Canned Goods</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#frozen"></use></svg>
-              <span>Frozen Foods</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#pasta"></use></svg>
-              <span>Pasta and Rice</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#breakfast"></use></svg>
-              <span>Breakfast Foods</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#snacks"></use></svg>
-              <span>Snacks and Chips</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <button class="btn btn-toggle dropdown-toggle position-relative w-100 d-flex justify-content-between align-items-center text-dark p-2" data-bs-toggle="collapse" data-bs-target="#beverages-collapse" aria-expanded="false">
-              <div class="d-flex gap-3">
-                <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#beverages"></use></svg>
-                <span>Beverages</span>
-              </div>
-            </button>
-            <div class="collapse" id="beverages-collapse">
-              <ul class="btn-toggle-nav list-unstyled fw-normal ps-5 pb-1">
-                <li class="border-bottom py-2"><a href="index.html" class="dropdown-item">Water</a></li>
-                <li class="border-bottom py-2"><a href="index.html" class="dropdown-item">Juice</a></li>
-                <li class="border-bottom py-2"><a href="index.html" class="dropdown-item">Soda</a></li>
-                <li class="border-bottom py-2"><a href="index.html" class="dropdown-item">Tea</a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#spices"></use></svg>
-              <span>Spices and Seasonings</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#baby"></use></svg>
-              <span>Baby Food and Formula</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#health"></use></svg>
-              <span>Health and Wellness</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#household"></use></svg>
-              <span>Household Supplies</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#personal"></use></svg>
-              <span>Personal Care</span>
-            </a>
-          </li>
-          <li class="nav-item border-dashed">
-            <a href="index.html" class="nav-link d-flex align-items-center gap-3 text-dark p-2">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#pet"></use></svg>
-              <span>Pet Food and Supplies</span>
-            </a>
-          </li>
-        </ul>
-      
-      </div>
-
-    </div>
-
-    <header>
-      <div class="container-fluid">
-        <div class="row py-3 border-bottom">
-          
-          <div class="col-sm-4 col-lg-2 text-center text-sm-start d-flex gap-3 justify-content-center justify-content-md-start">
-            <div class="d-flex align-items-center my-3 my-sm-0">
-              <a href="index.html">
-                <img src="images/logo.svg" alt="logo" class="img-fluid">
-              </a>
-            </div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
-              aria-controls="offcanvasNavbar">
-              <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#menu"></use></svg>
-            </button>
-          </div>
-          
-          <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-4">
-            <div class="search-bar row bg-light p-2 rounded-4">
-              <div class="col-md-4 d-none d-md-block">
-                <select class="form-select border-0 bg-transparent">
-                  <option>All Categories</option>
-                  <option>Groceries</option>
-                  <option>Drinks</option>
-                  <option>Chocolates</option>
-                </select>
-              </div>
-              <div class="col-11 col-md-7">
-                <form id="search-form" class="text-center" action="index.html" method="post">
-                  <input type="text" class="form-control border-0 bg-transparent" placeholder="Search for more than 20,000 products">
-                </form>
-              </div>
-              <div class="col-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z"/></svg>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4">
-            <ul class="navbar-nav list-unstyled d-flex flex-row gap-3 gap-lg-5 justify-content-center flex-wrap align-items-center mb-0 fw-bold text-uppercase text-dark">
-              <li class="nav-item active">
-                <a href="index.html" class="nav-link">Home</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle pe-3" role="button" id="pages" data-bs-toggle="dropdown" aria-expanded="false">Pages</a>
-                <ul class="dropdown-menu border-0 p-3 rounded-0 shadow" aria-labelledby="pages">
-                  <li><a href="index.html" class="dropdown-item">About Us </a></li>
-                  <li><a href="index.html" class="dropdown-item">Shop </a></li>
-                  <li><a href="index.html" class="dropdown-item">Single Product </a></li>
-                  <li><a href="index.html" class="dropdown-item">Cart </a></li>
-                  <li><a href="index.html" class="dropdown-item">Checkout </a></li>
-                  <li><a href="index.html" class="dropdown-item">Blog </a></li>
-                  <li><a href="index.html" class="dropdown-item">Single Post </a></li>
-                  <li><a href="index.html" class="dropdown-item">Styles </a></li>
-                  <li><a href="index.html" class="dropdown-item">Contact </a></li>
-                  <li><a href="index.html" class="dropdown-item">Thank You </a></li>
-                  <li><a href="index.html" class="dropdown-item">My Account </a></li>
-                  <li><a href="index.html" class="dropdown-item">404 Error </a></li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-          
-          <div class="col-sm-8 col-lg-2 d-flex gap-5 align-items-center justify-content-center justify-content-sm-end">
-            <ul class="d-flex justify-content-end list-unstyled m-0">
-              <li>
-                <a href="#" class="p-2 mx-1">
-                  <svg width="24" height="24"><use xlink:href="#user"></use></svg>
-                </a>
-              </li>
-              <li>
-                <a href="#" class="p-2 mx-1">
-                  <svg width="24" height="24"><use xlink:href="#wishlist"></use></svg>
-                </a>
-              </li>
-              <li>
-                <a href="#" class="p-2 mx-1" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
-                  <svg width="24" height="24"><use xlink:href="#shopping-bag"></use></svg>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-      </div>
-    </header>
+    </nav>
     
     
 
-    <section class="py-5 overflow-hidden">
+    <section class="py-5 overflow-hidden" id="categories">
       <div class="container-lg">
         <div class="row">
           <div class="col-md-12">
@@ -415,7 +548,7 @@ ksort($categories);
       </div>
     </section>
 
-    <section class="py-5 overflow-hidden">
+    <section class="py-5 overflow-hidden" id="recipes">
       <div class="container-lg">
         <div class="row">
           <div class="col-md-12">
@@ -487,7 +620,7 @@ ksort($categories);
 
    
 
-    <section class="pb-4 my-4">
+    <section class="pb-4 my-4" id="download">
       <div class="container-lg">
 
         <div class="bg-warning pt-5 rounded-5">
@@ -511,29 +644,39 @@ ksort($categories);
       </div>
     </section>
 
-    <section class="py-4">
-      <div class="container-lg">
-        <h2 class="my-4">People are also looking for</h2>
-        <a href="#" class="btn btn-warning me-2 mb-2">Blue diamon almonds</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Angie’s Boomchickapop Corn</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Salty kettle Corn</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Chobani Greek Yogurt</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Sweet Vanilla Yogurt</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Foster Farms Takeout Crispy wings</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Warrior Blend Organic</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Chao Cheese Creamy</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Chicken meatballs</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Blue diamon almonds</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Angie’s Boomchickapop Corn</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Salty kettle Corn</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Chobani Greek Yogurt</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Sweet Vanilla Yogurt</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Foster Farms Takeout Crispy wings</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Warrior Blend Organic</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Chao Cheese Creamy</a>
-        <a href="#" class="btn btn-warning me-2 mb-2">Chicken meatballs</a>
-      </div>
-    </section>
+    <script>
+      (function() {
+        const root = document.documentElement;
+        const nav = document.querySelector('.foovia-nav');
+        const toggle = document.querySelector('.theme-toggle');
+
+        if (!nav || !toggle) {
+          return;
+        }
+
+        const stored = localStorage.getItem('foovia-theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = stored || (prefersDark ? 'dark' : 'light');
+
+        const setTheme = (theme) => {
+          const isDark = theme === 'dark';
+          root.setAttribute('data-theme', theme);
+          root.style.colorScheme = theme;
+          nav.setAttribute('data-theme', theme);
+          toggle.setAttribute('aria-pressed', String(isDark));
+          toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+        };
+
+        setTheme(initialTheme);
+
+        toggle.addEventListener('click', () => {
+          const currentTheme = root.getAttribute('data-theme') || 'light';
+          const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          localStorage.setItem('foovia-theme', nextTheme);
+          setTheme(nextTheme);
+        });
+      })();
+    </script>
 
     <section class="py-5">
       <div class="container-lg">

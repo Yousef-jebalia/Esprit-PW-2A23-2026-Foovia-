@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $controller->delete_ingrediant((int)$_POST["delete_id_ing"]);
         $success = "Ingrediant deleted successfully.";
     } elseif (
-        isset($_POST["id_ing"]) && isset($_POST["name_ing"]) && isset($_POST["prot_ing"]) &&
+        isset($_POST["name_ing"]) && isset($_POST["prot_ing"]) &&
         isset($_POST["fat_ing"]) && isset($_POST["carb_ing"]) && isset($_POST["cal_ing"])
     ) {
         if (
@@ -54,9 +54,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             
             if (empty($error)) {
-                $idIng = !empty($_POST['id_ing']) ? (int)$_POST['id_ing'] : 0;
                 $ingrediant = new Ingrediant(
-                    $idIng,
+                    0,
                     $_POST['name_ing'],
                     (float)$_POST['prot_ing'],
                     $_POST['fat_ing'],
@@ -512,12 +511,6 @@ $ingrediants = $controller->list_ingrediants();
                                                         <h4 class="sub-title">Ingrediant Information</h4>
                                                         <form method="POST" action="" enctype="multipart/form-data">
                                                             <div class="form-group row">
-                                                                <label class="col-sm-2 col-form-label">Ingrediant ID</label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" name="id_ing" class="form-control" placeholder="Ingrediant ID">
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Ingrediant Name</label>
                                                                 <div class="col-sm-10">
                                                                     <input type="text" name="name_ing" class="form-control" placeholder="Ingrediant name">
@@ -581,7 +574,6 @@ $ingrediants = $controller->list_ingrediants();
                                                                     const form = document.querySelector('form[enctype="multipart/form-data"]');
                                                                     if (!form) return;
 
-                                                                    const idInput = form.querySelector('input[name="id_ing"]');
                                                                     const nameInput = form.querySelector('input[name="name_ing"]');
                                                                     const protInput = form.querySelector('input[name="prot_ing"]');
                                                                     const fatInput = form.querySelector('input[name="fat_ing"]');
@@ -633,24 +625,11 @@ $ingrediants = $controller->list_ingrediants();
                                                                         return /[A-Za-z]/.test(value);
                                                                     };
 
-                                                                    restrictDigits(idInput, 4);
                                                                     restrictText(nameInput, 20);
                                                                     floatFields.forEach(restrictFloatField);
 
                                                                     form.addEventListener('submit', function(e) {
                                                                         const errors = [];
-
-                                                                        const idRaw = idInput.value.trim();
-                                                                        if (!idRaw) {
-                                                                            errors.push('ID is required.');
-                                                                        } else if (!/^\d{1,4}$/.test(idRaw)) {
-                                                                            errors.push('ID must be a number between 0001 and 9999.');
-                                                                        } else {
-                                                                            const idNumber = Number(idRaw);
-                                                                            if (idNumber < 1 || idNumber > 9999) {
-                                                                                errors.push('ID must be a number between 0001 and 9999.');
-                                                                            }
-                                                                        }
 
                                                                         const nameRaw = nameInput.value.trim();
                                                                         if (nameRaw.length > 20) {

@@ -110,6 +110,11 @@ if ($ingrediantData === null) {
                         <input type="hidden" name="current_img_ing" value="<?php echo htmlspecialchars($ingrediantData['img_ing']); ?>">
 
                         <div class="form-group">
+                            <label>Ingrediant ID</label>
+                            <input type="text" class="form-control" value="<?php echo (int)$ingrediantData['id_ing']; ?>" readonly>
+                        </div>
+
+                        <div class="form-group">
                             <label>Ingrediant Name</label>
                             <input type="text" name="name_ing" class="form-control" value="<?php echo htmlspecialchars($ingrediantData['name_ing']); ?>">
                         </div>
@@ -186,7 +191,6 @@ if ($ingrediantData === null) {
             const form = document.querySelector('form[enctype="multipart/form-data"]');
             if (!form) return;
 
-            const idInput = form.querySelector('input[name="id_ing"]');
             const nameInput = form.querySelector('input[name="name_ing"]');
             const protInput = form.querySelector('input[name="prot_ing"]');
             const fatInput = form.querySelector('input[name="fat_ing"]');
@@ -238,24 +242,11 @@ if ($ingrediantData === null) {
                 return /[A-Za-z]/.test(value);
             };
 
-            restrictDigits(idInput, 4);
             restrictText(nameInput, 20);
             floatFields.forEach(restrictFloatField);
 
             form.addEventListener('submit', function(e) {
                 const errors = [];
-
-                const idRaw = idInput.value.trim();
-                if (!idRaw) {
-                    errors.push('ID is required.');
-                } else if (!/^\d{1,4}$/.test(idRaw)) {
-                    errors.push('ID must be a number between 0001 and 9999.');
-                } else {
-                    const idNumber = Number(idRaw);
-                    if (idNumber < 1 || idNumber > 9999) {
-                        errors.push('ID must be a number between 0001 and 9999.');
-                    }
-                }
 
                 const nameRaw = nameInput.value.trim();
                 if (nameRaw.length > 20) {
