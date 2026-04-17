@@ -1,12 +1,15 @@
 <?php
 include '../../controle/controle_Menu.php';
 include '../../controle/controle_categ_rec.php';
+include '../../controle/controle_ingrediant.php';
 
 $controller = new Controller_menu();
 $categoryController = new controle_categ_rec();
+$ingrediantController = new Controller_ingrediant();
 $error = "";
 $recipeData = null;
 $selectedCategoryIds = [];
+$selectedIngredientRows = [];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (
@@ -85,8 +88,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $categoryController->affecter_categ_rec($id, (int)$categoryId);
             }
 
-            header('Location: form-elements-component.php');
-            exit;
+            $ingredientRows = [];
+            if (isset($_POST['ingredients']) && is_array($_POST['ingredients'])) {
+                foreach ($_POST['ingredients'] as $ingredientRow) {
+                    if (!is_array($ingredientRow)) {
+                        continue;
+                    }
+
+                    $ingredientRows[] = [
+                        'id_ing' => isset($ingredientRow['id_ing']) ? (int)$ingredientRow['id_ing'] : 0,
+                        'quantity' => isset($ingredientRow['quantity']) ? trim((string)$ingredientRow['quantity']) : '',
+                        'unity' => isset($ingredientRow['unity']) ? trim((string)$ingredientRow['unity']) : '',
+                    ];
+                }
+            }
+
+            if (!$controller->add_recipe_ingredients($id, $ingredientRows)) {
+                $error = "Recipe updated, but failed to update ingredients.";
+            }
+
+            if (!empty($error)) {
+                $selectedIngredientRows = $ingredientRows;
+            }
+
+            if (empty($error)) {
+                header('Location: form-elements-component.php');
+                exit;
+            }
         }
 
         $recipeData = [
@@ -116,6 +144,7 @@ if ($recipeData === null) {
             $error = "Recipe not found.";
         } else {
             $selectedCategoryIds = $categoryController->get_rec_cat_ids((int)$recipeData['id_rec']);
+            $selectedIngredientRows = $controller->get_recipe_ingredients((int)$recipeData['id_rec']);
         }
     }
 }
@@ -125,6 +154,7 @@ if ($recipeData !== null && empty($selectedCategoryIds)) {
 }
 
 $recipeCategories = $categoryController->list_categ_rec();
+$availableIngrediants = $ingrediantController->list_ingrediants();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -221,6 +251,12 @@ $recipeCategories = $categoryController->list_categ_rec();
                         </div>
 
                         <div class="form-group">
+                            <label>Ingrediants</label>
+                            <div id="ingredientsRepeater" class="d-flex flex-wrap" style="gap:12px;"></div>
+                            <small class="form-text text-muted">Use + to add ingrediants. You can remove or change existing ones.</small>
+                        </div>
+
+                        <div class="form-group">
                             <label>Current Image</label><br>
                             <?php if (!empty($recipeData['img_rec'])): ?>
                                 <img src="<?php echo htmlspecialchars($recipeData['img_rec']); ?>" alt="Current recipe image" style="width:100px;height:100px;object-fit:cover;border-radius:6px;">
@@ -254,6 +290,21 @@ $recipeCategories = $categoryController->list_categ_rec();
             const descInput = form.querySelector('textarea[name="description_rec"]');
             const instInput = form.querySelector('textarea[name="instructions_rec"]');
             const categoryChecks = form.querySelectorAll('input[name="categorie_rec[]"]');
+            const ingredientsRepeater = document.getElementById('ingredientsRepeater');
+            const ingredientOptions = <?php echo json_encode(array_map(function($ingredient) {
+                return [
+                    'id' => (int)$ingredient['id_ing'],
+                    'name' => (string)$ingredient['name_ing'],
+                ];
+            }, $availableIngrediants ?: []), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+            const initialIngredients = <?php echo json_encode(array_values(array_map(function($row) {
+                return [
+                    'id_ing' => isset($row['id_ing']) ? (int)$row['id_ing'] : 0,
+                    'quantity' => isset($row['quantity']) ? (string)$row['quantity'] : '',
+                    'unity' => isset($row['unity']) ? (string)$row['unity'] : '',
+                ];
+            }, $selectedIngredientRows ?: [])), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+            let ingredientRowCounter = 0;
 
             const floatFields = [protInput, fatInput, carbInput, calInput];
 
@@ -308,6 +359,208 @@ $recipeCategories = $categoryController->list_categ_rec();
             const isTextValue = function(value) {
                 return /[A-Za-z]/.test(value);
             };
+
+            const createPlusSlot = function() {
+                const slot = document.createElement('div');
+                slot.className = 'ingredient-slot border rounded-3 bg-light d-flex align-items-center justify-content-center';
+                slot.style.width = '100px';
+                slot.style.height = '100px';
+                slot.innerHTML = '<button type="button" class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center ingredient-add-btn" aria-label="Add ingrediant" style="width:72px;height:72px;font-size:2rem;line-height:1;">+</button>';
+                return slot;
+            };
+
+            const createEditorSlot = function() {
+                const slot = document.createElement('div');
+                slot.className = 'ingredient-slot border rounded-3 bg-white p-3 shadow-sm';
+                slot.style.width = '260px';
+                const optionsHtml = ingredientOptions.map(function(option) {
+                    return '<option value="' + option.id + '">' + option.name + '</option>';
+                }).join('');
+
+                slot.innerHTML = [
+                    '<div class="d-flex flex-column" style="gap:8px;">',
+                    '<div>',
+                    '<label class="form-label mb-1 fw-semibold">Ingrediant</label>',
+                    '<select class="form-select ingredient-select">',
+                    '<option value="">Choose ingrediant</option>',
+                    optionsHtml,
+                    '</select>',
+                    '</div>',
+                    '<div class="row" style="margin-left:-4px;margin-right:-4px;">',
+                    '<div class="col-7" style="padding-left:4px;padding-right:4px;">',
+                    '<label class="form-label mb-1 fw-semibold">Quantity</label>',
+                    '<input type="text" class="form-control ingredient-quantity" placeholder="e.g. 250">',
+                    '</div>',
+                    '<div class="col-5" style="padding-left:4px;padding-right:4px;">',
+                    '<label class="form-label mb-1 fw-semibold">Unity</label>',
+                    '<input type="text" class="form-control ingredient-unity" placeholder="g">',
+                    '</div>',
+                    '</div>',
+                    '<div class="d-flex justify-content-between" style="gap:8px;">',
+                    '<button type="button" class="btn btn-sm btn-outline-danger ingredient-cancel-btn">Cancel</button>',
+                    '<button type="button" class="btn btn-sm btn-primary ingredient-confirm-btn">Done</button>',
+                    '</div>',
+                    '</div>'
+                ].join('');
+
+                return slot;
+            };
+
+            const createSummarySlot = function(ingredientId, ingredientName, quantity, unity, rowIndex) {
+                const slot = document.createElement('div');
+                slot.className = 'ingredient-slot border rounded-3 bg-white p-3 shadow-sm ingredient-summary-slot';
+                slot.style.width = '260px';
+                slot.innerHTML = [
+                    '<div class="d-flex justify-content-between align-items-start" style="gap:8px;">',
+                    '<div>',
+                    '<div class="fw-bold">' + ingredientName + '</div>',
+                    '<div class="text-muted small">' + quantity + ' ' + unity + '</div>',
+                    '</div>',
+                    '<div class="d-flex flex-column align-items-end" style="gap:4px;">',
+                    '<button type="button" class="btn btn-sm btn-link text-primary p-0 ingredient-edit-btn">Edit</button>',
+                    '<button type="button" class="btn btn-sm btn-link text-danger p-0 ingredient-remove-btn">Remove</button>',
+                    '</div>',
+                    '</div>',
+                    '<input type="hidden" name="ingredients[' + rowIndex + '][id_ing]" value="' + ingredientId + '">',
+                    '<input type="hidden" name="ingredients[' + rowIndex + '][quantity]" value="' + quantity + '">',
+                    '<input type="hidden" name="ingredients[' + rowIndex + '][unity]" value="' + unity + '">'
+                ].join('');
+                return slot;
+            };
+
+            const ensurePlusSlot = function() {
+                if (!ingredientsRepeater || ingredientsRepeater.querySelector('.ingredient-add-btn')) {
+                    return;
+                }
+
+                ingredientsRepeater.appendChild(createPlusSlot());
+                bindPlusSlots();
+            };
+
+            const bindSummarySlot = function(slot) {
+                const editButton = slot.querySelector('.ingredient-edit-btn');
+                const removeButton = slot.querySelector('.ingredient-remove-btn');
+
+                if (editButton) {
+                    editButton.addEventListener('click', function() {
+                        const idInput = slot.querySelector('input[name*="[id_ing]"]');
+                        const quantityInput = slot.querySelector('input[name*="[quantity]"]');
+                        const unityInput = slot.querySelector('input[name*="[unity]"]');
+
+                        const originalId = idInput ? idInput.value : '';
+                        const originalQuantity = quantityInput ? quantityInput.value : '';
+                        const originalUnity = unityInput ? unityInput.value : '';
+
+                        const editorSlot = createEditorSlot();
+                        const select = editorSlot.querySelector('.ingredient-select');
+                        const quantity = editorSlot.querySelector('.ingredient-quantity');
+                        const unity = editorSlot.querySelector('.ingredient-unity');
+
+                        if (select) {
+                            select.value = originalId;
+                        }
+                        if (quantity) {
+                            quantity.value = originalQuantity;
+                        }
+                        if (unity) {
+                            unity.value = originalUnity;
+                        }
+
+                        bindEditorSlot(editorSlot, function() {
+                            editorSlot.replaceWith(slot);
+                            bindSummarySlot(slot);
+                        });
+                        slot.replaceWith(editorSlot);
+                    });
+                }
+
+                if (removeButton) {
+                    removeButton.addEventListener('click', function() {
+                        slot.remove();
+                        ensurePlusSlot();
+                    });
+                }
+            };
+
+            const bindEditorSlot = function(slot, onCancel) {
+                const confirmButton = slot.querySelector('.ingredient-confirm-btn');
+                const cancelButton = slot.querySelector('.ingredient-cancel-btn');
+                const select = slot.querySelector('.ingredient-select');
+                const quantity = slot.querySelector('.ingredient-quantity');
+                const unity = slot.querySelector('.ingredient-unity');
+
+                if (confirmButton) {
+                    confirmButton.addEventListener('click', function() {
+                        const ingredientValue = select ? select.value : '';
+                        const ingredientName = select && select.selectedIndex >= 0 ? select.options[select.selectedIndex].text : '';
+                        const ingredientQuantity = quantity ? quantity.value.trim() : '';
+                        const ingredientUnity = unity ? unity.value.trim() : '';
+
+                        if (!ingredientValue || !ingredientName || !ingredientQuantity || !ingredientUnity) {
+                            alert('Choose an ingrediant, quantity, and unity first.');
+                            return;
+                        }
+
+                        const rowIndex = String(ingredientRowCounter++);
+                        const summarySlot = createSummarySlot(ingredientValue, ingredientName, ingredientQuantity, ingredientUnity, rowIndex);
+                        slot.replaceWith(summarySlot);
+                        bindSummarySlot(summarySlot);
+                        ensurePlusSlot();
+                    });
+                }
+
+                if (cancelButton) {
+                    cancelButton.addEventListener('click', function() {
+                        if (typeof onCancel === 'function') {
+                            onCancel();
+                        } else {
+                            slot.remove();
+                            ensurePlusSlot();
+                        }
+                    });
+                }
+            };
+
+            const bindPlusSlots = function() {
+                if (!ingredientsRepeater) {
+                    return;
+                }
+
+                const addButtons = ingredientsRepeater.querySelectorAll('.ingredient-add-btn');
+                addButtons.forEach(function(button) {
+                    if (button.dataset.bound === '1') {
+                        return;
+                    }
+
+                    button.dataset.bound = '1';
+                    button.addEventListener('click', function() {
+                        const currentSlot = button.closest('.ingredient-slot');
+                        if (!currentSlot) {
+                            return;
+                        }
+
+                        const editorSlot = createEditorSlot();
+                        currentSlot.replaceWith(editorSlot);
+                        bindEditorSlot(editorSlot);
+                        editorSlot.insertAdjacentElement('afterend', createPlusSlot());
+                        bindPlusSlots();
+                    });
+                });
+            };
+
+            if (ingredientsRepeater) {
+                initialIngredients.forEach(function(row) {
+                    const rowId = String(ingredientRowCounter++);
+                    const option = ingredientOptions.find(function(opt) { return String(opt.id) === String(row.id_ing); });
+                    const ingredientName = option ? option.name : ('Ingrediant #' + row.id_ing);
+                    const summarySlot = createSummarySlot(row.id_ing, ingredientName, row.quantity || '', row.unity || '', rowId);
+                    ingredientsRepeater.appendChild(summarySlot);
+                    bindSummarySlot(summarySlot);
+                });
+
+                ingredientsRepeater.appendChild(createPlusSlot());
+                bindPlusSlots();
+            }
 
             restrictText(nameInput, 20);
             restrictText(originInput, 20);
@@ -365,6 +618,17 @@ $recipeCategories = $categoryController->list_categ_rec();
                 });
                 if (checkedCategories.length === 0) {
                     errors.push('Select at least one category.');
+                }
+
+                const editorSlots = ingredientsRepeater ? ingredientsRepeater.querySelectorAll('.ingredient-select') : [];
+                const summarySlots = ingredientsRepeater ? ingredientsRepeater.querySelectorAll('.ingredient-summary-slot') : [];
+
+                if (editorSlots.length > 0) {
+                    errors.push('Confirm or cancel the ingredient row before saving.');
+                }
+
+                if (summarySlots.length === 0) {
+                    errors.push('Add at least one ingredient.');
                 }
 
                 if (errors.length > 0) {

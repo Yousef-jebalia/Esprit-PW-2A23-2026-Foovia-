@@ -1,6 +1,6 @@
 <?php
-include(__DIR__ . '/../model/config.php');
-include(__DIR__ . '/../model/ingrediant.php');
+include_once(__DIR__ . '/../model/config.php');
+include_once(__DIR__ . '/../model/ingrediant.php');
 
 class Controller_ingrediant {
 	private string $lastError = '';

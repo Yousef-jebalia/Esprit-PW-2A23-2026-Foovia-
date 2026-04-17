@@ -1,6 +1,7 @@
 <?php
 include '../../controle/controle_Menu.php';
 include '../../controle/controle_categ_rec.php';
+include '../../controle/controle_ingrediant.php';
 
 $error = "";
 $success = "";
@@ -164,6 +165,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             break;
                         }
                     }
+
+                    if (empty($error)) {
+                        $ingredientRows = [];
+                        if (isset($_POST['ingredients']) && is_array($_POST['ingredients'])) {
+                            foreach ($_POST['ingredients'] as $ingredientRow) {
+                                if (!is_array($ingredientRow)) {
+                                    continue;
+                                }
+
+                                $ingredientRows[] = [
+                                    'id_ing' => isset($ingredientRow['id_ing']) ? (int)$ingredientRow['id_ing'] : 0,
+                                    'quantity' => isset($ingredientRow['quantity']) ? trim((string)$ingredientRow['quantity']) : '',
+                                    'unity' => isset($ingredientRow['unity']) ? trim((string)$ingredientRow['unity']) : '',
+                                ];
+                            }
+                        }
+
+                        if (!$controller->add_recipe_ingredients((int)$newRecipeId, $ingredientRows)) {
+                            $error = "Recipe saved, but failed to link one or more ingredients.";
+                        }
+                    }
                 }
 
                 if (empty($error)) {
@@ -180,6 +202,8 @@ $controller = new Controller_menu();
 $recipes = $controller->list_recipe();
 $categoryController = new controle_categ_rec();
 $recipeCategories = $categoryController->list_categ_rec();
+$ingrediantController = new Controller_ingrediant();
+$availableIngrediants = $ingrediantController->list_ingrediants();
 ?>
 
 <!DOCTYPE html>
@@ -696,6 +720,13 @@ $recipeCategories = $categoryController->list_categ_rec();
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">
+                                                                <label class="col-sm-2 col-form-label">Ingrediants</label>
+                                                                <div class="col-sm-10">
+                                                                    <div id="ingredientsRepeater" class="d-flex flex-wrap gap-3 align-items-start"></div>
+                                                                    <small class="form-text text-muted d-block mt-2">Click the big + to add an ingrediant from the database.</small>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
                                                                 <label class="col-sm-2 col-form-label">Image</label>
                                                                 <div class="col-sm-10">
                                                                     <input type="file" name="imag_rec" id="imageInput" class="form-control-file" accept="image/*">
@@ -706,23 +737,23 @@ $recipeCategories = $categoryController->list_categ_rec();
                                                                 </div>
                                                             </div>
                                                             <script>
-                                                                document.getElementById('imageInput').addEventListener('change', function(e) {
-                                                                    const file = e.target.files[0];
-                                                                    if (file && file.type.startsWith('image/')) {
-                                                                        const reader = new FileReader();
-                                                                        reader.onload = function(event) {
-                                                                            document.getElementById('previewImg').src = event.target.result;
-                                                                            document.getElementById('imagePreview').style.display = 'block';
-                                                                        };
-                                                                        reader.readAsDataURL(file);
-                                                                    } else if (file) {
-                                                                        alert('Please select a valid image file');
-                                                                    }
-                                                                });
-
                                                                 (function() {
                                                                     const form = document.querySelector('form[enctype="multipart/form-data"]');
-                                                                    if (!form) return;
+                                                                    if (!form) {
+                                                                        return;
+                                                                    }
+
+                                                                    const imageInput = document.getElementById('imageInput');
+                                                                    const imagePreview = document.getElementById('imagePreview');
+                                                                    const previewImg = document.getElementById('previewImg');
+                                                                    const ingredientsRepeater = document.getElementById('ingredientsRepeater');
+                                                                    const ingredientOptions = <?php echo json_encode(array_map(function($ingredient) {
+                                                                        return [
+                                                                            'id' => (int)$ingredient['id_ing'],
+                                                                            'name' => (string)$ingredient['name_ing'],
+                                                                        ];
+                                                                    }, $availableIngrediants ?: []), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+                                                                    let ingredientRowCounter = 0;
 
                                                                     const nameInput = form.querySelector('input[name="nom_rec"]');
                                                                     const protInput = form.querySelector('input[name="prot_rec"]');
@@ -733,22 +764,47 @@ $recipeCategories = $categoryController->list_categ_rec();
                                                                     const descInput = form.querySelector('textarea[name="description_rec"]');
                                                                     const instInput = form.querySelector('textarea[name="instructions_rec"]');
                                                                     const categoryChecks = form.querySelectorAll('input[name="categorie_rec[]"]');
-
                                                                     const floatFields = [protInput, fatInput, carbInput, calInput];
 
-                                                                    const restrictDigits = function(input, maxLength) {
-                                                                        input.addEventListener('input', function() {
-                                                                            this.value = this.value.replace(/\D/g, '').slice(0, maxLength);
-                                                                        });
+                                                                    const triggerImagePreview = function(file) {
+                                                                        if (!file || !file.type.startsWith('image/')) {
+                                                                            return;
+                                                                        }
+
+                                                                        const reader = new FileReader();
+                                                                        reader.onload = function(event) {
+                                                                            previewImg.src = event.target.result;
+                                                                            imagePreview.style.display = 'block';
+                                                                        };
+                                                                        reader.readAsDataURL(file);
                                                                     };
 
+                                                                    if (imageInput) {
+                                                                        imageInput.addEventListener('change', function(e) {
+                                                                            const file = e.target.files[0];
+                                                                            if (file && file.type.startsWith('image/')) {
+                                                                                triggerImagePreview(file);
+                                                                            } else if (file) {
+                                                                                alert('Please select a valid image file');
+                                                                            }
+                                                                        });
+                                                                    }
+
                                                                     const restrictText = function(input, maxLength) {
+                                                                        if (!input) {
+                                                                            return;
+                                                                        }
+
                                                                         input.addEventListener('input', function() {
                                                                             this.value = this.value.replace(/[^A-Za-z\s]/g, '').slice(0, maxLength);
                                                                         });
                                                                     };
 
                                                                     const restrictMaxLength = function(input, maxLength) {
+                                                                        if (!input) {
+                                                                            return;
+                                                                        }
+
                                                                         input.addEventListener('input', function() {
                                                                             if (this.value.length > maxLength) {
                                                                                 this.value = this.value.slice(0, maxLength);
@@ -757,6 +813,10 @@ $recipeCategories = $categoryController->list_categ_rec();
                                                                     };
 
                                                                     const restrictFloatField = function(input) {
+                                                                        if (!input) {
+                                                                            return;
+                                                                        }
+
                                                                         input.addEventListener('input', function() {
                                                                             let value = this.value.replace(',', '.').replace(/[^0-9.]/g, '');
 
@@ -793,6 +853,159 @@ $recipeCategories = $categoryController->list_categ_rec();
                                                                     const isTextValue = function(value) {
                                                                         return /[A-Za-z]/.test(value);
                                                                     };
+
+                                                                    const createPlusSlot = function() {
+                                                                        const slot = document.createElement('div');
+                                                                        slot.className = 'ingredient-slot border rounded-3 bg-light d-flex align-items-center justify-content-center';
+                                                                        slot.style.width = '100px';
+                                                                        slot.style.height = '100px';
+                                                                        slot.innerHTML = '<button type="button" class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center ingredient-add-btn" aria-label="Add ingrediant" style="width:72px;height:72px;font-size:2rem;line-height:1;">+</button>';
+                                                                        return slot;
+                                                                    };
+
+                                                                    const createEditorSlot = function() {
+                                                                        const slot = document.createElement('div');
+                                                                        slot.className = 'ingredient-slot border rounded-3 bg-white p-3 shadow-sm';
+                                                                        slot.style.width = '260px';
+                                                                        const optionsHtml = ingredientOptions.map(function(option) {
+                                                                            return '<option value="' + option.id + '">' + option.name + '</option>';
+                                                                        }).join('');
+
+                                                                        slot.innerHTML = [
+                                                                            '<div class="d-flex flex-column gap-2">',
+                                                                            '<div>',
+                                                                            '<label class="form-label mb-1 fw-semibold">Ingrediant</label>',
+                                                                            '<select class="form-select ingredient-select">',
+                                                                            '<option value="">Choose ingrediant</option>',
+                                                                            optionsHtml,
+                                                                            '</select>',
+                                                                            '</div>',
+                                                                            '<div class="row g-2">',
+                                                                            '<div class="col-7">',
+                                                                            '<label class="form-label mb-1 fw-semibold">Quantity</label>',
+                                                                            '<input type="text" class="form-control ingredient-quantity" placeholder="e.g. 250">',
+                                                                            '</div>',
+                                                                            '<div class="col-5">',
+                                                                            '<label class="form-label mb-1 fw-semibold">Unity</label>',
+                                                                            '<input type="text" class="form-control ingredient-unity" placeholder="g">',
+                                                                            '</div>',
+                                                                            '</div>',
+                                                                            '<div class="d-flex gap-2 justify-content-between">',
+                                                                            '<button type="button" class="btn btn-sm btn-outline-danger ingredient-cancel-btn">Cancel</button>',
+                                                                            '<button type="button" class="btn btn-sm btn-primary ingredient-confirm-btn">Done</button>',
+                                                                            '</div>',
+                                                                            '</div>'
+                                                                        ].join('');
+
+                                                                        return slot;
+                                                                    };
+
+                                                                    const createSummarySlot = function(ingredientId, ingredientName, quantity, unity, rowIndex) {
+                                                                        const slot = document.createElement('div');
+                                                                        slot.className = 'ingredient-slot border rounded-3 bg-white p-3 shadow-sm ingredient-summary-slot';
+                                                                        slot.style.width = '260px';
+                                                                        slot.innerHTML = [
+                                                                            '<div class="d-flex justify-content-between align-items-start gap-2 mb-2">',
+                                                                            '<div>',
+                                                                            '<div class="fw-bold">' + ingredientName + '</div>',
+                                                                            '<div class="text-muted small">' + quantity + ' ' + unity + '</div>',
+                                                                            '</div>',
+                                                                            '<button type="button" class="btn btn-sm btn-link text-danger p-0 ingredient-remove-btn">Remove</button>',
+                                                                            '</div>',
+                                                                            '<input type="hidden" name="ingredients[' + rowIndex + '][id_ing]" value="' + ingredientId + '">',
+                                                                            '<input type="hidden" name="ingredients[' + rowIndex + '][quantity]" value="' + quantity + '">',
+                                                                            '<input type="hidden" name="ingredients[' + rowIndex + '][unity]" value="' + unity + '">'
+                                                                        ].join('');
+                                                                        return slot;
+                                                                    };
+
+                                                                    const ensurePlusSlot = function() {
+                                                                        if (!ingredientsRepeater || ingredientsRepeater.querySelector('.ingredient-add-btn')) {
+                                                                            return;
+                                                                        }
+
+                                                                        ingredientsRepeater.appendChild(createPlusSlot());
+                                                                        bindPlusSlots();
+                                                                    };
+
+                                                                    const bindEditorSlot = function(slot) {
+                                                                        const confirmButton = slot.querySelector('.ingredient-confirm-btn');
+                                                                        const cancelButton = slot.querySelector('.ingredient-cancel-btn');
+                                                                        const select = slot.querySelector('.ingredient-select');
+                                                                        const quantity = slot.querySelector('.ingredient-quantity');
+                                                                        const unity = slot.querySelector('.ingredient-unity');
+
+                                                                        if (confirmButton) {
+                                                                            confirmButton.addEventListener('click', function() {
+                                                                                const ingredientValue = select ? select.value : '';
+                                                                                const ingredientName = select && select.selectedIndex >= 0 ? select.options[select.selectedIndex].text : '';
+                                                                                const ingredientQuantity = quantity ? quantity.value.trim() : '';
+                                                                                const ingredientUnity = unity ? unity.value.trim() : '';
+
+                                                                                if (!ingredientValue || !ingredientName || !ingredientQuantity || !ingredientUnity) {
+                                                                                    alert('Choose an ingrediant, quantity, and unity first.');
+                                                                                    return;
+                                                                                }
+
+                                                                                const rowIndex = String(ingredientRowCounter++);
+                                                                                const summarySlot = createSummarySlot(ingredientValue, ingredientName, ingredientQuantity, ingredientUnity, rowIndex);
+                                                                                slot.replaceWith(summarySlot);
+                                                                                bindSummarySlot(summarySlot);
+                                                                                ensurePlusSlot();
+                                                                            });
+                                                                        }
+
+                                                                        if (cancelButton) {
+                                                                            cancelButton.addEventListener('click', function() {
+                                                                                slot.remove();
+                                                                                ensurePlusSlot();
+                                                                            });
+                                                                        }
+                                                                    };
+
+                                                                    const bindSummarySlot = function(slot) {
+                                                                        const removeButton = slot.querySelector('.ingredient-remove-btn');
+                                                                        if (!removeButton) {
+                                                                            return;
+                                                                        }
+
+                                                                        removeButton.addEventListener('click', function() {
+                                                                            slot.remove();
+                                                                            ensurePlusSlot();
+                                                                        });
+                                                                    };
+
+                                                                    const bindPlusSlots = function() {
+                                                                        if (!ingredientsRepeater) {
+                                                                            return;
+                                                                        }
+
+                                                                        const addButtons = ingredientsRepeater.querySelectorAll('.ingredient-add-btn');
+                                                                        addButtons.forEach(function(button) {
+                                                                            if (button.dataset.bound === '1') {
+                                                                                return;
+                                                                            }
+
+                                                                            button.dataset.bound = '1';
+                                                                            button.addEventListener('click', function() {
+                                                                                const currentSlot = button.closest('.ingredient-slot');
+                                                                                if (!currentSlot) {
+                                                                                    return;
+                                                                                }
+
+                                                                                const editorSlot = createEditorSlot();
+                                                                                currentSlot.replaceWith(editorSlot);
+                                                                                bindEditorSlot(editorSlot);
+                                                                                editorSlot.insertAdjacentElement('afterend', createPlusSlot());
+                                                                                bindPlusSlots();
+                                                                            });
+                                                                        });
+                                                                    };
+
+                                                                    if (ingredientsRepeater) {
+                                                                        ingredientsRepeater.appendChild(createPlusSlot());
+                                                                        bindPlusSlots();
+                                                                    }
 
                                                                     form.addEventListener('submit', function(e) {
                                                                         const errors = [];
@@ -846,6 +1059,17 @@ $recipeCategories = $categoryController->list_categ_rec();
                                                                             if (selectedCategories.length === 0) {
                                                                                 errors.push('Select at least one category.');
                                                                             }
+                                                                        }
+
+                                                                        const editorSlots = ingredientsRepeater ? ingredientsRepeater.querySelectorAll('.ingredient-select') : [];
+                                                                        const summarySlots = ingredientsRepeater ? ingredientsRepeater.querySelectorAll('.ingredient-summary-slot') : [];
+
+                                                                        if (editorSlots.length > 0) {
+                                                                            errors.push('Confirm or cancel the ingredient row before saving.');
+                                                                        }
+
+                                                                        if (summarySlots.length === 0) {
+                                                                            errors.push('Add at least one ingredient.');
                                                                         }
 
                                                                         if (errors.length > 0) {

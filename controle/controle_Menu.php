@@ -57,6 +57,43 @@ class Controller_menu {
         }
     }
 
+    public function add_recipe_ingredients($recipeId, array $ingredients) {
+        $db = config::getConnexion();
+
+        try {
+            $deleteQuery = $db->prepare("DELETE FROM contenir WHERE id_rec = :id_rec");
+            $deleteQuery->execute(['id_rec' => $recipeId]);
+
+            if (empty($ingredients)) {
+                return true;
+            }
+
+            $insertQuery = $db->prepare("INSERT INTO contenir (id_rec, id_ing, quantity, unity) VALUES (:id_rec, :id_ing, :quantity, :unity)");
+
+            foreach ($ingredients as $ingredientRow) {
+                $ingredientId = isset($ingredientRow['id_ing']) ? (int)$ingredientRow['id_ing'] : 0;
+                $quantity = isset($ingredientRow['quantity']) ? trim((string)$ingredientRow['quantity']) : '';
+                $unity = isset($ingredientRow['unity']) ? trim((string)$ingredientRow['unity']) : '';
+
+                if ($ingredientId <= 0 || $quantity === '' || $unity === '') {
+                    continue;
+                }
+
+                $insertQuery->execute([
+                    'id_rec' => (int)$recipeId,
+                    'id_ing' => $ingredientId,
+                    'quantity' => $quantity,
+                    'unity' => $unity,
+                ]);
+            }
+
+            return true;
+        } catch (Exception $e) {
+            echo 'Error: ' . $e->getMessage();
+            return false;
+        }
+    }
+
     public function update_recipe(Recipe $recipe) {
         $sql = "UPDATE recipe SET name_rec = :nom, description_rec = :description, prot_rec = :prot, fat_rec = :fat, carb_rec = :carb, cal_rec = :cal, instruction_rec = :instructions, origin_rec = :origin, img_rec = :imag 
             WHERE id_rec = :id_recipe";
@@ -98,9 +135,30 @@ class Controller_menu {
         }
     }
 
+    public function get_recipe_ingredients($id_rec) {
+        $sql = "SELECT ct.id_rec, ct.id_ing, ct.quantity, ct.unity, i.name_ing
+                FROM contenir ct
+                LEFT JOIN ingrediant i ON i.id_ing = ct.id_ing
+                WHERE ct.id_rec = :id_recipe
+                ORDER BY ct.id_ing ASC";
+        $db = config::getConnexion();
+
+        try {
+            $query = $db->prepare($sql);
+            $query->execute(['id_recipe' => (int)$id_rec]);
+            return $query->fetchAll();
+        } catch (Exception $e) {
+            echo 'Error: ' . $e->getMessage();
+            return [];
+        }
+    }
+
     public function delete_recipe($id_rec) {
         $db = config::getConnexion();
         try {
+            $query = $db->prepare("DELETE FROM contenir WHERE id_rec = :id_recipe");
+            $query->execute(['id_recipe' => $id_rec]);
+
             $query = $db->prepare("DELETE FROM affecter_categ_rec WHERE id_rec = :id_recipe");
             $query->execute(['id_recipe' => $id_rec]);
 
