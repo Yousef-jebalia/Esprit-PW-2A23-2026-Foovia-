@@ -61,6 +61,14 @@ if (!function_exists('foovia_normalize_image_path')) {
   }
 }
 
+if (!function_exists('foovia_category_key')) {
+  function foovia_category_key($name) {
+    $name = strtolower(trim((string)$name));
+    $name = preg_replace('/[^a-z0-9]+/', '-', $name);
+    return trim((string)$name, '-');
+  }
+}
+
 foreach ($categoryRows as $categoryRow) {
   $categoryId = isset($categoryRow['id_categ_rec']) ? (int)$categoryRow['id_categ_rec'] : 0;
   $categoryName = isset($categoryRow['nom_categ']) ? trim($categoryRow['nom_categ']) : '';
@@ -75,6 +83,7 @@ foreach ($categoryRows as $categoryRow) {
 
   $categories[$categoryName] = (int)$query->fetchColumn();
   $categoryMetaByName[$categoryName] = [
+    'key' => foovia_category_key($categoryName),
     'color' => foovia_normalize_hex_color($categoryColor),
     'text' => foovia_category_text_color($categoryColor),
     'photo' => foovia_normalize_image_path($categoryPhoto)
@@ -108,6 +117,14 @@ ksort($categories);
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 
     <style>
+      @font-face {
+        font-family: 'Boldonse';
+        src: url('../assets/Boldonse-Regular.ttf') format('truetype');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
       :root {
         --foovia-bg: #f7f5ef;
         --foovia-surface: #ffffff;
@@ -149,6 +166,16 @@ ksort($categories);
       .section-header,
       .category-title {
         color: var(--foovia-text);
+      }
+
+      .section-title,
+      .recipe-title,
+      .category-title {
+        font-family: 'Boldonse', 'Syne', sans-serif;
+      }
+
+      .recipe-category-square {
+        font-family: 'DM Sans', sans-serif;
       }
 
       .text-body-secondary,
@@ -232,6 +259,21 @@ ksort($categories);
         padding: 0.7rem 0.55rem;
       }
 
+      .category-scroll-row {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 1rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 0.25rem 0.25rem 0.75rem;
+        scrollbar-width: thin;
+      }
+
+      .category-scroll-item {
+        flex: 0 0 150px;
+        max-width: 150px;
+      }
+
       .category-mini-card figure {
         min-height: auto;
         margin-bottom: 0.5rem;
@@ -251,6 +293,27 @@ ksort($categories);
 
       .category-mini-card .text-body-secondary {
         font-size: 0.8rem;
+      }
+
+      .category-filter-card {
+        width: 100%;
+        border: 1px solid var(--foovia-border);
+        cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+      }
+
+      .category-filter-card:hover {
+        transform: translateY(-2px);
+      }
+
+      .category-filter-card.is-selected {
+        background: var(--cat-color) !important;
+        border-color: var(--cat-color) !important;
+      }
+
+      .category-filter-card.is-selected .category-title,
+      .category-filter-card.is-selected .text-body-secondary {
+        color: var(--cat-text) !important;
       }
 
       .search-bar,
@@ -671,7 +734,7 @@ ksort($categories);
     
     
 
-    <section class="py-5 overflow-hidden" id="categories">
+    <section class="py-5" id="categories">
       <div class="container-lg">
         <div class="row">
           <div class="col-md-12">
@@ -686,24 +749,36 @@ ksort($categories);
             
           </div>
         </div>
-        <div class="row g-4">
+        <div class="category-scroll-row">
           <?php if (!empty($categories)): ?>
             <?php foreach ($categories as $categoryName => $categoryCount): ?>
               <?php
-              $categoryPhoto = $categoryMetaByName[$categoryName]['photo'] ?? 'images/category-thumb-1.jpg';
+              $categoryMeta = $categoryMetaByName[$categoryName] ?? [
+                'key' => foovia_category_key($categoryName),
+                'photo' => 'images/category-thumb-1.jpg',
+                'color' => '#f59e0b',
+                'text' => '#111827'
+              ];
+              $categoryPhoto = $categoryMeta['photo'];
               ?>
-              <div class="col-6 col-md-3 col-lg-2">
-                <div class="product-item category-mini-card text-center">
+              <div class="category-scroll-item">
+                <button
+                  type="button"
+                  class="product-item category-mini-card text-center category-filter-card"
+                  data-category-key="<?php echo htmlspecialchars($categoryMeta['key']); ?>"
+                  aria-pressed="false"
+                  style="--cat-color: <?php echo htmlspecialchars($categoryMeta['color']); ?>; --cat-text: <?php echo htmlspecialchars($categoryMeta['text']); ?>;"
+                >
                   <figure class="d-flex justify-content-center">
                     <img src="<?php echo htmlspecialchars($categoryPhoto); ?>" class="rounded-circle category-photo" alt="<?php echo htmlspecialchars($categoryName); ?>">
                   </figure>
                   <h4 class="fs-6 mt-2 fw-normal category-title"><?php echo htmlspecialchars($categoryName); ?></h4>
                   <span class="text-body-secondary"><?php echo (int)$categoryCount; ?> recipes</span>
-                </div>
+                </button>
               </div>
             <?php endforeach; ?>
           <?php else: ?>
-            <div class="col-12">
+            <div>
               <p class="text-center text-body-secondary m-0">No categories found.</p>
             </div>
           <?php endif; ?>
@@ -741,17 +816,21 @@ ksort($categories);
                   if (empty($imagePath)) {
                       $imagePath = 'images/product-thumb-1.png';
                   }
+                    $recipeCategoryNames = array_filter(array_map('trim', explode(',', (string)($recipe['categorie_rec'] ?? ''))));
+                    $recipeCategoryKeys = [];
+                    foreach ($recipeCategoryNames as $recipeCategoryName) {
+                      $meta = $categoryMetaByName[$recipeCategoryName] ?? null;
+                      $recipeCategoryKeys[] = $meta['key'] ?? foovia_category_key($recipeCategoryName);
+                    }
+                    $recipeCategoryKeys = array_values(array_unique(array_filter($recipeCategoryKeys)));
                   ?>
-                  <div class="col-6 col-md-4 col-lg-3">
+                  <div class="col-6 col-md-4 col-lg-3 recipe-filter-item" data-category-keys="<?php echo htmlspecialchars(implode(',', $recipeCategoryKeys)); ?>">
                     <div class="product-item">
                       <figure class="recipe-card-media d-flex">
                         <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="<?php echo htmlspecialchars($recipe['name_rec']); ?>" class="tab-image d-block mx-auto">
                       </figure>
                       <div class="recipe-card-content text-center">
                         <h3 class="recipe-title fs-6 fw-normal"><?php echo htmlspecialchars($recipe['name_rec']); ?></h3>
-                        <?php
-                          $recipeCategoryNames = array_filter(array_map('trim', explode(',', (string)($recipe['categorie_rec'] ?? ''))));
-                        ?>
                         <div class="recipe-categories-slot">
                           <?php if (!empty($recipeCategoryNames)): ?>
                             <div class="recipe-category-grid">
@@ -782,6 +861,9 @@ ksort($categories);
                   <p class="text-center text-body-secondary m-0">No recipes found.</p>
                 </div>
               <?php endif; ?>
+              <div class="col-12 d-none" id="recipesFilterEmpty">
+                <p class="text-center text-body-secondary m-0">No recipes found for selected categories.</p>
+              </div>
             </div>
 
           </div>
@@ -859,198 +941,71 @@ ksort($categories);
           setTheme(nextTheme);
         });
       })();
+
+      (function() {
+        const categoryButtons = Array.from(document.querySelectorAll('.category-filter-card[data-category-key]'));
+        const recipeItems = Array.from(document.querySelectorAll('.recipe-filter-item[data-category-keys]'));
+        const emptyState = document.getElementById('recipesFilterEmpty');
+        const selectedCategoryKeys = new Set();
+
+        if (categoryButtons.length === 0 || recipeItems.length === 0) {
+          return;
+        }
+
+        const normalizeKey = (value) => String(value || '').trim().toLowerCase();
+
+        const applyRecipeFilter = () => {
+          let visibleCount = 0;
+
+          recipeItems.forEach((recipeItem) => {
+            const recipeKeys = (recipeItem.getAttribute('data-category-keys') || '')
+              .split(',')
+              .map(normalizeKey)
+              .filter(Boolean);
+
+            const matches = selectedCategoryKeys.size === 0 || Array.from(selectedCategoryKeys).every((selectedKey) => recipeKeys.includes(selectedKey));
+            recipeItem.classList.toggle('d-none', !matches);
+            if (matches) {
+              visibleCount += 1;
+            }
+          });
+
+          if (emptyState) {
+            emptyState.classList.toggle('d-none', visibleCount !== 0);
+          }
+
+          categoryButtons.forEach((categoryButton) => {
+            const key = normalizeKey(categoryButton.getAttribute('data-category-key'));
+            const isSelected = selectedCategoryKeys.has(key);
+            categoryButton.classList.toggle('is-selected', isSelected);
+            categoryButton.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+          });
+        };
+
+        categoryButtons.forEach((categoryButton) => {
+          categoryButton.addEventListener('click', () => {
+            const key = normalizeKey(categoryButton.getAttribute('data-category-key'));
+            if (!key) {
+              return;
+            }
+
+            if (selectedCategoryKeys.has(key)) {
+              selectedCategoryKeys.delete(key);
+            } else {
+              selectedCategoryKeys.add(key);
+            }
+
+            applyRecipeFilter();
+          });
+        });
+
+        applyRecipeFilter();
+      })();
     </script>
 
-    <section class="py-5">
-      <div class="container-lg">
-        <div class="row row-cols-1 row-cols-sm-3 row-cols-lg-5">
-          <div class="col">
-            <div class="card mb-3 border border-dark-subtle p-3">
-              <div class="text-dark mb-3">
-                <svg width="32" height="32"><use xlink:href="#package"></use></svg>
-              </div>
-              <div class="card-body p-0">
-                <h5>Free delivery</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card mb-3 border border-dark-subtle p-3">
-              <div class="text-dark mb-3">
-                <svg width="32" height="32"><use xlink:href="#secure"></use></svg>
-              </div>
-              <div class="card-body p-0">
-                <h5>100% secure payment</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card mb-3 border border-dark-subtle p-3">
-              <div class="text-dark mb-3">
-                <svg width="32" height="32"><use xlink:href="#quality"></use></svg>
-              </div>
-              <div class="card-body p-0">
-                <h5>Quality guarantee</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card mb-3 border border-dark-subtle p-3">
-              <div class="text-dark mb-3">
-                <svg width="32" height="32"><use xlink:href="#savings"></use></svg>
-              </div>
-              <div class="card-body p-0">
-                <h5>guaranteed savings</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card mb-3 border border-dark-subtle p-3">
-              <div class="text-dark mb-3">
-                <svg width="32" height="32"><use xlink:href="#offers"></use></svg>
-              </div>
-              <div class="card-body p-0">
-                <h5>Daily offers</h5>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    
 
-    <footer class="py-5">
-      <div class="container-lg">
-        <div class="row">
-
-          <div class="col-lg-3 col-md-6 col-sm-6">
-            <div class="footer-menu">
-              <img src="images/logo.svg" width="240" height="70" alt="logo">
-              <div class="social-links mt-3">
-                <ul class="d-flex list-unstyled gap-2">
-                  <li>
-                    <a href="#" class="btn btn-outline-light">
-                      <svg width="16" height="16"><use xlink:href="#facebook"></use></svg>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" class="btn btn-outline-light">
-                      <svg width="16" height="16"><use xlink:href="#twitter"></use></svg>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" class="btn btn-outline-light">
-                      <svg width="16" height="16"><use xlink:href="#youtube"></use></svg>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" class="btn btn-outline-light">
-                      <svg width="16" height="16"><use xlink:href="#instagram"></use></svg>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" class="btn btn-outline-light">
-                      <svg width="16" height="16"><use xlink:href="#amazon"></use></svg>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-2 col-sm-6">
-            <div class="footer-menu">
-              <h5 class="widget-title">Organic</h5>
-              <ul class="menu-list list-unstyled">
-                <li class="menu-item">
-                  <a href="#" class="nav-link">About us</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Conditions </a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Our Journals</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Careers</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Affiliate Programme</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Ultras Press</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-2 col-sm-6">
-            <div class="footer-menu">
-              <h5 class="widget-title">Quick Links</h5>
-              <ul class="menu-list list-unstyled">
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Offers</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Discount Coupons</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Stores</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Track Order</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Shop</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Info</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-2 col-sm-6">
-            <div class="footer-menu">
-              <h5 class="widget-title">Customer Service</h5>
-              <ul class="menu-list list-unstyled">
-                <li class="menu-item">
-                  <a href="#" class="nav-link">FAQ</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Contact</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Privacy Policy</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Returns & Refunds</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Cookie Guidelines</a>
-                </li>
-                <li class="menu-item">
-                  <a href="#" class="nav-link">Delivery Information</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 col-sm-6">
-            <div class="footer-menu">
-              <h5 class="widget-title">Subscribe Us</h5>
-              <p>Subscribe to our newsletter to get updates about our grand offers.</p>
-              <form class="d-flex mt-3 gap-0" action="index.html">
-                <input class="form-control rounded-start rounded-0 bg-light" type="email" placeholder="Email Address" aria-label="Email Address">
-                <button class="btn btn-dark rounded-end rounded-0" type="submit">Subscribe</button>
-              </form>
-            </div>
-          </div>
-          
-        </div>
-      </div>
-    </footer>
+    
     <div id="footer-bottom">
       <div class="container-lg">
         <div class="row">
