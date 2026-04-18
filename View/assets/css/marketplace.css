@@ -401,6 +401,21 @@
   object-fit: cover;
 }
 
+.market-card-image-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.market-product-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.market-product-link:hover {
+  color: var(--market-primary);
+}
+
 .market-card-body {
   padding: 1.5rem;
 }
@@ -479,6 +494,35 @@
   object-fit: cover;
 }
 
+.admin-store-preview {
+  min-height: 160px;
+}
+
+.admin-checkbox-list {
+  display: grid;
+  gap: 0.55rem;
+  max-height: 185px;
+  overflow-y: auto;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.admin-checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  color: #374151;
+  font-weight: 600;
+}
+
+.admin-checkbox-option input {
+  width: 16px;
+  height: 16px;
+}
+
 .validation-message {
   color: #ef4444;
   display: block;
@@ -492,6 +536,226 @@
   height: 52px;
   border-radius: 12px;
   object-fit: cover;
+}
+
+.store-thumb-empty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  min-height: 36px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.foovia-detail-body {
+  background: #f5f6f8;
+}
+
+.foovia-detail-page {
+  padding: 2rem 0 4rem;
+}
+
+.foovia-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 1.05fr) minmax(320px, 1.2fr) minmax(260px, 0.7fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.foovia-detail-image-card,
+.foovia-detail-info,
+.foovia-purchase-card {
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+}
+
+.foovia-detail-image-card {
+  min-height: 540px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.foovia-detail-image-card img {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+}
+
+.foovia-detail-info {
+  padding: 1.4rem 1.6rem;
+}
+
+.foovia-detail-back {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  color: #0b62c4;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.foovia-detail-info h1 {
+  color: #005eb8;
+  font-size: 1.45rem;
+  line-height: 1.35;
+  margin-bottom: 0.9rem;
+  text-transform: uppercase;
+}
+
+.foovia-arrival {
+  display: block;
+  color: #1267d8;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 0.7rem;
+}
+
+.foovia-reference {
+  border-bottom: 1px solid #c7c7c7;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
+  color: #111827;
+}
+
+.foovia-detail-description {
+  color: #111827;
+  line-height: 1.7;
+}
+
+.foovia-detail-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding: 0.7rem;
+  margin: 1rem 0;
+  background: #efeff1;
+  font-size: 0.92rem;
+}
+
+.foovia-detail-specs strong {
+  color: #e11d48;
+}
+
+.foovia-availability-card {
+  margin-top: 1.4rem;
+  background: #fff;
+  border: 1px solid #ececf0;
+}
+
+.foovia-availability-card h2 {
+  background: #e8e8eb;
+  color: #111827;
+  text-align: center;
+  font-size: 1.25rem;
+  padding: 0.6rem;
+  margin: 0;
+}
+
+.foovia-availability-list {
+  padding: 0.75rem 1.2rem;
+}
+
+.foovia-availability-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(120px, 0.65fr);
+  gap: 1rem;
+  padding: 0.28rem 0;
+  font-size: 0.95rem;
+}
+
+.foovia-availability-row strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.foovia-availability-row img {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f3f4f6;
+}
+
+.foovia-status-available {
+  color: #1267d8;
+  font-weight: 800;
+}
+
+.foovia-status-empty {
+  color: #dc2626;
+  font-weight: 800;
+}
+
+.foovia-purchase-card {
+  padding: 1.4rem;
+  position: sticky;
+  top: 70px;
+}
+
+.foovia-purchase-card > strong {
+  display: block;
+  color: #e11d48;
+  font-size: 2rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 2rem;
+}
+
+.foovia-quantity-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  color: #4b5563;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.foovia-quantity-row input {
+  width: 56px;
+  height: 34px;
+  border: 1px solid #c9c9c9;
+  text-align: center;
+}
+
+.foovia-cart-btn,
+.foovia-quote-btn {
+  border: 0;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-weight: 800;
+  margin-bottom: 0.55rem;
+}
+
+.foovia-cart-btn {
+  background: #28a745;
+  color: #fff;
+  border-radius: 5px;
+}
+
+.foovia-quote-btn {
+  background: #eeeeef;
+  color: #005eb8;
+  border-radius: 2px;
+}
+
+.foovia-action-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  background: #ededf0;
+  padding: 0.9rem;
+  color: #111827;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 @media (max-width: 767.98px) {
@@ -531,5 +795,17 @@
 
   .foovia-catalog-section .container-lg {
     padding-left: 1rem;
+  }
+
+  .foovia-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .foovia-detail-image-card {
+    min-height: 320px;
+  }
+
+  .foovia-purchase-card {
+    position: static;
   }
 }

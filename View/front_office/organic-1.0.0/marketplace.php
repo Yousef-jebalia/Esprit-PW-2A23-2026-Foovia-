@@ -196,16 +196,18 @@ $stores = $magasinModel->fetchAll();
 
                 <div class="row market-grid">
                     <?php foreach ($products as $product): ?>
-                        <div class="col-md-6 col-xl-4" data-product-card data-product-name="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>" data-store-name="<?= htmlspecialchars(strtolower((string) ($product['name_mag'] ?? '')), ENT_QUOTES) ?>" data-product-description="<?= htmlspecialchars($product['description_march'], ENT_QUOTES) ?>">
+                        <div class="col-md-6 col-xl-4" data-product-card data-product-name="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>" data-store-name="<?= htmlspecialchars(strtolower((string) ($product['store_names'] ?? '')), ENT_QUOTES) ?>" data-product-description="<?= htmlspecialchars($product['description_march'], ENT_QUOTES) ?>">
                             <article class="market-card">
                                 <div class="market-card-media">
-                                    <img src="../../../Controller/Marchandise_Controller.php?action=image&id=<?= (int) $product['id_march'] ?>" alt="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>">
+                                    <a href="product-details.php?id=<?= (int) $product['id_march'] ?>" class="market-card-image-link">
+                                        <img src="../../../Controller/Marchandise_Controller.php?action=image&id=<?= (int) $product['id_march'] ?>" alt="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>">
+                                    </a>
                                 </div>
                                 <div class="market-card-body">
                                     <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
                                         <div>
-                                            <h3 class="h5 mb-1"><?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?></h3>
-                                            <span class="market-badge"><?= htmlspecialchars($product['name_mag'] ?? 'No store', ENT_QUOTES) ?></span>
+                                            <h3 class="h5 mb-1"><a href="product-details.php?id=<?= (int) $product['id_march'] ?>" class="market-product-link"><?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?></a></h3>
+                                            <span class="market-badge"><?= htmlspecialchars($product['store_names'] ?? 'No store', ENT_QUOTES) ?></span>
                                         </div>
                                         <span class="market-price"><?= (int) $product['price_march'] ?> TND</span>
                                     </div>
@@ -216,7 +218,7 @@ $stores = $magasinModel->fetchAll();
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <small class="text-muted">Expires <?= htmlspecialchars($product['date_expiration_march'], ENT_QUOTES) ?></small>
-                                        <a href="../../back_office/material_able-main/products.php" class="btn btn-outline-success rounded-pill px-3">Manage</a>
+                                        <a href="product-details.php?id=<?= (int) $product['id_march'] ?>" class="btn btn-outline-success rounded-pill px-3">Details</a>
                                     </div>
                                 </div>
                             </article>

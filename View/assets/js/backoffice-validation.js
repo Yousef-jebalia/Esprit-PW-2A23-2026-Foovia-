@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!form) return;
 
   const fields = {
-    id_mag: form.querySelector('[name="id_mag"]'),
+    id_mag: Array.from(form.querySelectorAll('[name="id_mag[]"]')),
     name_march: form.querySelector('[name="name_march"]'),
     description_march: form.querySelector('[name="description_march"]'),
     price_march: form.querySelector('[name="price_march"]'),
@@ -28,8 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const validators = {
     id_mag: () => {
-      if (!fields.id_mag.value) {
-        setError('id_mag', 'Choose the magasin that will sell this product.');
+      const hasSelectedStore = fields.id_mag.some((field) => field.checked);
+      if (!hasSelectedStore) {
+        setError('id_mag', 'Choose at least one magasin that will sell this product.');
         return false;
       }
       clearError('id_mag');
@@ -134,7 +135,11 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   Object.entries(fields).forEach(([name, field]) => {
-    if (!field) return;
+    if (!field || (Array.isArray(field) && field.length === 0)) return;
+    if (Array.isArray(field)) {
+      field.forEach((item) => item.addEventListener('change', () => validators[name]()));
+      return;
+    }
     const eventName = field.type === 'file' || field.tagName === 'SELECT' ? 'change' : 'input';
     field.addEventListener(eventName, () => validators[name]());
   });

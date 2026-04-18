@@ -27,14 +27,22 @@ final class Marchandise
                 m.quantity_march,
                 m.date_expiration_march,
                 m.point_acces_march,
-                mag.id_mag,
-                mag.name_mag,
-                mag.email_mag,
-                mag.phone_mag,
-                mag.adress_mag
+                GROUP_CONCAT(DISTINCT mag.id_mag ORDER BY mag.name_mag SEPARATOR ",") AS store_ids,
+                GROUP_CONCAT(DISTINCT mag.name_mag ORDER BY mag.name_mag SEPARATOR ", ") AS store_names,
+                GROUP_CONCAT(DISTINCT mag.email_mag ORDER BY mag.name_mag SEPARATOR ", ") AS store_emails,
+                GROUP_CONCAT(DISTINCT mag.phone_mag ORDER BY mag.name_mag SEPARATOR ", ") AS store_phones,
+                GROUP_CONCAT(DISTINCT mag.adress_mag ORDER BY mag.name_mag SEPARATOR " | ") AS store_addresses
              FROM marchandise m
              LEFT JOIN vendre v ON v.id_march = m.id_march
              LEFT JOIN magasin mag ON mag.id_mag = v.id_mag
+             GROUP BY
+                m.id_march,
+                m.name_march,
+                m.description_march,
+                m.price_march,
+                m.quantity_march,
+                m.date_expiration_march,
+                m.point_acces_march
              ORDER BY m.id_march DESC'
         );
 
@@ -52,11 +60,19 @@ final class Marchandise
                 m.quantity_march,
                 m.date_expiration_march,
                 m.point_acces_march,
-                mag.id_mag
+                GROUP_CONCAT(DISTINCT mag.id_mag ORDER BY mag.name_mag SEPARATOR ",") AS store_ids
              FROM marchandise m
              LEFT JOIN vendre v ON v.id_march = m.id_march
              LEFT JOIN magasin mag ON mag.id_mag = v.id_mag
-             WHERE m.id_march = :id_march'
+             WHERE m.id_march = :id_march
+             GROUP BY
+                m.id_march,
+                m.name_march,
+                m.description_march,
+                m.price_march,
+                m.quantity_march,
+                m.date_expiration_march,
+                m.point_acces_march'
         );
         $statement->execute(['id_march' => $productId]);
         $result = $statement->fetch();
@@ -102,7 +118,7 @@ final class Marchandise
             ]);
 
             $productId = (int) $this->db->lastInsertId();
-            $this->linkToStore($productId, (int) $payload['id_mag']);
+            $this->linkToStores($productId, $payload['id_mag']);
 
             $this->db->commit();
 
@@ -124,7 +140,7 @@ final class Marchandise
                 $this->updateWithoutImage($payload);
             }
 
-            $this->updateStoreLink((int) $payload['id_march'], (int) $payload['id_mag']);
+            $this->updateStoreLinks((int) $payload['id_march'], $payload['id_mag']);
             $this->db->commit();
         } catch (Throwable $exception) {
             $this->db->rollBack();
@@ -158,22 +174,44 @@ final class Marchandise
         return $statement->fetchColumn();
     }
 
-    private function linkToStore(int $productId, int $storeId): void
+    public function fetchAvailabilityById(int $productId): array
     {
-        $statement = $this->db->prepare('INSERT INTO vendre (id_march, id_mag) VALUES (:id_march, :id_mag)');
-        $statement->execute([
-            'id_march' => $productId,
-            'id_mag' => $storeId,
-        ]);
+        $statement = $this->db->prepare(
+            'SELECT
+                mag.id_mag,
+                mag.name_mag,
+                mag.email_mag,
+                mag.phone_mag,
+                mag.adress_mag,
+                mag.img_mag IS NOT NULL AS has_image,
+                CASE WHEN v.id_march IS NULL THEN 0 ELSE 1 END AS is_available
+             FROM magasin mag
+             LEFT JOIN vendre v ON v.id_mag = mag.id_mag AND v.id_march = :id_march
+             ORDER BY mag.name_mag ASC'
+        );
+        $statement->execute(['id_march' => $productId]);
+
+        return $statement->fetchAll();
     }
 
-    private function updateStoreLink(int $productId, int $storeId): void
+    private function linkToStores(int $productId, array $storeIds): void
     {
-        $statement = $this->db->prepare('UPDATE vendre SET id_mag = :id_mag WHERE id_march = :id_march');
-        $statement->execute([
-            'id_mag' => $storeId,
-            'id_march' => $productId,
-        ]);
+        $statement = $this->db->prepare('INSERT INTO vendre (id_march, id_mag) VALUES (:id_march, :id_mag)');
+
+        foreach ($storeIds as $storeId) {
+            $statement->execute([
+                'id_march' => $productId,
+                'id_mag' => (int) $storeId,
+            ]);
+        }
+    }
+
+    private function updateStoreLinks(int $productId, array $storeIds): void
+    {
+        $deleteStatement = $this->db->prepare('DELETE FROM vendre WHERE id_march = :id_march');
+        $deleteStatement->execute(['id_march' => $productId]);
+
+        $this->linkToStores($productId, $storeIds);
     }
 
     private function hasNewImage(array $image): bool

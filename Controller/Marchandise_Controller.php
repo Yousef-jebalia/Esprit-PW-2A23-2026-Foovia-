@@ -88,9 +88,15 @@ final class MarchandiseController
 
     private function buildProductPayload(): array
     {
+        $storeIds = $_POST['id_mag'] ?? [];
+        if (!is_array($storeIds)) {
+            $storeIds = [$storeIds];
+        }
+        $storeIds = array_values(array_filter(array_map('intval', $storeIds)));
+
         return [
             'id_march' => (int) ($_POST['id_march'] ?? 0),
-            'id_mag' => (int) ($_POST['id_mag'] ?? 0),
+            'id_mag' => $storeIds,
             'name_march' => (string) ($_POST['name_march'] ?? ''),
             'description_march' => (string) ($_POST['description_march'] ?? ''),
             'price_march' => (int) ($_POST['price_march'] ?? 0),

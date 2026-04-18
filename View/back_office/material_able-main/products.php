@@ -15,6 +15,9 @@ $status = (string) ($_GET['status'] ?? '');
 $editId = (int) ($_GET['edit'] ?? 0);
 $editingProduct = $editId > 0 ? $marchandiseModel->findById($editId) : null;
 $isEditing = $editingProduct !== null;
+$selectedStoreIds = $isEditing && !empty($editingProduct['store_ids'])
+    ? array_map('intval', explode(',', (string) $editingProduct['store_ids']))
+    : [];
 
 $message = match ($status) {
     'success' => ['class' => 'alert-success', 'text' => 'Product added successfully. It is now available in the front office.'],
@@ -105,6 +108,12 @@ $message = match ($status) {
                                     </a>
                                 </li>
                                 <li>
+                                    <a href="magasins.php" class="waves-effect waves-dark">
+                                        <span class="pcoded-micon"><i class="ti-home"></i></span>
+                                        <span class="pcoded-mtext">Magasins</span>
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="../../front_office/organic-1.0.0/marketplace.php" class="waves-effect waves-dark">
                                         <span class="pcoded-micon"><i class="ti-shopping-cart"></i></span>
                                         <span class="pcoded-mtext">Front Office</span>
@@ -161,13 +170,15 @@ $message = match ($status) {
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
-                                                                        <label for="id_mag">Magasin</label>
-                                                                        <select id="id_mag" name="id_mag" class="form-control form-select">
-                                                                            <option value="">Select a store</option>
+                                                                        <label>Magasins</label>
+                                                                        <div class="admin-checkbox-list" data-store-checkboxes>
                                                                             <?php foreach ($stores as $store): ?>
-                                                                                <option value="<?= (int) $store['id_mag'] ?>" <?= $isEditing && (int) $editingProduct['id_mag'] === (int) $store['id_mag'] ? 'selected' : '' ?>><?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?></option>
+                                                                                <label class="admin-checkbox-option">
+                                                                                    <input type="checkbox" name="id_mag[]" value="<?= (int) $store['id_mag'] ?>" <?= in_array((int) $store['id_mag'], $selectedStoreIds, true) ? 'checked' : '' ?>>
+                                                                                    <span><?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?></span>
+                                                                                </label>
                                                                             <?php endforeach; ?>
-                                                                        </select>
+                                                                        </div>
                                                                         <span class="validation-message" data-error-for="id_mag"></span>
                                                                     </div>
                                                                 </div>
@@ -297,7 +308,7 @@ $message = match ($status) {
                                                                     <tr>
                                                                         <td><img class="admin-table-thumb" src="../../../Controller/Marchandise_Controller.php?action=image&id=<?= (int) $product['id_march'] ?>" alt="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>"></td>
                                                                         <td><strong><?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?></strong><br><small><?= htmlspecialchars($product['description_march'], ENT_QUOTES) ?></small></td>
-                                                                        <td><?= htmlspecialchars($product['name_mag'] ?? 'No store', ENT_QUOTES) ?></td>
+                                                                        <td><?= htmlspecialchars($product['store_names'] ?? 'No store', ENT_QUOTES) ?></td>
                                                                         <td><?= (int) $product['price_march'] ?> TND</td>
                                                                         <td><?= (int) $product['quantity_march'] ?></td>
                                                                         <td><?= htmlspecialchars($product['date_expiration_march'], ENT_QUOTES) ?></td>

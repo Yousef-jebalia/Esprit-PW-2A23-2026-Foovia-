@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const description = (card.dataset.productDescription || '').toLowerCase();
 
       const searchMatch = !search || productName.includes(search) || description.includes(search) || storeName.includes(search);
-      const storeMatch = !selectedStore || storeName === selectedStore;
+      const storeMatch = !selectedStore || storeName.includes(selectedStore);
       const visible = searchMatch && storeMatch;
 
       card.style.display = visible ? '' : 'none';
