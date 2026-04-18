@@ -4,6 +4,9 @@ require_once __DIR__ . '/../../model/config.php';
 $db = config::getConnexion();
 $stmt = $db->query("SELECT * FROM exercice ORDER BY id_ex DESC");
 $exercises = $stmt->fetchAll();
+
+$stmt_workout = $db->query("SELECT * FROM workout ORDER BY id_work DESC");
+$workouts = $stmt_workout->fetchAll();
 ?>
 
 
@@ -110,6 +113,68 @@ function validateForm() {
     return true;
 }
 
+function validateWorkoutForm() {
+    const name   = document.getElementById('work_name').value.trim();
+    const duree  = document.getElementById('work_duree').value.trim();
+    const cal    = document.getElementById('work_cal').value.trim();
+    const nb     = document.getElementById('work_nb').value.trim();
+
+    let errorMessage = '';
+
+    // Name
+    if (name === '') {
+        errorMessage += 'Workout name is required.\n';
+    } else if (name.length < 3) {
+        errorMessage += 'Workout name must be at least 3 characters.\n';
+    } else if (name.length > 100) {
+        errorMessage += 'Workout name must be less than 100 characters.\n';
+    }
+
+    // Duration
+    if (duree === '') {
+        errorMessage += 'Duration is required.\n';
+    } else if (isNaN(duree) || Number(duree) <= 0) {
+        errorMessage += 'Duration must be a positive number.\n';
+    } else if (Number(duree) > 300) {
+        errorMessage += 'Duration seems too long (max 300 minutes).\n';
+    }
+
+    // Calories
+    if (cal === '') {
+        errorMessage += 'Calories burned is required.\n';
+    } else if (isNaN(cal) || Number(cal) < 0) {
+        errorMessage += 'Calories must be a positive number.\n';
+    } else if (Number(cal) > 5000) {
+        errorMessage += 'Calories burned seems too high (max 5000).\n';
+    }
+
+    // Reps/Sets
+    if (nb === '') {
+        errorMessage += 'Sets/Reps is required.\n';
+    } else if (isNaN(nb) || Number(nb) <= 0) {
+        errorMessage += 'Sets/Reps must be a positive number.\n';
+    } else if (Number(nb) > 100) {
+        errorMessage += 'Sets/Reps seems too high (max 100).\n';
+    }
+
+    if (errorMessage !== '') {
+        alert(errorMessage);
+        return false;
+    }
+
+    return true;
+}
+
+function fillEditWorkoutForm(id, name, duree, cal, nb) {
+    document.getElementById('work-form-action').value = 'update';
+    document.getElementById('work-edit-id').value = id;
+    document.getElementById('work_name').value = name;
+    document.getElementById('work_duree').value = duree;
+    document.getElementById('work_cal').value = cal;
+    document.getElementById('work_nb').value = nb;
+
+    document.getElementById('workout-form').scrollIntoView({ behavior: 'smooth' });
+}
 
 
 function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
@@ -433,7 +498,7 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                             <div class="pcoded-navigation-label">Forms</div>
                             <ul class="pcoded-item pcoded-left-item">
                                 <li class="active">
-                                    <a href="form-elements-component.html" class="waves-effect waves-dark">
+                                    <a href="form-elements-component.php" class="waves-effect waves-dark">
                                         <span class="pcoded-micon"><i class="ti-layers"></i><b>FC</b></span>
                                         <span class="pcoded-mtext">Form</span>
                                         <span class="pcoded-mcaret"></span>
@@ -526,14 +591,133 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
 
                                 <!-- WORKOUT SECTION *****************************************************-->
                                 <div id="workout-section" class="section-content" style="display: none;">
-                                    <div style="background: #000; color: white; padding: 60px; text-align: center; border-radius: 5px; min-height: 400px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 500;">
-                                        <div>
-                                            <i class="ti-info-alt" style="font-size: 48px; display: block; margin-bottom: 20px;"></i>
-                                            Workout management coming soon! Stay tuned for updates.
-                                        </div>
-                                    </div>
+                                    <div style="display: flex; gap: 20px; min-height: 600px;">
+                                        <!-- LEFT SIDE: WORKOUTS LIST -->
+                                        <div style="flex: 1; background: white; padding: 20px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow-y: auto;">
+                                            <div style="font-size: 18px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                                                <i class="ti-list"></i>
+                                                Available Workouts
+                                            </div>
+
+                                            <div id="workouts-list-container" style="display: flex; flex-direction: column; gap: 12px;">
+
+    <?php if (empty($workouts)): ?>
+        <div style="text-align: center; padding: 40px 20px; color: #999;">
+            <div style="font-size: 48px; margin-bottom: 10px;">
+                <i class="ti-package"></i>
+            </div>
+            <div style="font-weight: 600; margin-bottom: 5px;">No Workouts Yet</div>
+            <div style="font-size: 14px;">Add your first workout using the form on the right ==> </div>
+        </div>
+    <?php else: ?>
+        <?php foreach ($workouts as $wk): ?>
+            <div id="card-<?= $wk['id_work'] ?>" class="workout-card" style="background: white; border-radius: 6px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px;">
+                
+                <!-- Image -->
+                <?php if (!empty($wk['pic_work'])): ?>
+                    <img src="data:image/jpeg;base64,<?= base64_encode($wk['pic_work']) ?>" 
+                        style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                <?php else: ?>
+                    <i class="ti-image" style="color: #aaa; font-size: 24px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;"></i>
+                <?php endif; ?>
+
+                <!-- Info -->
+                <div style="flex: 1; min-width: 0;">
+                    <div style="font-weight: 600; font-size: 15px; margin-bottom: 4px;">
+                        <?= htmlspecialchars($wk['name_work'] . ' (id=' . $wk['id_work'] . ')') ?>
+                    </div>
+                    <div style="font-size: 12px; color: #666; display: flex; gap: 8px; flex-wrap: wrap;">
+                        <span style="background: #e8f0fe; color: #4099ff; padding: 2px 8px; border-radius: 20px;">
+                            ⏱️ <?= (int)$wk['duree_work'] ?> min
+                        </span>
+                        <span style="background: #fff3cd; color: #d97706; padding: 2px 8px; border-radius: 20px;">
+                            🔥 <?= (int)$wk['cal_work'] ?> cal
+                        </span>
+                        <span style="background: #e8f7ee; color: #28a745; padding: 2px 8px; border-radius: 20px;">
+                            💪 <?= (int)$wk['nb_work'] ?> sets
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Delete button & edit button -->
+                <form method="POST" action="../../controle/controle_workout.php" style="margin: 0; display: flex; gap: 5px;">
+                    <input type="hidden" name="delete_id" value="<?= (int)$wk['id_work'] ?>">
+                    
+                    <!-- Delete button -->
+                    <button type="submit" name="action" value="delete"
+                        style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 16px; padding: 5px;"
+                        onclick="return confirm('Delete this workout?')">
+                        <i class="ti-trash"></i>
+                    </button>
+
+                    <!-- Edit button -->
+                    <button type="button"
+                        onclick="fillEditWorkoutForm(<?= $wk['id_work'] ?>, '<?= addslashes($wk['name_work']) ?>', <?= (int)$wk['duree_work'] ?>, <?= (int)$wk['cal_work'] ?>, <?= (int)$wk['nb_work'] ?>)"
+                        style="background: none; border: none; color: #4099ff; cursor: pointer; font-size: 16px; padding: 5px;">
+                        <i class="ti-pencil"></i>
+                    </button>
+                </form>
+
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
+                            </div>
+                        </div>
+
+                        <!-- RIGHT SIDE: WORKOUT FORM -->
+                        <div style="flex: 1; background: white; padding: 20px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow-y: auto;">
+                            
+                            <form onsubmit="return validateWorkoutForm()" class="workout-form" id="workout-form" action="../../controle/controle_workout.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+
+                                <input type="hidden" name="action" id="work-form-action" value="add">
+                                <input type="hidden" name="edit_id" id="work-edit-id" value="">
+                                <input type="hidden" name="id_user" value="1">
+
+                                <div style="font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                    <i class="ti-pencil-alt"></i>
+                                    Add New Workout
                                 </div>
-                                <!-- WORKOUT SECTION *****************************************************-->
+
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">Workout Name</label>
+                                    <input type="text" id="work_name" name="work_name" class="form-input" placeholder="e.g., Full Body Strength" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                </div>
+
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">Duration (minutes)</label>
+                                    <input type="number" id="work_duree" name="work_duree" class="form-input" placeholder="45" min="1" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                </div>
+
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">Calories Burned</label>
+                                    <input type="number" id="work_cal" name="work_cal" class="form-input" placeholder="300" min="0" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                </div>
+
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">Sets/Reps</label>
+                                    <input type="number" id="work_nb" name="work_nb" class="form-input" placeholder="3" min="1" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                </div>
+
+                                <div style="display: flex; flex-direction: column;">
+                                    <label style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">Workout Image</label>
+                                    <input type="file" id="work_picture" name="work_picture" class="form-input" accept="image/*" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                </div>
+
+                                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                    <button type="submit" style="flex: 1; padding: 12px; background: #4099ff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.3s;">
+                                        <i class="ti-save"></i> Add / Modify Workout
+                                    </button>
+                                    <button type="reset" style="flex: 1; padding: 12px; background: #f5f5f5; color: #333; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s;">
+                                        <i class="ti-close"></i> Clear
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- WORKOUT SECTION *****************************************************-->
                                 <!-- EXERCISES SECTION -->
                                 <div id="exercise-section" class="section-content" style="display: block;">
                                     <div style="display: flex; gap: 20px; min-height: 600px;">

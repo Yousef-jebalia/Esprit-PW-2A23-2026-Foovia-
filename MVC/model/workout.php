@@ -2,14 +2,14 @@
 
 class Workout {
     private ?int $id_work = null;
-    private int $name_work;
-    private string $pic_work;
+    private string $name_work;
+    private ?string $pic_work;
     private int $nb_work;
     private int $cal_work;
     private int $duree_work;
     private int $id_user;
-
-    public function __construct(int $name_work, string $pic_work, int $nb_work, int $cal_work, int $duree_work, int $id_user) {
+    
+    public function __construct(string $name_work, ?string $pic_work, int $nb_work, int $cal_work, int $duree_work, int $id_user) {
         $this->name_work = $name_work;
         $this->pic_work = $pic_work;
         $this->nb_work = $nb_work;
@@ -20,8 +20,8 @@ class Workout {
 
     // Getters
     public function getIdWork(): ?int { return $this->id_work; }
-    public function getNameWork(): int { return $this->name_work; }
-    public function getPicWork(): string { return $this->pic_work; }
+    public function getNameWork(): string { return $this->name_work; }
+    public function getPicWork(): ?string { return $this->pic_work; }
     public function getNbWork(): int { return $this->nb_work; }
     public function getCalWork(): int { return $this->cal_work; }
     public function getDureeWork(): int { return $this->duree_work; }
@@ -29,8 +29,8 @@ class Workout {
 
     // Setters
     public function setIdWork(int $id): void { $this->id_work = $id; }
-    public function setNameWork(int $name): void { $this->name_work = $name; }
-    public function setPicWork(string $pic): void { $this->pic_work = $pic; }
+    public function setNameWork(string $name): void { $this->name_work = $name; }
+    public function setPicWork(?string $pic): void { $this->pic_work = $pic; }
     public function setNbWork(int $nb): void { $this->nb_work = $nb; }
     public function setCalWork(int $cal): void { $this->cal_work = $cal; }
     public function setDureeWork(int $duree): void { $this->duree_work = $duree; }
