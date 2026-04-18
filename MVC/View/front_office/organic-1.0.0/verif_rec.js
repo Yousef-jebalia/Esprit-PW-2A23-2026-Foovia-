@@ -6,16 +6,12 @@
   form.noValidate = true;
 
   const fields = {
-    id_recl: document.getElementById('id_recl'),
-    id_user: document.getElementById('id_user'),
     description: document.getElementById('description'),
     etat_rec: document.getElementById('etat_rec'),
     type: document.getElementById('type')
   };
 
   const labels = {
-    id_recl: 'ID Reclamation',
-    id_user: 'ID User',
     description: 'Description',
     etat_rec: 'Etat Reclamation',
     type: 'Type'
@@ -56,18 +52,6 @@
   function getErrorMessage(input) {
     const value = input.value.trim();
     switch (input.id) {
-      case 'id_recl':
-      case 'id_user':
-        if (!value) {
-          return `${labels[input.id]} is required.`;
-        }
-        if (!/^\d+$/.test(value)) {
-          return `${labels[input.id]} must contain only numbers.`;
-        }
-        if (!/^\d{4}$/.test(value)) {
-          return `${labels[input.id]} must be exactly 4 digits.`;
-        }
-        return '';
       case 'description':
         if (!value) {
           return 'Description is required.';

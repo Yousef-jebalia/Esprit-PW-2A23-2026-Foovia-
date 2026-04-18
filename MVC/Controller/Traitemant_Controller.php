@@ -4,13 +4,12 @@ include(__DIR__ . '/../Model/traitements.php');
 
 class Controller_traitement {
     public function add_traitement(Traitements $traitement) {
-        $sql = "INSERT INTO traitement (id_traitement, id_reclam, comment_trait, status_trait, date__trait, id_user) 
-                VALUES (:id_traitement, :id_reclam, :comment, :status, :date_trait, :id_user)";
+        $sql = "INSERT INTO traitement (id_reclam, comment_trait, status_trait, date__trait, id_user) 
+                VALUES (:id_reclam, :comment, :status, :date_trait, :id_user)";
         $db = config::getConnexion();
         try {
             $query = $db->prepare($sql);
             $query->execute([
-                'id_traitement' => $traitement->getIdTraitement(),
                 'id_reclam' => $traitement->getIdReclamation(),
                 'comment' => $traitement->getCommentaire(),
                 'status' => $traitement->getStatus(),

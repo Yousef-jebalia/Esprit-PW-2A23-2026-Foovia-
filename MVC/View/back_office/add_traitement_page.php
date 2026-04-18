@@ -7,16 +7,15 @@ $controller = new Controller_traitement();
 $traitementToEdit = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id_traitement = $_POST['id_traitement'] ?? '';
     $id_reclam = $_POST['id_reclam'] ?? '';
     $comment = $_POST['comment'] ?? '';
     $status = $_POST['status'] ?? '';
     $date_trait = $_POST['date_trait'] ?? '';
     $id_user = $_POST['id_user'] ?? '';
 
-    if ($id_traitement !== '' && $id_reclam !== '' && $comment !== '' && $status !== '' && $date_trait !== '' && $id_user !== '') {
+    if ($id_reclam !== '' && $comment !== '' && $status !== '' && $date_trait !== '' && $id_user !== '') {
         $traitement = new Traitements(
-            (int)$id_traitement,
+            0,
             (int)$id_user,
             $id_reclam,
             $comment,
@@ -31,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$id_traitement = $id_traitement ?? '';
 $id_reclam = $id_reclam ?? '';
 $comment = $comment ?? '';
 $status = $status ?? '';
@@ -71,10 +69,6 @@ $editMode = false;
                         <?php endif; ?>
                         <form method="post" novalidate>
                             <input type="hidden" name="action" value="add">
-                            <div class="mb-3">
-                                <label for="id_traitement" class="form-label">ID Traitement</label>
-                                <input type="text" class="form-control" id="id_traitement" name="id_traitement" value="<?php echo htmlspecialchars($id_traitement); ?>" <?php echo $editMode ? 'readonly' : ''; ?> >
-                            </div>
                             <div class="mb-3">
                                 <label for="id_reclam" class="form-label">ID Réclamation</label>
                                 <input type="text" class="form-control" id="id_reclam" name="id_reclam" value="<?php echo htmlspecialchars($id_reclam); ?>">

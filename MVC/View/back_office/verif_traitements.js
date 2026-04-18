@@ -6,7 +6,6 @@
   form.noValidate = true;
 
   const fields = {
-    id_traitement: document.getElementById('id_traitement'),
     id_reclam: document.getElementById('id_reclam'),
     id_user: document.getElementById('id_user'),
     comment: document.getElementById('comment'),
@@ -14,7 +13,6 @@
   };
 
   const labels = {
-    id_traitement: 'ID Traitement',
     id_reclam: 'ID Réclamation',
     id_user: 'ID User',
     comment: 'Commentaire',
@@ -56,18 +54,8 @@
   function getErrorMessage(input) {
     const value = input.value.trim();
     switch (input.id) {
-      case 'id_traitement':
       case 'id_reclam':
       case 'id_user':
-        if (!value) {
-          return `${labels[input.id]} est requis.`;
-        }
-        if (!/^\d+$/.test(value)) {
-          return `${labels[input.id]} doit contenir uniquement des chiffres.`;
-        }
-        if (!/^\d{4}$/.test(value)) {
-          return `${labels[input.id]} doit comporter exactement 4 chiffres.`;
-        }
         return '';
       case 'comment':
         if (!value) {
