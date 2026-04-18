@@ -56,6 +56,8 @@ $workouts = $stmt_workout->fetchAll();
 
 
 <script>
+let selectedWorkoutExercises = [];
+
 function validateForm() {
     const name     = document.getElementById('ex_name').value.trim();
     const type     = document.getElementById('ex_type').value;
@@ -118,6 +120,7 @@ function validateWorkoutForm() {
     const duree  = document.getElementById('work_duree').value.trim();
     const cal    = document.getElementById('work_cal').value.trim();
     const nb     = document.getElementById('work_nb').value.trim();
+    const selectedExercisesRaw = document.getElementById('selected_exercises').value.trim();
 
     let errorMessage = '';
 
@@ -157,6 +160,20 @@ function validateWorkoutForm() {
         errorMessage += 'Sets/Reps seems too high (max 100).\n';
     }
 
+    // Selected exercises
+    if (selectedExercisesRaw === '') {
+        errorMessage += 'Please select at least one exercise for this workout.\n';
+    } else {
+        try {
+            const parsed = JSON.parse(selectedExercisesRaw);
+            if (!Array.isArray(parsed) || parsed.length === 0) {
+                errorMessage += 'Please select at least one exercise for this workout.\n';
+            }
+        } catch (e) {
+            errorMessage += 'Selected exercises data is invalid. Please select again.\n';
+        }
+    }
+
     if (errorMessage !== '') {
         alert(errorMessage);
         return false;
@@ -172,8 +189,105 @@ function fillEditWorkoutForm(id, name, duree, cal, nb) {
     document.getElementById('work_duree').value = duree;
     document.getElementById('work_cal').value = cal;
     document.getElementById('work_nb').value = nb;
+    selectedWorkoutExercises = [];
+    document.getElementById('selected_exercises').value = '';
+    document.getElementById('selected-exercises-summary').innerHTML = 'No exercises selected';
 
     document.getElementById('workout-form').scrollIntoView({ behavior: 'smooth' });
+}
+
+function openExerciseSelectorModal() {
+    document.getElementById('exercise-selector-modal').style.display = 'flex';
+}
+
+function closeExerciseSelectorModal() {
+    document.getElementById('exercise-selector-modal').style.display = 'none';
+}
+
+function applySelectedExercises() {
+    const rows = document.querySelectorAll('.workout-exercise-row');
+    const collected = [];
+
+    rows.forEach(function(row) {
+        const checkbox = row.querySelector('.workout-ex-checkbox');
+        if (!checkbox || !checkbox.checked) {
+            return;
+        }
+
+        const idEx = Number(checkbox.value);
+        const name = checkbox.dataset.name || ('Exercise #' + idEx);
+        const setsInput = row.querySelector('.workout-ex-sets');
+        const weightInput = row.querySelector('.workout-ex-weight');
+        const timeInput = row.querySelector('.workout-ex-time');
+
+        const sets = Math.max(1, Number(setsInput.value || 1));
+        const weight = Math.max(0, Number(weightInput.value || 0));
+        const time = Math.max(0, Number(timeInput.value || 0));
+
+        collected.push({
+            id_ex: idEx,
+            name: name,
+            sets: sets,
+            weight: weight,
+            time: time
+        });
+    });
+
+    selectedWorkoutExercises = collected;
+    document.getElementById('selected_exercises').value = JSON.stringify(
+        selectedWorkoutExercises.map(function(item) {
+            return {
+                id_ex: item.id_ex,
+                sets: item.sets,
+                weight: item.weight,
+                time: item.time
+            };
+        })
+    );
+
+    const summary = document.getElementById('selected-exercises-summary');
+    if (selectedWorkoutExercises.length === 0) {
+        summary.innerHTML = 'No exercises selected';
+    } else {
+        summary.innerHTML = selectedWorkoutExercises.map(function(item) {
+            return item.name + ' (sets: ' + item.sets + ', weight: ' + item.weight + ', time: ' + item.time + ' min)';
+        }).join('<br>');
+    }
+
+    closeExerciseSelectorModal();
+}
+
+function toggleExerciseConfig(checkbox) {
+    const row = checkbox.closest('.workout-exercise-row');
+    if (!row) {
+        return;
+    }
+
+    row.querySelectorAll('.workout-ex-config').forEach(function(input) {
+        input.disabled = !checkbox.checked;
+    });
+}
+
+function resetWorkoutExerciseSelection() {
+    selectedWorkoutExercises = [];
+    document.getElementById('selected_exercises').value = '';
+    document.getElementById('selected-exercises-summary').innerHTML = 'No exercises selected';
+
+    document.querySelectorAll('.workout-exercise-row').forEach(function(row) {
+        const checkbox = row.querySelector('.workout-ex-checkbox');
+        const setsInput = row.querySelector('.workout-ex-sets');
+        const weightInput = row.querySelector('.workout-ex-weight');
+        const timeInput = row.querySelector('.workout-ex-time');
+
+        checkbox.checked = false;
+        setsInput.value = 3;
+        weightInput.value = 0;
+        timeInput.value = 30;
+
+        row.querySelectorAll('.workout-ex-config').forEach(function(input) {
+            input.disabled = true;
+        });
+    });
 }
 
 
@@ -695,8 +809,19 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                                 </div>
 
                                 <div style="display: flex; flex-direction: column;">
-                                    <label style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">Sets/Reps</label>
+                                    <label style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">Workout Sets/Reps</label>
                                     <input type="number" id="work_nb" name="work_nb" class="form-input" placeholder="3" min="1" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                </div>
+
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <label style="font-weight: 600; margin-bottom: 0; font-size: 14px;">Exercises In This Workout</label>
+                                    <input type="hidden" id="selected_exercises" name="selected_exercises" value="">
+                                    <button type="button" onclick="openExerciseSelectorModal()" style="padding: 10px 12px; background: #f7faff; border: 1px solid #4099ff; color: #4099ff; border-radius: 4px; font-weight: 600; cursor: pointer; text-align: left;">
+                                        <i class="ti-list"></i> Select Exercises
+                                    </button>
+                                    <div id="selected-exercises-summary" style="font-size: 13px; color: #666; background: #fafafa; border: 1px dashed #ddd; border-radius: 4px; padding: 10px; min-height: 42px; max-height: 130px; overflow-y: auto;">
+                                        No exercises selected
+                                    </div>
                                 </div>
 
                                 <div style="display: flex; flex-direction: column;">
@@ -714,6 +839,42 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                                 </div>
                             </form>
 
+                        </div>
+                    </div>
+
+                    <div id="exercise-selector-modal" style="display: none; position: fixed; z-index: 1050; inset: 0; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; padding: 20px;">
+                        <div style="background: white; border-radius: 8px; width: min(900px, 100%); max-height: 85vh; display: flex; flex-direction: column;">
+                            <div style="padding: 16px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                                <h4 style="margin: 0; font-size: 18px; font-weight: 600;">Select Exercises For Workout</h4>
+                                <button type="button" onclick="closeExerciseSelectorModal()" style="background: none; border: none; font-size: 22px; line-height: 1; cursor: pointer; color: #666;">&times;</button>
+                            </div>
+
+                            <div style="padding: 12px 20px; font-size: 13px; color: #666; border-bottom: 1px solid #eee;">
+                                Select one or more exercises and set the values for sets, weight, and time.
+                            </div>
+
+                            <div style="padding: 12px 20px; overflow-y: auto; flex: 1;">
+                                <?php if (empty($exercises)): ?>
+                                    <div style="text-align: center; padding: 24px; color: #999;">No exercises available.</div>
+                                <?php else: ?>
+                                    <?php foreach ($exercises as $ex): ?>
+                                        <div class="workout-exercise-row" style="display: grid; grid-template-columns: 1.8fr 0.7fr 0.7fr 0.7fr; gap: 10px; align-items: center; padding: 10px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 8px;">
+                                            <label style="display: flex; align-items: center; gap: 8px; margin: 0; font-weight: 600; cursor: pointer;">
+                                                <input type="checkbox" class="workout-ex-checkbox" value="<?= (int)$ex['id_ex'] ?>" data-name="<?= htmlspecialchars($ex['name_ex'], ENT_QUOTES) ?>" onchange="toggleExerciseConfig(this)">
+                                                <span><?= htmlspecialchars($ex['name_ex']) ?> (id=<?= (int)$ex['id_ex'] ?>)</span>
+                                            </label>
+                                            <input type="number" class="workout-ex-sets workout-ex-config" min="1" value="3" disabled style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;" title="sets" placeholder="sets">
+                                            <input type="number" class="workout-ex-weight workout-ex-config" min="0" value="0" step="0.5" disabled style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;" title="weight" placeholder="weight">
+                                            <input type="number" class="workout-ex-time workout-ex-config" min="0" value="30" disabled style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;" title="time" placeholder="time (min)">
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+
+                            <div style="padding: 14px 20px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px;">
+                                <button type="button" onclick="closeExerciseSelectorModal()" style="padding: 10px 14px; border: 1px solid #ddd; background: #f8f8f8; border-radius: 4px; cursor: pointer;">Cancel</button>
+                                <button type="button" onclick="applySelectedExercises()" style="padding: 10px 14px; border: none; background: #4099ff; color: white; border-radius: 4px; cursor: pointer;">Apply Selection</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1030,6 +1191,8 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                 workout: document.getElementById('workout-section'),
                 exercise: document.getElementById('exercise-section')
             };
+            const workoutForm = document.getElementById('workout-form');
+            const selectorModal = document.getElementById('exercise-selector-modal');
 
             function setActiveSection(sectionKey) {
                 Object.keys(sections).forEach(function(key) {
@@ -1058,6 +1221,24 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
 
             const initiallyActive = document.querySelector('.dashboard-item.active[data-section]');
             setActiveSection(initiallyActive ? initiallyActive.dataset.section : 'exercise');
+
+            if (workoutForm) {
+                workoutForm.addEventListener('reset', function() {
+                    setTimeout(function() {
+                        document.getElementById('work-form-action').value = 'add';
+                        document.getElementById('work-edit-id').value = '';
+                        resetWorkoutExerciseSelection();
+                    }, 0);
+                });
+            }
+
+            if (selectorModal) {
+                selectorModal.addEventListener('click', function(e) {
+                    if (e.target === selectorModal) {
+                        closeExerciseSelectorModal();
+                    }
+                });
+            }
         });
     </script>
 </body>

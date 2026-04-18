@@ -21,7 +21,7 @@ class controle_workout
             $query->bindValue('duree_work', $workout->getDureeWork());
             $query->bindValue('id_user',    $workout->getIdUser());
             $query->execute();
-            return true;
+            return (int)$db->lastInsertId();
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -68,6 +68,56 @@ class controle_workout
             die('Error: ' . $e->getMessage());
         }
     }
+
+    function replace_belong_for_workout(int $workoutId, array $selectedExercises)
+    {
+        $db = config::getConnexion();
+        try {
+            $db->beginTransaction();
+
+            $delete = $db->prepare("DELETE FROM belong WHERE id_work = :id_work");
+            $delete->execute(['id_work' => $workoutId]);
+
+            if (!empty($selectedExercises)) {
+                $insert = $db->prepare(
+                    "INSERT INTO belong (id_ex, id_work, sets, weight, `time`)
+                     VALUES (:id_ex, :id_work, :sets, :weight, :time)
+                     ON DUPLICATE KEY UPDATE
+                        id_work = VALUES(id_work),
+                        sets = VALUES(sets),
+                        weight = VALUES(weight),
+                        `time` = VALUES(`time`)"
+                );
+
+                foreach ($selectedExercises as $item) {
+                    $idEx = (int)($item['id_ex'] ?? 0);
+                    $sets = (int)($item['sets'] ?? 0);
+                    $weight = (float)($item['weight'] ?? 0);
+                    $time = (int)($item['time'] ?? 0);
+
+                    if ($idEx <= 0) {
+                        continue;
+                    }
+
+                    $insert->execute([
+                        'id_ex' => $idEx,
+                        'id_work' => $workoutId,
+                        'sets' => max(1, $sets),
+                        'weight' => max(0, $weight),
+                        'time' => max(0, $time),
+                    ]);
+                }
+            }
+
+            $db->commit();
+            return true;
+        } catch (Exception $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+            return $e->getMessage();
+        }
+    }
 }
 
 // ── Handling POST Requests ──────────────────────────────────────────────
@@ -94,12 +144,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pic = file_get_contents($_FILES['work_picture']['tmp_name']);
     }
 
+    $selectedExercises = [];
+    if (!empty($_POST['selected_exercises'])) {
+        $decoded = json_decode($_POST['selected_exercises'], true);
+        if (is_array($decoded)) {
+            $selectedExercises = $decoded;
+        }
+    }
+
     $workout = new Workout($name, $pic, $nb, $cal, $duree, $user);
 
     if ($action === 'update') {
-        $result = $controller->update_workout($workout, (int)$_POST['edit_id']);
+        $workoutId = (int)$_POST['edit_id'];
+        $result = $controller->update_workout($workout, $workoutId);
+        if ($result === true && isset($_POST['selected_exercises']) && trim((string)$_POST['selected_exercises']) !== '') {
+            $result = $controller->replace_belong_for_workout($workoutId, $selectedExercises);
+        }
     } else {
-        $result = $controller->add_workout($workout);
+        $newWorkoutId = $controller->add_workout($workout);
+        if (is_int($newWorkoutId) && $newWorkoutId > 0) {
+            $result = $controller->replace_belong_for_workout($newWorkoutId, $selectedExercises);
+        } else {
+            $result = $newWorkoutId;
+        }
     }
 
     if ($result === true) {
