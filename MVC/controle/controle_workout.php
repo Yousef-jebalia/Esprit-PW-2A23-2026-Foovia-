@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Capture Inputs
-    $name  = (int)($_POST['work_name'] ?? 0);
+    $name  = $_POST['work_name'] ?? '';
     $nb    = (int)($_POST['work_nb'] ?? 0);
     $cal   = (int)($_POST['work_cal'] ?? 0);
     $duree = (int)($_POST['work_duree'] ?? 0);
