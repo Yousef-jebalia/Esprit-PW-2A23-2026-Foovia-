@@ -89,415 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
 <title>FOOVIA — Your Health Profile</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --yellow:    #F5C842;
-    --green:     #4BAE52;
-    --orange:    #D94F00;
-    --yellow-mid:#F0A830;
-    --forest:    #2E4A28;
-    --peach:     #F2A98A;
-    --red:       #C0381A;
-    --off-white: #FDF8EE;
-    --dark:      #111008;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--off-white);
-    color: var(--dark);
-    min-height: 100vh;
-  }
-
-  /* ── TOP BAR ── */
-  .topbar {
-    position: fixed; top: 0; left: 0; width: 100%;
-    z-index: 100;
-    background: rgba(253,248,238,.92);
-    backdrop-filter: blur(14px);
-    border-bottom: 1.5px solid rgba(75,174,82,.15);
-    padding: 14px 48px;
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 24px;
-  }
-  .topbar-logo {
-    font-family: 'Boldonse', system-ui;
-    font-size: 1.3rem; color: var(--dark);
-    text-decoration: none; flex-shrink: 0;
-  }
-  .topbar-logo span { color: var(--green); }
-
-  /* progress bar */
-  .progress-wrap { flex: 1; max-width: 480px; }
-  .progress-labels {
-    display: flex; justify-content: space-between;
-    margin-bottom: 6px;
-  }
-  .progress-labels span {
-    font-family: 'Boldonse', system-ui;
-    font-size: .65rem; letter-spacing: .1em;
-    text-transform: uppercase; color: #aaa;
-    transition: color .3s;
-  }
-  .progress-labels span.active { color: var(--green); }
-  .progress-track {
-    height: 6px; background: rgba(0,0,0,.08);
-    border-radius: 100px; overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%; border-radius: 100px;
-    background: linear-gradient(90deg, var(--green), var(--yellow));
-    transition: width .5s cubic-bezier(.4,0,.2,1);
-  }
-  .topbar-step {
-    font-family: 'Boldonse', system-ui;
-    font-size: .78rem; color: #999; flex-shrink: 0;
-  }
-  .topbar-step span { color: var(--dark); }
-
-  /* ── MAIN ── */
-  main {
-    min-height: 100vh;
-    padding: 100px 24px 80px;
-    display: flex; align-items: flex-start; justify-content: center;
-  }
-
-  /* ── STEP WRAPPER ── */
-  .survey-wrap {
-    width: 100%; max-width: 680px;
-    position: relative;
-  }
-  .step {
-    display: none;
-    animation: slideIn .35s cubic-bezier(.4,0,.2,1) both;
-  }
-  .step.active { display: block; }
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* step header */
-  .step-eyebrow {
-    font-family: 'Boldonse', system-ui;
-    font-size: .68rem; letter-spacing: .16em;
-    text-transform: uppercase; color: var(--orange);
-    margin-bottom: 8px;
-  }
-  .step-title {
-    font-family: 'Boldonse', system-ui;
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
-    line-height: 1.05; margin-bottom: 10px;
-    color: var(--dark);
-  }
-  .step-title em { font-style: normal; color: var(--green); }
-  .step-desc {
-    font-size: .95rem; color: #666; line-height: 1.65;
-    margin-bottom: 36px; max-width: 520px;
-  }
-
-  /* ── CARD ── */
-  .card {
-    background: #fff;
-    border-radius: 22px;
-    border: 1.5px solid rgba(0,0,0,.07);
-    padding: 32px;
-    margin-bottom: 20px;
-  }
-  .card-label {
-    font-family: 'Boldonse', system-ui;
-    font-size: .75rem; letter-spacing: .08em;
-    text-transform: uppercase; color: #555;
-    margin-bottom: 16px;
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  /* ── GENDER TILES ── */
-  .gender-grid {
-    display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
-  }
-  .gender-tile {
-    border: 2px solid rgba(0,0,0,.1);
-    border-radius: 18px;
-    padding: 24px 12px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color .2s, background .2s, transform .15s;
-    background: var(--off-white);
-  }
-  .gender-tile:hover { border-color: var(--green); transform: translateY(-2px); }
-  .gender-tile.selected { border-color: var(--green); background: rgba(75,174,82,.07); }
-  .gender-tile .gt-icon { font-size: 2.4rem; display: block; margin-bottom: 10px; }
-  .gender-tile .gt-label {
-    font-family: 'Boldonse', system-ui; font-size: .9rem;
-  }
-
-  /* ── DATE / NUMBER INPUTS ── */
-  .field { display: flex; flex-direction: column; gap: 7px; }
-  .field label {
-    font-family: 'Boldonse', system-ui;
-    font-size: .75rem; letter-spacing: .06em; color: #555;
-  }
-  .field input, .field select {
-    width: 100%;
-    border: 1.5px solid rgba(0,0,0,.12);
-    border-radius: 14px;
-    padding: 14px 16px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: .95rem;
-    background: #fff; color: var(--dark);
-    outline: none;
-    transition: border-color .2s, box-shadow .2s;
-  }
-  .field input:focus, .field select:focus {
-    border-color: var(--green);
-    box-shadow: 0 0 0 3px rgba(75,174,82,.12);
-  }
-  .field input.error { border-color: var(--red); }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-
-  /* unit toggle */
-  .unit-toggle {
-    display: flex; gap: 0;
-    border: 1.5px solid rgba(0,0,0,.12);
-    border-radius: 12px; overflow: hidden;
-    width: fit-content;
-  }
-  .unit-btn {
-    padding: 8px 18px;
-    font-family: 'Boldonse', system-ui;
-    font-size: .75rem; border: none;
-    background: #fff; color: #aaa;
-    cursor: pointer; transition: background .15s, color .15s;
-  }
-  .unit-btn.active { background: var(--dark); color: var(--yellow); }
-
-  /* BMI display */
-  .bmi-display {
-    background: var(--dark);
-    border-radius: 18px;
-    padding: 24px 28px;
-    display: flex; align-items: center; gap: 24px;
-    flex-wrap: wrap;
-  }
-  .bmi-num {
-    font-family: 'Boldonse', system-ui;
-    font-size: 3.2rem; line-height: 1;
-    color: var(--yellow);
-    min-width: 90px;
-  }
-  .bmi-info { flex: 1; }
-  .bmi-label {
-    font-family: 'Boldonse', system-ui;
-    font-size: 1.1rem; color: #fff; margin-bottom: 4px;
-  }
-  .bmi-sub { font-size: .82rem; color: rgba(255,255,255,.5); margin-bottom: 12px; }
-  .bmi-scale {
-    display: flex; gap: 4px; height: 8px; border-radius: 100px; overflow: hidden;
-  }
-  .bmi-seg { flex: 1; border-radius: 0; }
-  .bmi-seg:first-child { border-radius: 100px 0 0 100px; }
-  .bmi-seg:last-child  { border-radius: 0 100px 100px 0; }
-  .bmi-arrow {
-    font-family: 'Boldonse', system-ui; font-size: .7rem;
-    color: rgba(255,255,255,.5); margin-top: 6px;
-  }
-
-  /* ── ACTIVITY TILES ── */
-  .activity-grid { display: flex; flex-direction: column; gap: 10px; }
-  .activity-tile {
-    display: flex; align-items: center; gap: 16px;
-    border: 2px solid rgba(0,0,0,.1);
-    border-radius: 16px;
-    padding: 16px 20px;
-    cursor: pointer;
-    transition: border-color .2s, background .2s;
-    background: var(--off-white);
-  }
-  .activity-tile:hover { border-color: var(--orange); }
-  .activity-tile.selected { border-color: var(--orange); background: rgba(217,79,0,.05); }
-  .at-icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.4rem; flex-shrink: 0;
-  }
-  .at-body { flex: 1; }
-  .at-title { font-family: 'Boldonse', system-ui; font-size: .95rem; margin-bottom: 2px; }
-  .at-sub { font-size: .78rem; color: #888; }
-  .at-check {
-    width: 22px; height: 22px; border-radius: 50%;
-    border: 2px solid rgba(0,0,0,.15);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; font-size: .7rem;
-    transition: background .2s, border-color .2s;
-  }
-  .activity-tile.selected .at-check { background: var(--orange); border-color: var(--orange); color: #fff; }
-
-  /* ── TAG INPUT (illness / allergy / medication) ── */
-  .tag-input-wrap {
-    border: 1.5px solid rgba(0,0,0,.12);
-    border-radius: 14px;
-    padding: 10px 12px;
-    background: #fff;
-    display: flex; flex-wrap: wrap; gap: 8px;
-    align-items: center;
-    min-height: 54px;
-    cursor: text;
-    transition: border-color .2s, box-shadow .2s;
-  }
-  .tag-input-wrap:focus-within {
-    border-color: var(--green);
-    box-shadow: 0 0 0 3px rgba(75,174,82,.12);
-  }
-  .tag-chip {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 5px 10px 5px 12px;
-    border-radius: 100px;
-    font-size: .8rem; font-weight: 500;
-    flex-shrink: 0;
-  }
-  .tag-chip.illness  { background: rgba(192,56,26,.1); color: var(--red); }
-  .tag-chip.allergy  { background: rgba(245,200,66,.2); color: #7a5800; }
-  .tag-chip.medic    { background: rgba(75,174,82,.12); color: var(--forest); }
-  .tag-chip-del {
-    background: none; border: none; cursor: pointer;
-    font-size: .85rem; line-height: 1; padding: 0;
-    opacity: .6; transition: opacity .15s;
-    color: inherit;
-  }
-  .tag-chip-del:hover { opacity: 1; }
-  .tag-real-input {
-    border: none; outline: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: .9rem; background: transparent;
-    color: var(--dark); min-width: 140px; flex: 1;
-    padding: 4px 4px;
-  }
-  .tag-hint {
-    font-size: .75rem; color: #bbb; margin-top: 6px;
-    display: flex; align-items: center; gap: 5px;
-  }
-  .tag-suggestions {
-    display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px;
-  }
-  .tag-sug-btn {
-    border: 1.5px solid rgba(0,0,0,.1);
-    border-radius: 100px; background: var(--off-white);
-    padding: 5px 13px; font-size: .78rem;
-    cursor: pointer; color: #555;
-    transition: background .15s, border-color .15s;
-  }
-  .tag-sug-btn:hover { background: #fff; border-color: rgba(0,0,0,.2); }
-
-  /* none toggle */
-  .none-toggle {
-    display: flex; align-items: center; gap: 10px;
-    padding: 14px 16px;
-    border: 2px solid rgba(0,0,0,.08);
-    border-radius: 14px; cursor: pointer;
-    margin-top: 10px;
-    background: var(--off-white);
-    transition: border-color .2s;
-    font-size: .88rem; color: #666;
-  }
-  .none-toggle.active { border-color: var(--green); background: rgba(75,174,82,.05); color: var(--forest); }
-  .none-box {
-    width: 18px; height: 18px; border-radius: 5px;
-    border: 2px solid rgba(0,0,0,.15);
-    background: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: .65rem; transition: background .2s, border-color .2s;
-  }
-  .none-toggle.active .none-box { background: var(--green); border-color: var(--green); color: #fff; }
-
-  /* ── NAVIGATION BUTTONS ── */
-  .nav-btns {
-    display: flex; gap: 12px; margin-top: 28px;
-  }
-  .btn-back {
-    border: 1.5px solid rgba(0,0,0,.12);
-    background: #fff; border-radius: 14px;
-    padding: 14px 28px;
-    font-family: 'Boldonse', system-ui; font-size: .9rem;
-    cursor: pointer; color: #666;
-    transition: background .15s;
-  }
-  .btn-back:hover { background: rgba(0,0,0,.04); }
-  .btn-next {
-    flex: 1; background: var(--dark); color: #fff;
-    border: none; border-radius: 14px;
-    padding: 16px;
-    font-family: 'Boldonse', system-ui; font-size: 1rem;
-    cursor: pointer;
-    transition: background .2s, transform .15s;
-  }
-  .btn-next:hover { background: var(--forest); transform: scale(1.01); }
-  .btn-next:active { transform: scale(.99); }
-  .btn-next.finish { background: var(--green); }
-  .btn-next.finish:hover { background: var(--forest); }
-
-  /* ── SUCCESS SCREEN ── */
-  .success-screen {
-    display: none;
-    text-align: center;
-    padding: 40px 20px;
-    animation: slideIn .4s ease both;
-  }
-  .success-screen.active { display: block; }
-  .success-big-icon { font-size: 5rem; margin-bottom: 24px; display: block; }
-  .success-screen h1 {
-    font-family: 'Boldonse', system-ui;
-    font-size: 2.6rem; margin-bottom: 14px;
-    color: var(--dark);
-  }
-  .success-screen h1 span { color: var(--green); }
-  .success-screen p {
-    font-size: 1rem; color: #666; line-height: 1.7;
-    max-width: 460px; margin: 0 auto 36px;
-  }
-  .success-chips {
-    display: flex; flex-wrap: wrap; gap: 10px;
-    justify-content: center; margin-bottom: 40px;
-  }
-  .success-chip {
-    background: #fff;
-    border: 1.5px solid rgba(0,0,0,.08);
-    border-radius: 100px;
-    padding: 8px 18px;
-    font-size: .82rem; font-weight: 500;
-    display: flex; align-items: center; gap: 7px;
-  }
-  .success-chip .dot { width: 8px; height: 8px; border-radius: 50%; }
-  .btn-go {
-    display: inline-block;
-    background: var(--green); color: #fff;
-    padding: 16px 48px; border-radius: 100px;
-    font-family: 'Boldonse', system-ui; font-size: 1rem;
-    text-decoration: none;
-    transition: background .2s, transform .15s;
-  }
-  .btn-go:hover { background: var(--forest); transform: scale(1.02); }
-
-  /* error message */
-  .step-error {
-    color: var(--red); font-size: .78rem;
-    margin-top: -20px; margin-bottom: 16px;
-    display: none;
-  }
-  .step-error.visible { display: block; }
-
-  /* responsive */
-  @media (max-width: 640px) {
-    .topbar { padding: 12px 20px; }
-    .progress-labels { display: none; }
-    main { padding: 90px 16px 60px; }
-    .card { padding: 20px; }
-    .gender-grid { grid-template-columns: 1fr 1fr 1fr; }
-    .field-row, .field-row-3 { grid-template-columns: 1fr; }
-  }
-</style>
+<link rel="stylesheet" href="foovia-survey.css">
 </head>
 <body>
 
@@ -513,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
       <span id="pl-5">Done</span>
     </div>
     <div class="progress-track">
-      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      <div class="progress-fill" id="progress-fill"></div>
     </div>
   </div>
   <div class="topbar-step">Step <span id="step-num">1</span> / 4</div>
@@ -532,8 +124,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
   <input type="hidden" name="medicament" id="medicament-hidden">
   <input type="hidden" name="survey_submit" value="1">
   <?php if (!empty($error_message)): ?>
-    <div class="card" style="border-color: rgba(192,56,26,.2); background: rgba(255,240,240,.9); margin-bottom: 22px;">
-      <div class="step-error visible" style="display:block; margin:0; padding: 18px 20px; color: var(--red);">
+    <div class="card alert-card">
+      <div class="step-error visible alert-message">
         <?php echo htmlspecialchars($error_message); ?>
       </div>
     </div>
@@ -583,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
             <option>October</option><option>November</option><option>December</option>
           </select>
         </div>
-        <div class="field" style="grid-column:span 2">
+        <div class="field field-span-2">
           <label>Year</label>
           <input type="number" id="dob-year" placeholder="YYYY" min="1920" max="2010"/>
         </div>
@@ -604,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
 
     <!-- HEIGHT -->
     <div class="card">
-      <div class="card-label" style="justify-content:space-between;">
+      <div class="card-label space-between">
         <span>📏 Height</span>
         <div class="unit-toggle">
           <button class="unit-btn active" id="h-cm" onclick="setHeightUnit('cm')">cm</button>
@@ -617,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
           <input type="number" id="height-cm" placeholder="e.g. 175" min="100" max="250" oninput="recalcBMI()"/>
         </div>
       </div>
-      <div id="height-ft-wrap" style="display:none">
+      <div id="height-ft-wrap" class="hidden">
         <div class="field-row">
           <div class="field">
             <label>Feet</label>
@@ -634,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
 
     <!-- WEIGHT -->
     <div class="card">
-      <div class="card-label" style="justify-content:space-between;">
+      <div class="card-label space-between">
         <span>⚖️ Weight</span>
         <div class="unit-toggle">
           <button class="unit-btn active" id="w-kg" onclick="setWeightUnit('kg')">kg</button>
@@ -657,11 +249,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
           <div class="bmi-label" id="bmi-label">Enter height & weight</div>
           <div class="bmi-sub" id="bmi-sub">Your BMI will appear automatically</div>
           <div class="bmi-scale">
-            <div class="bmi-seg" style="background:#5ab5f5;flex:1.5"></div>
-            <div class="bmi-seg" style="background:#4BAE52;flex:1.5"></div>
-            <div class="bmi-seg" style="background:#F0A830;flex:1"></div>
-            <div class="bmi-seg" style="background:#D94F00;flex:1"></div>
-            <div class="bmi-seg" style="background:#C0381A;flex:1"></div>
+            <div class="bmi-seg seg-1"></div>
+            <div class="bmi-seg seg-2"></div>
+            <div class="bmi-seg seg-3"></div>
+            <div class="bmi-seg seg-4"></div>
+            <div class="bmi-seg seg-5"></div>
           </div>
           <div class="bmi-arrow" id="bmi-arrow">Underweight · Normal · Overweight · Obese · Severe</div>
         </div>
@@ -684,7 +276,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
       <div class="card-label">🏃 Activity level</div>
       <div class="activity-grid">
         <div class="activity-tile" onclick="selectActivity(this,'sedentary')">
-          <div class="at-icon" style="background:rgba(90,181,245,.12)">🪑</div>
+          <div class="at-icon sed">🪑</div>
           <div class="at-body">
             <div class="at-title">Sedentary</div>
             <div class="at-sub">Little or no exercise, desk job</div>
@@ -692,7 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
           <div class="at-check"></div>
         </div>
         <div class="activity-tile" onclick="selectActivity(this,'light')">
-          <div class="at-icon" style="background:rgba(168,196,90,.15)">🚶</div>
+          <div class="at-icon light">🚶</div>
           <div class="at-body">
             <div class="at-title">Lightly active</div>
             <div class="at-sub">Light exercise 1–3 days/week</div>
@@ -700,7 +292,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
           <div class="at-check"></div>
         </div>
         <div class="activity-tile" onclick="selectActivity(this,'moderate')">
-          <div class="at-icon" style="background:rgba(245,200,66,.15)">🚴</div>
+          <div class="at-icon moderate">🚴</div>
           <div class="at-body">
             <div class="at-title">Moderately active</div>
             <div class="at-sub">Moderate exercise 3–5 days/week</div>
@@ -708,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
           <div class="at-check"></div>
         </div>
         <div class="activity-tile" onclick="selectActivity(this,'very')">
-          <div class="at-icon" style="background:rgba(217,79,0,.1)">🏋️</div>
+          <div class="at-icon very">🏋️</div>
           <div class="at-body">
             <div class="at-title">Very active</div>
             <div class="at-sub">Hard exercise 6–7 days/week</div>
@@ -716,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
           <div class="at-check"></div>
         </div>
         <div class="activity-tile" onclick="selectActivity(this,'extreme')">
-          <div class="at-icon" style="background:rgba(192,56,26,.1)">🔥</div>
+          <div class="at-icon extreme">🔥</div>
           <div class="at-body">
             <div class="at-title">Extremely active</div>
             <div class="at-sub">Athlete, physical job, or 2× training</div>
@@ -1096,15 +688,20 @@ function showSuccess() {
   const totalHealth = state.tags.illness.length + state.tags.allergy.length + state.tags.medic.length;
   chips.push({ label: `${totalHealth} health note${totalHealth !== 1 ? 's' : ''} recorded`, color: '#5ab5f5' });
 
-  document.getElementById('summary-chips').innerHTML = chips.map(c => `
-    <div class="success-chip">
-      <div class="dot" style="background:${c.color}"></div>
-      ${c.label}
-    </div>
-  `).join('');
+  const dotClasses = { '#4BAE52':'dot-green', '#F0A830':'dot-yellow', '#D94F00':'dot-orange', '#5ab5f5':'dot-blue' };
+  document.getElementById('summary-chips').innerHTML = chips.map(c => {
+    const dotClass = dotClasses[c.color] || '';
+    return `
+      <div class="success-chip">
+        <div class="dot ${dotClass}"></div>
+        ${c.label}
+      </div>
+    `;
+  }).join('');
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 </body>
 </html>
+
