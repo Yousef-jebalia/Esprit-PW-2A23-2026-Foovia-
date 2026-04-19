@@ -173,7 +173,7 @@ $user_name = $_SESSION['user_name'] ?? '';
         <h3>Built around you</h3>
         <p>Our intake survey understands your goals, health challenges, and lifestyle before your first session. Secured with 2FA from day one.</p>
         <span class="feat-tag">Personalised</span>
-         <a href="../backoffice/survey.php" class="feat-btn">Get Started</a>
+         <a href="../backoffice/foovia-survey.php" class="feat-btn">Get Started</a>
       </div>
 
       <div class="feat-card photo-card photo-support">

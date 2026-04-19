@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
 
             $success_message = 'Account created successfully! Redirecting to survey...';
             $_SESSION['signup_email'] = $email;
-            header('Location: survey.php');
+            header('Location: foovia-survey.php');
             exit;
         } catch (Exception $e) {
             $error_message = 'An error occurred: ' . $e->getMessage();
