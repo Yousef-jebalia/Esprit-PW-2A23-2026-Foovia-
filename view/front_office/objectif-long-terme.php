@@ -1,11 +1,34 @@
 <?php
+session_start();
 require_once '../../controller/ObjectifLongTerme_Controller.php';
 
 $controller = new ObjectifLongTerme_Controller();
 
+function goal_type_label(string $type): string {
+  $labels = [
+    'prise_de_poids' => 'weight gain',
+    'perte_de_poids' => 'weight loss',
+    'maintien_de_poids' => 'weight maintenance'
+  ];
+
+  return $labels[$type] ?? $type;
+}
+
+function goal_status_label(string $status): string {
+  $labels = [
+    'en_attente' => 'pending',
+    'en_cours' => 'in progress',
+    'termine' => 'completed'
+  ];
+
+  return $labels[$status] ?? $status;
+}
+
 $edit_error_message = '';
 $edit_objectif = null;
 $edit_panel_visible = false;
+$current_user_id = (int) ($_SESSION['user_id'] ?? 1);
+$user_has_goal = $controller->user_has_goal($current_user_id);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_id_obj'])) {
   $update_id_obj = (int) $_POST['update_id_obj'];
@@ -570,8 +593,32 @@ $objectifs = $controller->list_objectifs();
     }
 
     .goal-edit-card .form-label {
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 700;
+      color: var(--panel-text);
+      margin-bottom: 0.38rem;
+    }
+
+    .goal-edit-card .form-control,
+    .goal-edit-card .form-select {
+      border-radius: 14px;
+      border: 1px solid rgba(17,16,8,.16);
+      padding: 0.78rem 0.88rem;
+      box-shadow: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      background: var(--surface);
+      color: var(--panel-text);
+    }
+
+    .goal-edit-card .form-control:focus,
+    .goal-edit-card .form-select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(75, 174, 82, 0.16);
+    }
+
+    .goal-edit-card .form-control[readonly] {
+      background: rgba(17,16,8,.05);
+      color: var(--panel-muted);
     }
 
     .goal-edit-actions {
@@ -652,10 +699,20 @@ $objectifs = $controller->list_objectifs();
             <p>View, edit, and remove long-term goals from one centralized table.</p>
           </div>
           <div class="goal-actions">
-            <a href="../back_office/form-elements-component.php" class="goal-chip goal-chip-add">Add Goal</a>
-            <a href="tracking.html#long-term-goals" class="goal-chip goal-chip-track">Back to Tracking</a>
+            <button
+              type="button"
+              class="goal-chip goal-chip-add"
+              id="goal-add-trigger"
+              data-can-add="<?php echo $user_has_goal ? '0' : '1'; ?>"
+              data-add-url="../back_office/form-elements-component.php"
+              style="border:0;"
+            >
+              Add Goal
+            </button>
+            <a href="tracking.php#long-term-goals" class="goal-chip goal-chip-track">Back to Tracking</a>
           </div>
         </div>
+        <p id="goal-add-warning" style="display:none;margin:0 26px 12px;color:var(--panel-muted);font-size:.9rem;">Delete your existing goal before adding a new one.</p>
 
         <div class="goal-table-wrap">
           <table class="goal-table">
@@ -683,7 +740,7 @@ $objectifs = $controller->list_objectifs();
                 <?php foreach ($objectifs as $objectif): ?>
                   <?php
                     $statusRaw = (string) $objectif['status_obj'];
-                    $statusLabel = str_replace(['en_attente', 'en_cours', 'termine'], ['pending', 'in progress', 'completed'], $statusRaw);
+                    $statusLabel = goal_status_label($statusRaw);
                     $statusClass = 'goal-status-pending';
                     if ($statusLabel === 'in progress') {
                       $statusClass = 'goal-status-progress';
@@ -693,7 +750,7 @@ $objectifs = $controller->list_objectifs();
                   ?>
                   <tr>
                     <td><?php echo htmlspecialchars((string) $objectif['id_obj']); ?></td>
-                    <td><?php echo htmlspecialchars($objectif['type_obj']); ?></td>
+                    <td><?php echo htmlspecialchars(goal_type_label((string) $objectif['type_obj'])); ?></td>
                     <td><?php echo htmlspecialchars((string) $objectif['val_cible_obj']); ?></td>
                     <td><?php echo htmlspecialchars((string) $objectif['val_init_obj']); ?></td>
                     <td><?php echo htmlspecialchars($objectif['date_deb_obj']); ?></td>
@@ -762,11 +819,11 @@ $objectifs = $controller->list_objectifs();
                   </div>
                   <div class="col-md-6">
                     <label class="form-label" for="goal-edit-type-display">Goal type</label>
-                    <input type="text" class="form-control" id="goal-edit-type-display" value="<?php echo htmlspecialchars((string) ($edit_objectif['type_obj'] ?? '')); ?>" readonly>
+                    <input type="text" class="form-control" id="goal-edit-type-display" value="<?php echo htmlspecialchars(goal_type_label((string) ($edit_objectif['type_obj'] ?? ''))); ?>" readonly>
                   </div>
                   <div class="col-md-6">
                     <label class="form-label" for="goal-edit-status-display">Status</label>
-                    <input type="text" class="form-control" id="goal-edit-status-display" value="<?php echo htmlspecialchars(str_replace(['en_attente', 'en_cours', 'termine'], ['pending', 'in progress', 'completed'], (string) ($edit_objectif['status_obj'] ?? ''))); ?>" readonly>
+                    <input type="text" class="form-control" id="goal-edit-status-display" value="<?php echo htmlspecialchars(goal_status_label((string) ($edit_objectif['status_obj'] ?? ''))); ?>" readonly>
                   </div>
                   <div class="col-md-6">
                     <label class="form-label" for="goal-edit-reminder-display">Reminder frequency</label>
@@ -867,6 +924,8 @@ $objectifs = $controller->list_objectifs();
       const deletePanel = document.getElementById('goal-delete-panel');
       const deleteInput = document.getElementById('goal-delete-id');
       const deleteCancel = document.getElementById('goal-delete-cancel');
+      const goalAddTrigger = document.getElementById('goal-add-trigger');
+      const goalAddWarning = document.getElementById('goal-add-warning');
       const editPanel = document.getElementById('goal-edit-panel');
       const editId = document.getElementById('goal-edit-id');
       const editTitle = document.getElementById('goal-edit-title');
@@ -874,11 +933,22 @@ $objectifs = $controller->list_objectifs();
       const editCancelBottom = document.getElementById('goal-edit-cancel-bottom');
 
       function fillEditPanel(objectif) {
+        const typeLabels = {
+          prise_de_poids: 'weight gain',
+          perte_de_poids: 'weight loss',
+          maintien_de_poids: 'weight maintenance'
+        };
+        const statusLabels = {
+          en_attente: 'pending',
+          en_cours: 'in progress',
+          termine: 'completed'
+        };
+
         const fieldMap = {
           'goal-edit-id-display': objectif.id_obj,
           'goal-edit-user-display': objectif.id_user,
-          'goal-edit-type-display': objectif.type_obj,
-          'goal-edit-status-display': objectif.status_obj,
+          'goal-edit-type-display': typeLabels[objectif.type_obj] || objectif.type_obj,
+          'goal-edit-status-display': statusLabels[objectif.status_obj] || objectif.status_obj,
           'goal-edit-reminder-display': objectif.frequency_rappel_obj,
           'goal-edit-sport-display': objectif.consistancy_sport_obj,
           'goal-edit-diet-display': objectif.consistency_alim_obj,
@@ -925,6 +995,28 @@ $objectifs = $controller->list_objectifs();
           deleteInput.value = '';
           deletePanel.hidden = true;
           deletePanel.classList.remove('is-visible');
+        });
+      }
+
+      if (goalAddTrigger) {
+        goalAddTrigger.addEventListener('click', function () {
+          const canAdd = goalAddTrigger.getAttribute('data-can-add') === '1';
+          const addUrl = goalAddTrigger.getAttribute('data-add-url') || '';
+
+          if (!canAdd) {
+            if (goalAddWarning) {
+              goalAddWarning.style.display = 'block';
+            }
+            return;
+          }
+
+          if (goalAddWarning) {
+            goalAddWarning.style.display = 'none';
+          }
+
+          if (addUrl) {
+            window.location.href = addUrl;
+          }
         });
       }
 

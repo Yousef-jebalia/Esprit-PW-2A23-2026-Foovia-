@@ -4,6 +4,19 @@ include(__DIR__ . '/../model/ObjectifLongTerme.php');
 
 class ObjectifLongTerme_Controller {
 
+    public function user_has_goal(int $id_user): bool {
+        $sql = "SELECT 1 FROM objectiflongterme WHERE id_user = :id_user LIMIT 1";
+        $db = config::getConnexion();
+
+        try {
+            $query = $db->prepare($sql);
+            $query->execute(['id_user' => $id_user]);
+            return (bool) $query->fetchColumn();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
     private function normalize_status_for_date(string $status_obj, ?string $date_deb_obj): string {
         if ($status_obj === 'termine' || $status_obj === 'en_cours') {
             return $status_obj;
@@ -56,6 +69,9 @@ class ObjectifLongTerme_Controller {
 
     public function add_objectif(ObjectifLongTerme $objectif, $data) {
         $errors = $this->validate_objectif($data);
+        if ($this->user_has_goal((int) $objectif->getIdUser())) {
+            $errors[] = "Only one long-term goal is allowed per user. Delete the existing goal before adding a new one.";
+        }
         if (!empty($errors)) {
             foreach ($errors as $error) {
                 echo "<p style='color:red'>$error</p>";

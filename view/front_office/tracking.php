@@ -1,11 +1,34 @@
 <?php
+session_start();
 require_once '../../controller/ObjectifLongTerme_Controller.php';
 
 $controller = new ObjectifLongTerme_Controller();
 
+function goal_type_label(string $type): string {
+  $labels = [
+    'prise_de_poids' => 'weight gain',
+    'perte_de_poids' => 'weight loss',
+    'maintien_de_poids' => 'weight maintenance'
+  ];
+
+  return $labels[$type] ?? $type;
+}
+
+function goal_status_label(string $status): string {
+  $labels = [
+    'en_attente' => 'pending',
+    'en_cours' => 'in progress',
+    'termine' => 'completed'
+  ];
+
+  return $labels[$status] ?? $status;
+}
+
 $edit_error_message = '';
 $edit_objectif = null;
 $edit_panel_visible = false;
+$current_user_id = (int) ($_SESSION['user_id'] ?? 1);
+$user_has_goal = $controller->user_has_goal($current_user_id);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_id_obj'])) {
   $update_id_obj = (int) $_POST['update_id_obj'];
@@ -102,11 +125,22 @@ $objectifs = $controller->list_objectifs();
       const editCancelBottom = document.getElementById('ltg-edit-cancel-bottom');
 
       function fillEditPanel(objectif) {
+        const typeLabels = {
+          prise_de_poids: 'weight gain',
+          perte_de_poids: 'weight loss',
+          maintien_de_poids: 'weight maintenance'
+        };
+        const statusLabels = {
+          en_attente: 'pending',
+          en_cours: 'in progress',
+          termine: 'completed'
+        };
+
         const fieldMap = {
           'ltg-edit-id-display': objectif.id_obj,
           'ltg-edit-user-display': objectif.id_user,
-          'ltg-edit-type-display': objectif.type_obj,
-          'ltg-edit-status-display': objectif.status_obj,
+          'ltg-edit-type-display': typeLabels[objectif.type_obj] || objectif.type_obj,
+          'ltg-edit-status-display': statusLabels[objectif.status_obj] || objectif.status_obj,
           'ltg-edit-reminder-display': objectif.frequency_rappel_obj,
           'ltg-edit-sport-display': objectif.consistancy_sport_obj,
           'ltg-edit-diet-display': objectif.consistency_alim_obj,
@@ -337,8 +371,32 @@ $objectifs = $controller->list_objectifs();
   }
 
   .ltg-edit-card .form-label {
-    font-size: 0.88rem;
+    font-size: 0.86rem;
     font-weight: 700;
+    color: var(--panel-text);
+    margin-bottom: 0.38rem;
+  }
+
+  .ltg-edit-card .form-control,
+  .ltg-edit-card .form-select {
+    border-radius: 14px;
+    border: 1px solid rgba(17,16,8,.16);
+    padding: 0.78rem 0.88rem;
+    box-shadow: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: var(--surface);
+    color: var(--panel-text);
+  }
+
+  .ltg-edit-card .form-control:focus,
+  .ltg-edit-card .form-select:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(75, 174, 82, 0.16);
+  }
+
+  .ltg-edit-card .form-control[readonly] {
+    background: rgba(17,16,8,.05);
+    color: var(--panel-muted);
   }
 
   .ltg-edit-actions {
@@ -445,11 +503,13 @@ $objectifs = $controller->list_objectifs();
           type="button"
           class="btn-primary ltg-open-survey"
           data-survey-url="../back_office/form-elements-component.php"
+          data-can-add="<?php echo $user_has_goal ? '0' : '1'; ?>"
           aria-controls="ltg-survey-panel"
           aria-expanded="false"
         >
           Add Goal
         </button>
+        <small id="ltg-add-warning" style="display:none;margin-top:8px;color:var(--panel-muted);font-size:.82rem;">Delete your existing goal before adding a new one.</small>
       </div>
     </div>
 
@@ -478,11 +538,7 @@ $objectifs = $controller->list_objectifs();
           <?php if (!empty($objectifs)): ?>
             <?php foreach ($objectifs as $objectif): ?>
               <?php
-                $status = str_replace(
-                  ['en_attente', 'en_cours', 'termine'],
-                  ['pending', 'in progress', 'completed'],
-                  (string) $objectif['status_obj']
-                );
+                $status = goal_status_label((string) $objectif['status_obj']);
                 $statusClass = 'ltg-status-pending';
                 if ($status === 'in progress') {
                   $statusClass = 'ltg-status-progress';
@@ -492,7 +548,7 @@ $objectifs = $controller->list_objectifs();
               ?>
               <tr>
                 <td><?php echo htmlspecialchars((string) $objectif['id_obj']); ?></td>
-                <td><?php echo htmlspecialchars((string) $objectif['type_obj']); ?></td>
+                <td><?php echo htmlspecialchars(goal_type_label((string) $objectif['type_obj'])); ?></td>
                 <td><?php echo htmlspecialchars((string) $objectif['val_cible_obj']); ?></td>
                 <td><?php echo htmlspecialchars((string) $objectif['val_init_obj']); ?></td>
                 <td><?php echo htmlspecialchars((string) $objectif['date_deb_obj']); ?></td>
@@ -561,11 +617,11 @@ $objectifs = $controller->list_objectifs();
                   </div>
                   <div class="col-md-6">
                     <label class="form-label" for="ltg-edit-type-display">Goal type</label>
-                    <input type="text" class="form-control" id="ltg-edit-type-display" value="<?php echo htmlspecialchars((string) ($edit_objectif['type_obj'] ?? '')); ?>" readonly>
+                    <input type="text" class="form-control" id="ltg-edit-type-display" value="<?php echo htmlspecialchars(goal_type_label((string) ($edit_objectif['type_obj'] ?? ''))); ?>" readonly>
                   </div>
                   <div class="col-md-6">
                     <label class="form-label" for="ltg-edit-status-display">Status</label>
-                    <input type="text" class="form-control" id="ltg-edit-status-display" value="<?php echo htmlspecialchars(str_replace(['en_attente', 'en_cours', 'termine'], ['pending', 'in progress', 'completed'], (string) ($edit_objectif['status_obj'] ?? ''))); ?>" readonly>
+                    <input type="text" class="form-control" id="ltg-edit-status-display" value="<?php echo htmlspecialchars(goal_status_label((string) ($edit_objectif['status_obj'] ?? ''))); ?>" readonly>
                   </div>
                   <div class="col-md-6">
                     <label class="form-label" for="ltg-edit-reminder-display">Reminder frequency</label>
@@ -801,6 +857,20 @@ $objectifs = $controller->list_objectifs();
 
     if (openSurveyButton && surveyPanel && surveyFrame) {
       openSurveyButton.addEventListener('click', () => {
+        const canAdd = openSurveyButton.getAttribute('data-can-add') === '1';
+        const addWarning = document.getElementById('ltg-add-warning');
+
+        if (!canAdd) {
+          if (addWarning) {
+            addWarning.style.display = 'block';
+          }
+          return;
+        }
+
+        if (addWarning) {
+          addWarning.style.display = 'none';
+        }
+
         if (!surveyFrame.src) {
           surveyFrame.src = surveyFrame.getAttribute('data-src') || '';
         }
