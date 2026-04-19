@@ -20,7 +20,7 @@ class User
     private string $inscriptiondate_user;
     private string $role_user;
 
-    // Constructor
+    
     public function __construct(
         int $id_user,
         string $name_user,
@@ -59,13 +59,13 @@ class User
         $this->role_user = $role_user;
     }
 
-    // Destructor
+   
     public function __destruct()
     {
-        // Cleanup if needed
+       
     }
 
-    // Getters
+    
     public function getIdUser(): int { return $this->id_user; }
     public function getNameUser(): string { return $this->name_user; }
     public function getLastnameUser(): string { return $this->lastname_user; }
@@ -84,7 +84,7 @@ class User
     public function getInscriptiondateUser(): string { return $this->inscriptiondate_user; }
     public function getRoleUser(): string { return $this->role_user; }
 
-    // Setters
+    
     public function setIdUser(int $id_user): void { $this->id_user = $id_user; }
     public function setNameUser(string $name_user): void { $this->name_user = $name_user; }
     public function setLastnameUser(string $lastname_user): void { $this->lastname_user = $lastname_user; }

@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
     } else {
         try {
             $db = config::getConnexion();
-            // Search with case-insensitive email
+            
             $sql = "SELECT id_user, name_user, email_user, password_user FROM user WHERE LOWER(email_user) = :email";
             $query = $db->prepare($sql);
             $query->execute(['email' => $email]);
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
             if (!$user) {
                 $error_message = 'Username or password is false';
             } else {
-                // Compare plain text passwords
+                
                 if ($password === $user['password_user']) {
                     // Password is correct
                     $_SESSION['user_id'] = $user['id_user'];

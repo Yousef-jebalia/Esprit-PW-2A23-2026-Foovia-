@@ -5,7 +5,7 @@ include_once(__DIR__ . '/../Model/user.php');
 
 class Controller_user {
 
-    // ADD USER
+    
     public function add_user(User $user) {
 
         $sql = "INSERT INTO user (
@@ -91,7 +91,6 @@ class Controller_user {
     }
 
 
-    // LIST USERS
     public function list_users() {
 
         $sql = "SELECT * FROM user";
@@ -106,7 +105,6 @@ class Controller_user {
     }
 
 
-    // DELETE USER
     public function delete_user($id) {
 
         $sql = "DELETE FROM user WHERE id_user = :id";
@@ -121,7 +119,7 @@ class Controller_user {
     }
 
 
-    // GET USER
+    
     public function get_user($id) {
 
         $sql = "SELECT * FROM user WHERE id_user = :id";
@@ -137,7 +135,7 @@ class Controller_user {
     }
 
 
-    // UPDATE USER
+    
     public function update_user(User $user, $id) {
 
         $sql = "UPDATE user SET
@@ -189,6 +187,6 @@ class Controller_user {
         }
     }
 
-}  // <-- this was missing, closes the Controller_user class
+}  
 
 ?>

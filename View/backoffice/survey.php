@@ -218,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['survey_submit'])) {
     <script type="text/javascript" src="assets/js/common-pages.js"></script>
 
     <script>
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    
     function showError(fieldId, errorId) {
         const field = document.getElementById(fieldId);
         const error = document.getElementById(errorId);
@@ -234,19 +234,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['survey_submit'])) {
         return true;
     }
 
-    // ── Last name: letters, spaces, hyphens only ──────────────────────────────
+    
     document.getElementById('lastname').addEventListener('input', function () {
-        // Block any character that is not a letter, space or hyphen
+        
         this.value = this.value.replace(/[^a-zA-ZÀ-ÿ\s\-]/g, '');
     });
 
-    // ── Birthday: set max to today so the browser picker blocks future dates ──
+   
     (function () {
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('birthday').setAttribute('max', today);
     })();
 
-    // ── Live validation on blur ───────────────────────────────────────────────
+   
     document.getElementById('lastname').addEventListener('blur', validateLastname);
     document.getElementById('birthday').addEventListener('blur', validateBirthday);
 
@@ -268,7 +268,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['survey_submit'])) {
             : showError('birthday', 'birthday-error');
     }
 
-    // ── BMI auto-calculation ──────────────────────────────────────────────────
+   
     function calcBMI() {
         const height = parseFloat(document.getElementById('height').value);
         const weight = parseFloat(document.getElementById('weight').value);
@@ -280,7 +280,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['survey_submit'])) {
             const bmi = (weight / (heightM * heightM)).toFixed(1);
             bmiField.value = bmi;
 
-            // Show category
+            
             let category = '';
             let color = '';
             if      (bmi < 18.5) { category = 'Underweight'; color = '#3498db'; }
@@ -300,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['survey_submit'])) {
     document.getElementById('height').addEventListener('input', calcBMI);
     document.getElementById('weight').addEventListener('input', calcBMI);
 
-    // ── Block form if validation fails ────────────────────────────────────────
+    
     document.getElementById('surveyForm').addEventListener('submit', function (e) {
         const lastnameOk = validateLastname();
         const birthdayOk = validateBirthday();

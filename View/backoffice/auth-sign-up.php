@@ -224,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
 <script type="text/javascript" src="assets/js/common-pages.js"></script>
 
 <script>
-// ── Helpers ──────────────────────────────────────────────────────────────────
+
 function showError(fieldId, errorId) {
     const field = document.getElementById(fieldId);
     const error = document.getElementById(errorId);
@@ -242,12 +242,12 @@ function showValid(fieldId, errorId) {
     return true;
 }
 
-// ── Phone: allow only digits, max 8 ──────────────────────────────────────────
+
 document.getElementById('phone').addEventListener('input', function () {
     this.value = this.value.replace(/\D/g, '').slice(0, 8);
 });
 
-// ── Live validation on blur ───────────────────────────────────────────────────
+
 document.getElementById('name').addEventListener('blur', validateName);
 document.getElementById('email').addEventListener('blur', validateEmail);
 document.getElementById('phone').addEventListener('blur', validatePhone);
@@ -263,7 +263,7 @@ function validateName() {
 
 function validateEmail() {
     const val = document.getElementById('email').value.trim();
-    // Must end with @gmail.com
+    
     return /^[a-zA-Z0-9._%+\-]+@gmail\.com$/.test(val)
         ? showValid('email', 'email-error')
         : showError('email', 'email-error');
@@ -271,7 +271,7 @@ function validateEmail() {
 
 function validatePhone() {
     const val = document.getElementById('phone').value.trim();
-    // Exactly 8 digits
+    
     return /^\d{8}$/.test(val)
         ? showValid('phone', 'phone-error')
         : showError('phone', 'phone-error');
@@ -292,7 +292,7 @@ function validateConfirm() {
         : showError('confirm-password', 'confirm-password-error');
 }
 
-// ── Form submit: block if any field is invalid ────────────────────────────────
+
 document.getElementById('signupForm').addEventListener('submit', function (e) {
     const nameOk    = validateName();
     const emailOk   = validateEmail();
@@ -314,6 +314,51 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
         e.preventDefault();
     }
 });
+
+// Add an eye icon to toggle password visibility
+function togglePasswordVisibility(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+// Add event listeners for password toggle
+const passwordToggle = document.createElement('i');
+passwordToggle.className = 'fa fa-eye';
+passwordToggle.id = 'password-toggle';
+passwordToggle.style.cursor = 'pointer';
+passwordToggle.style.position = 'absolute';
+passwordToggle.style.right = '10px';
+passwordToggle.style.top = '50%';
+passwordToggle.style.transform = 'translateY(-50%)';
+
+document.getElementById('password').parentNode.style.position = 'relative';
+document.getElementById('password').parentNode.appendChild(passwordToggle);
+
+passwordToggle.addEventListener('click', () => togglePasswordVisibility('password', 'password-toggle'));
+
+const confirmPasswordToggle = document.createElement('i');
+confirmPasswordToggle.className = 'fa fa-eye';
+confirmPasswordToggle.id = 'confirm-password-toggle';
+confirmPasswordToggle.style.cursor = 'pointer';
+confirmPasswordToggle.style.position = 'absolute';
+confirmPasswordToggle.style.right = '10px';
+confirmPasswordToggle.style.top = '50%';
+confirmPasswordToggle.style.transform = 'translateY(-50%)';
+
+document.getElementById('confirm-password').parentNode.style.position = 'relative';
+document.getElementById('confirm-password').parentNode.appendChild(confirmPasswordToggle);
+
+confirmPasswordToggle.addEventListener('click', () => togglePasswordVisibility('confirm-password', 'confirm-password-toggle'));
 </script>
 </body>
 </html>

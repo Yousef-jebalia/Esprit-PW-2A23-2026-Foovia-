@@ -1,6 +1,6 @@
 
 <?php
-//Connection file to project database the database name must be foovia_db
+
 class config
 { 
         private static $pdo = null;
