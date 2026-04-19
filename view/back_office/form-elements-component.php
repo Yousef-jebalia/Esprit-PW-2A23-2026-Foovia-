@@ -84,6 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if ($controller->user_has_goal((int) $user_id)) {
+        $errors[] = "You already have a long-term goal. Delete your existing goal before adding a new one.";
+    }
+
     if (empty($errors) && !empty($data['date_deb_obj'])) {
         $today = new DateTime('today');
         $start_date = new DateTime($data['date_deb_obj']);
