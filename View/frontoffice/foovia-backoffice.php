@@ -10,6 +10,7 @@ session_start();
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="foovia-signin.css">
+<link rel="stylesheet" href="foovia-backoffice.css">
 </head>
 <body>
 
@@ -26,9 +27,9 @@ session_start();
   </div>
 
   <div class="left-pills">
-    <div class="pill"><div class="pill-dot" style="background:var(--yellow)"></div>User and account supervision</div>
-    <div class="pill"><div class="pill-dot" style="background:var(--green)"></div>Dashboard and analytics pages</div>
-    <div class="pill"><div class="pill-dot" style="background:var(--orange)"></div>Backoffice authentication flow</div>
+    <div class="pill"><div class="pill-dot pill-dot-yellow"></div>User and account supervision</div>
+    <div class="pill"><div class="pill-dot pill-dot-green"></div>Dashboard and analytics pages</div>
+    <div class="pill"><div class="pill-dot pill-dot-orange"></div>Backoffice authentication flow</div>
   </div>
 </div>
 

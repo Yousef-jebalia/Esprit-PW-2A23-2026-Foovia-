@@ -1,0 +1,11 @@
+.pill-dot-yellow {
+  background: var(--yellow);
+}
+
+.pill-dot-green {
+  background: var(--green);
+}
+
+.pill-dot-orange {
+  background: var(--orange);
+}
