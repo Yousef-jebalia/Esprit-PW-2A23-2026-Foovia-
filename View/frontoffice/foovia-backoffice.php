@@ -1,5 +1,58 @@
 <?php
 session_start();
+
+include_once(__DIR__ . '/../../model/config.php');
+
+$error_message = '';
+$warning_message = '';
+
+if (!isset($_SESSION['backoffice_tries_left'])) {
+  $_SESSION['backoffice_tries_left'] = 3;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signin_submit'])) {
+  $tries_left = (int) $_SESSION['backoffice_tries_left'];
+  $email = strtolower(trim($_POST['email'] ?? ''));
+  $password = $_POST['password'] ?? '';
+
+  if ($tries_left <= 0) {
+    $error_message = 'Login blocked. You have no tries left in this session.';
+  } elseif (empty($email) || empty($password)) {
+    $error_message = 'Email and password are required.';
+  } else {
+    try {
+      $db = config::getConnexion();
+      $sql = "SELECT id_user, name_user, email_user, password_user FROM user WHERE LOWER(email_user) = :email";
+      $query = $db->prepare($sql);
+      $query->execute(['email' => $email]);
+      $user = $query->fetch();
+
+      if ($user && $password === $user['password_user']) {
+        $_SESSION['user_id'] = $user['id_user'];
+        $_SESSION['user_name'] = $user['name_user'];
+        $_SESSION['user_email'] = $user['email_user'];
+        $_SESSION['backoffice_tries_left'] = 3;
+
+        header('Location: ../backoffice/accordion.html');
+        exit;
+      }
+
+      $_SESSION['backoffice_tries_left'] = max(0, $tries_left - 1);
+      $tries_left = (int) $_SESSION['backoffice_tries_left'];
+
+      if ($tries_left > 0) {
+        $warning_message = 'Username or password is false. You only have ' . $tries_left . ' ' . ($tries_left === 1 ? 'try' : 'tries') . ' left.';
+      } else {
+        $error_message = 'Username or password is false. You have no tries left in this session.';
+      }
+    } catch (Exception $e) {
+      $error_message = 'An error occurred while signing in.';
+    }
+  }
+}
+
+$tries_left = (int) $_SESSION['backoffice_tries_left'];
+$is_locked = $tries_left <= 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,14 +89,28 @@ session_start();
 <div class="right-panel">
   <p class="form-eyebrow">Admin area</p>
   <h1 class="form-title">Sign in to<br>Backoffice</h1>
-  <p class="form-sub">Need an admin account? <a href="../backoffice/auth-sign-up.php">Create one now</a></p>
+  <p class="form-sub">Need an admin account? <a href="../backoffice/foovia-signup.php">Create one now</a></p>
 
-  <form method="POST" action="../backoffice/auth-normal-sign-in.php" id="backofficeForm">
+  <?php if (!empty($warning_message)): ?>
+    <div class="backoffice-alert backoffice-alert-warning"><?php echo htmlspecialchars($warning_message); ?></div>
+  <?php endif; ?>
+
+  <?php if (!empty($error_message)): ?>
+    <div class="backoffice-alert backoffice-alert-error"><?php echo htmlspecialchars($error_message); ?></div>
+  <?php endif; ?>
+
+  <?php if ($tries_left > 0): ?>
+    <p class="tries-note">Security notice: you have <?php echo $tries_left; ?> <?php echo $tries_left === 1 ? 'try' : 'tries'; ?> left.</p>
+  <?php else: ?>
+    <p class="tries-note tries-note-locked">Security notice: your 3 tries are used. Login is blocked for this session.</p>
+  <?php endif; ?>
+
+  <form method="POST" action="" id="backofficeForm">
     <div class="field-group">
       <div class="field">
         <label for="email">Email address</label>
         <div class="field-wrap">
-          <input type="email" id="email" name="email" placeholder="admin@example.com" autocomplete="email" required/>
+          <input type="email" id="email" name="email" placeholder="admin@example.com" autocomplete="email" required <?php echo $is_locked ? 'disabled' : ''; ?>/>
           <span class="field-icon">@</span>
         </div>
         <span class="field-error" id="err-email">Please enter a valid email address.</span>
@@ -52,8 +119,8 @@ session_start();
       <div class="field">
         <label for="password">Password</label>
         <div class="field-wrap">
-          <input type="password" id="password" name="password" placeholder="Your password" autocomplete="current-password" required/>
-          <button class="toggle-pw" type="button" onclick="togglePw('password', this)">Show</button>
+          <input type="password" id="password" name="password" placeholder="Your password" autocomplete="current-password" required <?php echo $is_locked ? 'disabled' : ''; ?>/>
+          <button class="toggle-pw" type="button" onclick="togglePw('password', this)" <?php echo $is_locked ? 'disabled' : ''; ?>>Show</button>
         </div>
         <span class="field-error" id="err-password">Password cannot be empty.</span>
       </div>
@@ -61,7 +128,7 @@ session_start();
 
     <div class="forgot-row"><a href="../backoffice/auth-reset-password.html">Forgot your password?</a></div>
 
-    <button type="submit" name="signin_submit" class="btn-submit">Continue to Backoffice</button>
+    <button type="submit" name="signin_submit" class="btn-submit" <?php echo $is_locked ? 'disabled' : ''; ?>>Continue to Backoffice</button>
   </form>
 
   <div class="divider">
@@ -71,8 +138,8 @@ session_start();
   </div>
 
   <div class="social-btns">
-    <a class="social-btn" href="../backoffice/auth-normal-sign-in.php">Sign in page</a>
-    <a class="social-btn" href="../backoffice/auth-sign-up.php">Sign up page</a>
+    <a class="social-btn" href="../frontoffice/foovia-signin.php">Sign in page</a>
+    <a class="social-btn" href="../backoffice/foovia-signup.php">Sign up page</a>
   </div>
 </div>
 
