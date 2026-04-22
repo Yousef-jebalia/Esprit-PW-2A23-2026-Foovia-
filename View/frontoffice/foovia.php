@@ -29,7 +29,7 @@ $user_name = $_SESSION['user_name'] ?? '';
     <li><a href="#community">Community</a></li>
   </ul>
   <div class="nav-actions">
-    <a href="backoffice.html" class="nav-btn nav-backoffice">Backoffice</a>
+    <a href="foovia-backoffice.php" class="nav-btn nav-backoffice">Backoffice</a>
     <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
       <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="4"></circle>
