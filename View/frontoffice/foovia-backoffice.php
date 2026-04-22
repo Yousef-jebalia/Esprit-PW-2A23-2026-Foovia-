@@ -6,37 +6,47 @@ include_once(__DIR__ . '/../../model/config.php');
 $error_message = '';
 $warning_message = '';
 
+/*
 if (!isset($_SESSION['backoffice_tries_left'])) {
   $_SESSION['backoffice_tries_left'] = 3;
 }
+*/
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signin_submit'])) {
-  $tries_left = (int) $_SESSION['backoffice_tries_left'];
+  // $tries_left = (int) $_SESSION['backoffice_tries_left']; // tries system paused for now
   $email = strtolower(trim($_POST['email'] ?? ''));
   $password = $_POST['password'] ?? '';
 
-  if ($tries_left <= 0) {
-    $error_message = 'Login blocked. You have no tries left in this session.';
-  } elseif (empty($email) || empty($password)) {
+  if (empty($email) || empty($password)) {
     $error_message = 'Email and password are required.';
   } else {
     try {
       $db = config::getConnexion();
-      $sql = "SELECT id_user, name_user, email_user, password_user FROM user WHERE LOWER(email_user) = :email";
+      $sql = "SELECT id_user, name_user, email_user, password_user, role_user FROM user WHERE LOWER(email_user) = :email";
       $query = $db->prepare($sql);
       $query->execute(['email' => $email]);
       $user = $query->fetch();
 
       if ($user && $password === $user['password_user']) {
-        $_SESSION['user_id'] = $user['id_user'];
-        $_SESSION['user_name'] = $user['name_user'];
-        $_SESSION['user_email'] = $user['email_user'];
-        $_SESSION['backoffice_tries_left'] = 3;
+        $role = strtolower(trim($user['role_user'] ?? ''));
 
-        header('Location: ../backoffice/accordion.html');
-        exit;
+        if ($role === 'admin') {
+          $_SESSION['user_id'] = $user['id_user'];
+          $_SESSION['user_name'] = $user['name_user'];
+          $_SESSION['user_email'] = $user['email_user'];
+          $_SESSION['user_role'] = $user['role_user'];
+          // $_SESSION['backoffice_tries_left'] = 3; // tries system paused for now
+
+          header('Location: ../backoffice/backoffice_work.php');
+          exit;
+        }
+
+        $error_message = 'Access denied. This area is for admin users only.';
+      } else {
+        $error_message = 'Username or password is false.';
       }
 
+      /*
       $_SESSION['backoffice_tries_left'] = max(0, $tries_left - 1);
       $tries_left = (int) $_SESSION['backoffice_tries_left'];
 
@@ -45,14 +55,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signin_submit'])) {
       } else {
         $error_message = 'Username or password is false. You have no tries left in this session.';
       }
+      */
     } catch (Exception $e) {
       $error_message = 'An error occurred while signing in.';
     }
   }
 }
 
-$tries_left = (int) $_SESSION['backoffice_tries_left'];
-$is_locked = $tries_left <= 0;
+$tries_left = 3;
+$is_locked = false;
+// $tries_left = (int) $_SESSION['backoffice_tries_left']; // tries system paused for now
+// $is_locked = $tries_left <= 0; // tries system paused for now
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -99,11 +112,11 @@ $is_locked = $tries_left <= 0;
     <div class="backoffice-alert backoffice-alert-error"><?php echo htmlspecialchars($error_message); ?></div>
   <?php endif; ?>
 
-  <?php if ($tries_left > 0): ?>
+  <?php /* if ($tries_left > 0): ?>
     <p class="tries-note">Security notice: you have <?php echo $tries_left; ?> <?php echo $tries_left === 1 ? 'try' : 'tries'; ?> left.</p>
   <?php else: ?>
     <p class="tries-note tries-note-locked">Security notice: your 3 tries are used. Login is blocked for this session.</p>
-  <?php endif; ?>
+  <?php endif; */ ?>
 
   <form method="POST" action="" id="backofficeForm">
     <div class="field-group">
