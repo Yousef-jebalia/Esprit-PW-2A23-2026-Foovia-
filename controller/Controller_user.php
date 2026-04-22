@@ -104,6 +104,10 @@ class Controller_user {
         }
     }
 
+    public function listusers() {
+        return $this->list_users();
+    }
+
 
     public function delete_user($id) {
 
