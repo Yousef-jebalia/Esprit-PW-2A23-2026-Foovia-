@@ -1,9 +1,17 @@
 <?php
 session_start();
 include_once(__DIR__ . '/../../model/config.php');
+require_once __DIR__ . '/google-config.php';
+
+$googleLoginUrl = $client->createAuthUrl();
 
 $error_message = '';
 $success_message = '';
+
+if (isset($_SESSION['error_message'])) {
+    $error_message = $_SESSION['error_message'];
+    unset($_SESSION['error_message']);
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
     $email = strtolower(trim($_POST['email'] ?? ''));
@@ -125,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
     </div>
   </div>
 
-  <div class="forgot-row"><a href="#">Forgot your password?</a></div>
+  <div class="forgot-row"><a href="forgot-password.php">Forgot your password?</a></div>
 
   <button type="submit" name="signin_submit" class="btn-submit">Sign in to my account</button>
   </form>
@@ -137,10 +145,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
   </div>
 
   <div class="social-btns">
-    <button class="social-btn">
+    <a href="<?php echo htmlspecialchars($googleLoginUrl); ?>" class="social-btn" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; justify-content: center;">
       <span class="social-icon">G</span> Google
-    </button>
-    <button class="social-btn">
+    </a>
+    <button type="button" class="social-btn">
       <span class="social-icon">f</span> Facebook
     </button>
     <button class="social-btn">
