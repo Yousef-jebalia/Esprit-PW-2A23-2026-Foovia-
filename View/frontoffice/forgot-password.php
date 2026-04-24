@@ -1,6 +1,7 @@
 <?php
 session_start();
 include_once(__DIR__ . '/../../model/config.php');
+include_once(__DIR__ . '/../../controller/Controller_user.php');
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -16,23 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['forgot_submit'])) {
         $error_message = 'Please enter your email address.';
     } else {
         try {
-            $db = config::getConnexion();
-            $sql = "SELECT id_user, name_user FROM user WHERE LOWER(email_user) = :email";
-            $query = $db->prepare($sql);
-            $query->execute(['email' => $email]);
-            $user = $query->fetch();
+            $controller = new Controller_user();
+            $user = $controller->get_user_by_email($email);
 
             if ($user) {
                 $token = bin2hex(random_bytes(32));
                 $expires_at = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
-                $updateSql = "UPDATE user SET reset_token = :token, reset_token_expires_at = :expires_at WHERE id_user = :id_user";
-                $updateQuery = $db->prepare($updateSql);
-                $updateQuery->execute([
-                    'token' => $token,
-                    'expires_at' => $expires_at,
-                    'id_user' => $user['id_user']
-                ]);
+                $controller->set_user_reset_token((int)$user['id_user'], $token, $expires_at);
 
                 // Send email
                 $mail = new PHPMailer(true);

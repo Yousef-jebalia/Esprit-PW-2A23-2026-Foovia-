@@ -1,6 +1,7 @@
 <?php
 session_start();
 include_once(__DIR__ . '/../../model/config.php');
+include_once(__DIR__ . '/../../controller/Controller_user.php');
 
 $error_message = '';
 $success_message = '';
@@ -13,11 +14,8 @@ $token = $_GET['token'] ?? $_POST['token'];
 $first_login = isset($_GET['first_login']) || isset($_POST['first_login']);
 
 try {
-    $db = config::getConnexion();
-    $sql = "SELECT id_user, name_user, email_user, reset_token_expires_at FROM user WHERE reset_token = :token";
-    $query = $db->prepare($sql);
-    $query->execute(['token' => $token]);
-    $user = $query->fetch();
+    $controller = new Controller_user();
+    $user = $controller->get_user_by_token($token);
 
     if (!$user) {
         $error_message = 'Invalid or expired token.';
@@ -39,13 +37,8 @@ try {
         } elseif (strlen($password) < 6) {
             $error_message = 'Password must be at least 6 characters long.';
         } else {
-            // Update password and clear token
-            $updateSql = "UPDATE user SET password_user = :password, reset_token = NULL, reset_token_expires_at = NULL WHERE id_user = :id_user";
-            $updateQuery = $db->prepare($updateSql);
-            $updateQuery->execute([
-                'password' => $password, // using plaintext password for now based on login logic seen earlier
-                'id_user' => $user['id_user']
-            ]);
+            // Update password and clear token via Controller
+            $controller->update_user_password_by_token((int)$user['id_user'], $password);
 
             if ($first_login) {
                 // Log them in immediately

@@ -4,6 +4,7 @@ session_start();
 include_once(__DIR__ . '/../../controller/Controller_user.php');
 
 $controller = new Controller_user();
+$controller->release_expired_bans();
 $users = [];
 $searchTerm = trim($_GET['q'] ?? '');
 $genderFilter = trim($_GET['gender'] ?? '');
@@ -383,9 +384,10 @@ if (!empty($users)) {
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      grid-template-columns: repeat(2, minmax(320px, 1fr));
       gap: 14px;
       margin-top: 14px;
+      align-items: stretch;
     }
 
     .stats-card {
@@ -393,6 +395,9 @@ if (!empty($users)) {
       border-radius: 12px;
       background: #fff;
       padding: 14px;
+      display: flex;
+      flex-direction: column;
+      min-height: 360px;
     }
 
     .stats-card h3 {
@@ -401,6 +406,19 @@ if (!empty($users)) {
       color: #12393f;
       font-family: 'Boldonse', sans-serif;
       letter-spacing: 0.03em;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 300px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .chart-wrap canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
     }
 
     .stats-mini {
@@ -571,6 +589,10 @@ if (!empty($users)) {
       }
       body {
         padding: 14px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -757,7 +779,9 @@ if (!empty($users)) {
             <div class="stats-card">
               <h3>Top users by login count</h3>
               <?php if (!empty($statsTopUsers)): ?>
-                <canvas id="topUsersChart" height="180"></canvas>
+                <div class="chart-wrap">
+                  <canvas id="topUsersChart"></canvas>
+                </div>
               <?php else: ?>
                 <div class="empty">No statistics available for this role.</div>
               <?php endif; ?>
@@ -766,7 +790,9 @@ if (!empty($users)) {
             <div class="stats-card">
               <h3>Role distribution by total logins</h3>
               <?php if (!empty($statsRoleDistribution)): ?>
-                <canvas id="rolesChart" height="180"></canvas>
+                <div class="chart-wrap">
+                  <canvas id="rolesChart"></canvas>
+                </div>
               <?php else: ?>
                 <div class="empty">No role-based data available.</div>
               <?php endif; ?>

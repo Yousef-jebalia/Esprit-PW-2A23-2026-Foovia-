@@ -1,7 +1,7 @@
 <?php
 session_start();
-
 include_once(__DIR__ . '/../../model/config.php');
+include_once(__DIR__ . '/../../controller/Controller_user.php');
 
 $error_message = '';
 $warning_message = '';
@@ -21,11 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signin_submit'])) {
     $error_message = 'Email and password are required.';
   } else {
     try {
-      $db = config::getConnexion();
-      $sql = "SELECT id_user, name_user, email_user, password_user, role_user FROM user WHERE LOWER(email_user) = :email";
-      $query = $db->prepare($sql);
-      $query->execute(['email' => $email]);
-      $user = $query->fetch();
+      $controller = new Controller_user();
+      $user = $controller->get_user_by_email($email);
 
       if ($user && $password === $user['password_user']) {
         $role = strtolower(trim($user['role_user'] ?? ''));
@@ -139,7 +136,7 @@ $is_locked = false;
       </div>
     </div>
 
-    <div class="forgot-row"><a href="../backoffice/auth-reset-password.html">Forgot your password?</a></div>
+    <div class="forgot-row"><a href="foovia-backoffice-forgot-password.php">Forgot your password?</a></div>
 
     <button type="submit" name="signin_submit" class="btn-submit" <?php echo $is_locked ? 'disabled' : ''; ?>>Continue to Backoffice</button>
   </form>

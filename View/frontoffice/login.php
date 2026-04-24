@@ -6,6 +6,7 @@ include_once(__DIR__ . '/../../controller/Controller_user.php');
 $error_message = '';
 $success_message = '';
 $controller = new Controller_user();
+$controller->release_expired_bans();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
     $email = strtolower(trim($_POST['email'] ?? ''));

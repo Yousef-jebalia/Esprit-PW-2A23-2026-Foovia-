@@ -3,11 +3,16 @@ session_start();
 include_once(__DIR__ . '/../../model/config.php');
 include_once(__DIR__ . '/../../controller/Controller_user.php');
 require_once __DIR__ . '/google-config.php';
+require_once __DIR__ . '/facebook-config.php';
 
 $googleLoginUrl = $client->createAuthUrl();
+// $fb_login_url is already provided by facebook-config.php
 
 $error_message = '';
 $success_message = '';
+
+$controller = new Controller_user();
+$controller->release_expired_bans();
 
 if (isset($_SESSION['error_message'])) {
     $error_message = $_SESSION['error_message'];
@@ -15,7 +20,6 @@ if (isset($_SESSION['error_message'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
-  $controller = new Controller_user();
     $email = strtolower(trim($_POST['email'] ?? ''));
     $password = $_POST['password'] ?? '';
 
@@ -23,12 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
         $error_message = 'Email and password are required.';
     } else {
         try {
-            $db = config::getConnexion();
-            
-            $sql = "SELECT id_user, name_user, email_user, password_user, account_state_user, duration_user, ban_until_user FROM user WHERE LOWER(email_user) = :email";
-            $query = $db->prepare($sql);
-            $query->execute(['email' => $email]);
-            $user = $query->fetch();
+            $user = $controller->get_user_by_email($email);
 
             if (!$user) {
                 $error_message = 'Username or password is false';
@@ -86,6 +85,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
     <h2>Welcome back!</h2>
     <p>You've signed in successfully. Let's get back to crushing your goals.</p>
     <a href="foovia.php" class="btn-go">Go to my tracker →</a>
+  </div>
+</div>
+
+<!-- WhatsApp Login Modal -->
+<div id="wa-modal" class="wa-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:var(--panel-bg, #fff); padding:30px; border-radius:16px; width:100%; max-width:400px; text-align:center;">
+    <h2 style="font-family:'Syne', sans-serif; margin-bottom:10px;">WhatsApp Login</h2>
+    
+    <div id="wa-step-1">
+      <p style="margin-bottom:20px; color:var(--page-muted, #666);">Enter your phone number to receive a secure login code.</p>
+      <input type="text" id="wa-phone" placeholder="+1234567890" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; margin-bottom:20px; font-size:16px;">
+      <button onclick="requestWaCode()" style="width:100%; padding:12px; background:#25D366; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Send Code via WhatsApp</button>
+    </div>
+
+    <div id="wa-step-2" style="display:none;">
+      <p style="margin-bottom:20px; color:var(--page-muted, #666);">We've sent a 4-digit code to your WhatsApp. Please enter it below.</p>
+      <input type="text" id="wa-code" placeholder="0000" maxlength="4" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; margin-bottom:20px; font-size:24px; text-align:center; letter-spacing:4px;">
+      <button onclick="verifyWaCode()" style="width:100%; padding:12px; background:#25D366; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Verify Code</button>
+    </div>
+
+    <button onclick="document.getElementById('wa-modal').style.display='none'" style="margin-top:20px; background:none; border:none; color:#888; cursor:pointer; text-decoration:underline;">Cancel</button>
   </div>
 </div>
 
@@ -165,11 +185,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
     <a href="<?php echo htmlspecialchars($googleLoginUrl); ?>" class="social-btn" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; justify-content: center;">
       <span class="social-icon">G</span> Google
     </a>
-    <button type="button" class="social-btn">
-      <span class="social-icon">f</span> Facebook
-    </button>
-    <button class="social-btn">
-      <span class="social-icon">🍎</span> Apple
+    <a href="<?php echo htmlspecialchars($fb_login_url); ?>" class="social-btn" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center; justify-content: center;">
+      <span class="social-icon" style="color:#1877F2; font-weight:bold;">f</span> Facebook
+    </a>
+    <button type="button" class="social-btn" onclick="document.getElementById('wa-modal').style.display='flex'">
+      <span class="social-icon" style="color:#25D366;">💬</span> WhatsApp
     </button>
   </div>
 </div>
@@ -210,6 +230,49 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('success-overlay').classList.add('show');
 });
 <?php endif; ?>
+
+// WhatsApp Flow JS
+function requestWaCode() {
+  const phone = document.getElementById('wa-phone').value;
+  if(!phone) { alert("Please enter a phone number"); return; }
+  
+  fetch('whatsapp-request.php', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone: phone })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success) {
+      document.getElementById('wa-step-1').style.display = 'none';
+      document.getElementById('wa-step-2').style.display = 'block';
+      // Real mode: Code has been sent to WhatsApp
+    } else {
+      alert("Error: " + data.message);
+    }
+  });
+}
+
+function verifyWaCode() {
+  const code = document.getElementById('wa-code').value;
+  if(code.length !== 4) { alert("Please enter the 4-digit code"); return; }
+  
+  fetch('whatsapp-verify.php', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code: code })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success) {
+      window.location.href = data.redirect;
+    } else {
+      alert(data.message);
+    }
+  });
+}
 </script>
 </body>
 </html>

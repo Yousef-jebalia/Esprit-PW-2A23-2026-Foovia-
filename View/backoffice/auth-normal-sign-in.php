@@ -6,6 +6,7 @@ include_once(__DIR__ . '/../../controller/Controller_user.php');
 $error_message = '';
 $success_message = '';
 $controller = new Controller_user();
+$controller->release_expired_bans();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
     $email = strtolower(trim($_POST['email'] ?? ''));
@@ -188,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
                                                 </label>
                                             </div>
                                             <div class="forgot-phone text-right f-right">
-                                                <a href="auth-reset-password.html" class="text-right f-w-600"> Forgot Password?</a>
+                                                <a href="auth-forgot-password.php" class="text-right f-w-600"> Forgot Password?</a>
                                             </div>
                                         </div>
                                     </div>

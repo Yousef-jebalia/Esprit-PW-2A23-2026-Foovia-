@@ -120,6 +120,28 @@ class Controller_user {
         return $this->list_users();
     }
 
+    public function release_expired_bans(): int {
+
+        $sql = "UPDATE user
+                SET account_state_user = 'active',
+                    duration_user = '00:00:00',
+                    ban_until_user = NULL,
+                    failed_attempts_user = 0
+                WHERE account_state_user = 'banned'
+                  AND ban_until_user IS NOT NULL
+                  AND ban_until_user <= NOW()";
+        $db = config::getConnexion();
+
+        try {
+            $query = $db->prepare($sql);
+            $query->execute();
+            return $query->rowCount();
+        } catch (Exception $e) {
+            error_log('Error releasing expired bans: ' . $e->getMessage());
+            return 0;
+        }
+    }
+
     public function increment_user_login_count(int $userId): bool {
 
         $sql = "UPDATE user
@@ -285,6 +307,8 @@ class Controller_user {
     }
 
     public function process_ban_countdown(int $userId): array {
+
+        $this->release_expired_bans();
 
         $sql = "SELECT id_user, account_state_user, duration_user, ban_until_user
                 FROM user
@@ -513,6 +537,63 @@ class Controller_user {
 
         } catch (Exception $e) {
             echo 'Error: ' . $e->getMessage();
+        }
+    }
+
+    public function get_user_by_email(string $email) {
+        $sql = "SELECT id_user, name_user, email_user, password_user, account_state_user, duration_user, ban_until_user, role_user FROM user WHERE LOWER(email_user) = :email";
+        $db = config::getConnexion();
+        try {
+            $query = $db->prepare($sql);
+            $query->execute(['email' => strtolower(trim($email))]);
+            return $query->fetch();
+        } catch (Exception $e) {
+            error_log('Error getting user by email: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function set_user_reset_token(int $id_user, string $token, string $expires_at): bool {
+        $sql = "UPDATE user SET reset_token = :token, reset_token_expires_at = :expires_at WHERE id_user = :id_user";
+        $db = config::getConnexion();
+        try {
+            $query = $db->prepare($sql);
+            return $query->execute([
+                'token' => $token,
+                'expires_at' => $expires_at,
+                'id_user' => $id_user
+            ]);
+        } catch (Exception $e) {
+            error_log('Error setting reset token: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function get_user_by_token(string $token) {
+        $sql = "SELECT id_user, name_user, email_user, reset_token_expires_at FROM user WHERE reset_token = :token";
+        $db = config::getConnexion();
+        try {
+            $query = $db->prepare($sql);
+            $query->execute(['token' => $token]);
+            return $query->fetch();
+        } catch (Exception $e) {
+            error_log('Error getting user by token: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function update_user_password_by_token(int $id_user, string $password): bool {
+        $sql = "UPDATE user SET password_user = :password, reset_token = NULL, reset_token_expires_at = NULL WHERE id_user = :id_user";
+        $db = config::getConnexion();
+        try {
+            $query = $db->prepare($sql);
+            return $query->execute([
+                'password' => $password,
+                'id_user' => $id_user
+            ]);
+        } catch (Exception $e) {
+            error_log('Error updating password by token: ' . $e->getMessage());
+            return false;
         }
     }
 
