@@ -1333,7 +1333,7 @@ ksort($categories);
             const formData = new FormData();
             formData.append('image', file, file.name || 'ingredient.jpg');
 
-            const response = await fetch('analyze_ingredients.php', {
+            const response = await fetch('../../../controle/analyze_ingredients.php', {
               method: 'POST',
               body: formData
             });

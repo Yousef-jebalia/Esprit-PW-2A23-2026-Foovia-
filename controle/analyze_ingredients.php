@@ -42,14 +42,43 @@ if (strpos($mimeType, 'image/') !== 0) {
   exit;
 }
 
-$apiKey = getenv('GEMINI_API_KEY');
-if (!$apiKey) {
-  $apiKey = 'AIzaSyCphw4mEnqBDG9nz03M8USZG99QGQqxkRw';
+$apiKey = trim((string)getenv('GEMINI_API_KEY'));
+if ($apiKey === '' && isset($_SERVER['GEMINI_API_KEY'])) {
+  $apiKey = trim((string)$_SERVER['GEMINI_API_KEY']);
+}
+if ($apiKey === '' && isset($_ENV['GEMINI_API_KEY'])) {
+  $apiKey = trim((string)$_ENV['GEMINI_API_KEY']);
+}
+if ($apiKey === '' && isset($_SERVER['REDIRECT_GEMINI_API_KEY'])) {
+  $apiKey = trim((string)$_SERVER['REDIRECT_GEMINI_API_KEY']);
+}
+if ($apiKey === '' && function_exists('apache_getenv')) {
+  $apacheEnvLocal = apache_getenv('GEMINI_API_KEY');
+  if ($apacheEnvLocal !== false && trim((string)$apacheEnvLocal) !== '') {
+    $apiKey = trim((string)$apacheEnvLocal);
+  }
+}
+if ($apiKey === '' && function_exists('apache_getenv')) {
+  $apacheEnvTop = apache_getenv('GEMINI_API_KEY', true);
+  if ($apacheEnvTop !== false && trim((string)$apacheEnvTop) !== '') {
+    $apiKey = trim((string)$apacheEnvTop);
+  }
+}
+
+// XAMPP fallback: read key from a local file outside the project repo.
+if ($apiKey === '') {
+  $localKeyPath = 'C:/xampp/apache/conf/gemini_api_key.txt';
+  if (is_readable($localKeyPath)) {
+    $fileKey = trim((string)@file_get_contents($localKeyPath));
+    if ($fileKey !== '') {
+      $apiKey = $fileKey;
+    }
+  }
 }
 
 if (!$apiKey) {
   http_response_code(500);
-  echo json_encode(['error' => 'Gemini API key is missing']);
+  echo json_encode(['error' => 'Gemini API key is missing on server. Set GEMINI_API_KEY or create C:/xampp/apache/conf/gemini_api_key.txt']);
   exit;
 }
 
