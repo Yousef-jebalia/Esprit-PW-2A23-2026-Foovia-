@@ -1,9 +1,11 @@
 <?php
 session_start();
 include_once(__DIR__ . '/../../model/config.php');
+include_once(__DIR__ . '/../../controller/Controller_user.php');
 
 $error_message = '';
 $success_message = '';
+$controller = new Controller_user();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
     $email = strtolower(trim($_POST['email'] ?? ''));
@@ -25,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
             } else {
                 
                 if ($password === $user['password_user']) {
+                    $controller->increment_user_login_count((int) $user['id_user']);
                     // Password is correct
                     $_SESSION['user_id'] = $user['id_user'];
                     $_SESSION['user_name'] = $user['name_user'];

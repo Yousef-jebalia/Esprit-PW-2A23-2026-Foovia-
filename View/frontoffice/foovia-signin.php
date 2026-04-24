@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
               } else {
                 
                 if ($password === $user['password_user']) {
+                  $controller->increment_user_login_count((int) $user['id_user']);
                   $controller->reset_failed_login_attempts((int) $user['id_user']);
 
                   // Password is correct

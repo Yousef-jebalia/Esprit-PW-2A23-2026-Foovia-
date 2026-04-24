@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include_once(__DIR__ . '/../../model/config.php');
+include_once(__DIR__ . '/../../controller/Controller_user.php');
 
 if (isset($_GET['code'])) {
   $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
@@ -26,6 +27,7 @@ if (isset($_GET['code'])) {
     
     try {
         $db = config::getConnexion();
+        $controller = new Controller_user();
         $sql = "SELECT id_user, name_user, email_user FROM user WHERE LOWER(email_user) = :email";
         $query = $db->prepare($sql);
         $query->execute(['email' => strtolower($email)]);
@@ -58,6 +60,7 @@ if (isset($_GET['code'])) {
             header("Location: reset-password.php?token=" . $token . "&first_login=1");
             exit;
         } else {
+            $controller->increment_user_login_count((int) $user['id_user']);
             $_SESSION['user_id'] = $user['id_user'];
             $_SESSION['user_name'] = $user['name_user'];
             $_SESSION['user_email'] = $user['email_user'];

@@ -14,6 +14,30 @@ $totalPages = 1;
 $successMessage = '';
 $errorMessage = '';
 $editUser = null;
+$showStatistics = ($_GET['view'] ?? '') === 'statistics';
+$statsRole = trim($_GET['stats_role'] ?? '');
+$statsChart = trim($_GET['stats_chart'] ?? 'diagram');
+$statsTopUsers = [];
+$statsRoleDistribution = [];
+$availableRoles = [];
+
+if (!in_array($statsChart, ['diagram', 'slices'], true)) {
+  $statsChart = 'diagram';
+}
+
+if ($showStatistics) {
+  try {
+    $availableRoles = $controller->get_available_roles();
+    if ($statsRole !== '' && !in_array($statsRole, $availableRoles, true)) {
+      $statsRole = '';
+    }
+
+    $statsTopUsers = $controller->get_top_logged_users(10, $statsRole);
+    $statsRoleDistribution = $controller->get_login_role_distribution();
+  } catch (Exception $e) {
+    $errorMessage = 'Unable to load global statistics.';
+  }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $action = $_POST['action'] ?? '';
@@ -236,7 +260,8 @@ if (!empty($users)) {
     .btn-ghost,
     .btn-save,
     .btn-delete,
-    .btn-edit {
+    .btn-edit,
+    .btn-stats {
       border: 1px solid transparent;
       border-radius: 999px;
       padding: 8px 14px;
@@ -253,6 +278,11 @@ if (!empty($users)) {
     .btn-save,
     .btn-edit {
       background: var(--green);
+      color: #fff;
+    }
+
+    .btn-stats {
+      background: #1f6f78;
       color: #fff;
     }
 
@@ -310,6 +340,90 @@ if (!empty($users)) {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+    }
+
+    .stats-box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #f3fbff;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .stats-box h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: #12434a;
+      font-family: 'Boldonse', sans-serif;
+      letter-spacing: 0.03em;
+    }
+
+    .stats-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #0f2f34;
+    }
+
+    .stats-toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      align-items: center;
+    }
+
+    .stats-toolbar select {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+      background: #fff;
+      min-width: 190px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .stats-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .stats-card h3 {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      color: #12393f;
+      font-family: 'Boldonse', sans-serif;
+      letter-spacing: 0.03em;
+    }
+
+    .stats-mini {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin: 10px 0 2px;
+    }
+
+    .stats-mini div {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .stats-mini strong {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #567177;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
     }
 
     .empty {
@@ -379,8 +493,17 @@ if (!empty($users)) {
 
     .top-actions {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
       margin-bottom: 14px;
+    }
+
+    .top-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .back-link {
@@ -461,6 +584,25 @@ if (!empty($users)) {
 
     <div class="content">
       <div class="top-actions">
+        <div class="top-actions-group">
+          <a href="tabs.php?<?php
+            $statsViewParams = ['view' => 'statistics'];
+            if ($searchTerm !== '') { $statsViewParams['q'] = $searchTerm; }
+            if ($genderFilter !== '') { $statsViewParams['gender'] = $genderFilter; }
+            if ($currentPage > 1) { $statsViewParams['page'] = $currentPage; }
+            echo htmlspecialchars(http_build_query($statsViewParams));
+          ?>" class="btn-stats">Statistics</a>
+
+          <?php if ($showStatistics): ?>
+            <a href="tabs.php?<?php
+              $usersViewParams = [];
+              if ($searchTerm !== '') { $usersViewParams['q'] = $searchTerm; }
+              if ($genderFilter !== '') { $usersViewParams['gender'] = $genderFilter; }
+              if ($currentPage > 1) { $usersViewParams['page'] = $currentPage; }
+              echo htmlspecialchars(http_build_query($usersViewParams));
+            ?>" class="btn-ghost">Users list</a>
+          <?php endif; ?>
+        </div>
         <a href="backoffice_work.php" class="back-link">Back to Backoffice</a>
       </div>
 
@@ -554,6 +696,85 @@ if (!empty($users)) {
         <div class="notice"><?php echo htmlspecialchars($errorMessage); ?></div>
       <?php endif; ?>
 
+      <?php if ($showStatistics): ?>
+        <div class="stats-box">
+          <h2>Global Statistics</h2>
+
+          <form method="GET" class="stats-toolbar">
+            <input type="hidden" name="view" value="statistics">
+            <?php if ($searchTerm !== ''): ?>
+              <input type="hidden" name="q" value="<?php echo htmlspecialchars($searchTerm); ?>">
+            <?php endif; ?>
+            <?php if ($genderFilter !== ''): ?>
+              <input type="hidden" name="gender" value="<?php echo htmlspecialchars($genderFilter); ?>">
+            <?php endif; ?>
+
+            <select name="stats_role" aria-label="Filter statistics by role">
+              <option value="">All roles</option>
+              <?php foreach ($availableRoles as $role): ?>
+                <option value="<?php echo htmlspecialchars($role); ?>" <?php echo $statsRole === $role ? 'selected' : ''; ?>>
+                  <?php echo htmlspecialchars($role); ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+
+            <select name="stats_chart" aria-label="Chart type">
+              <option value="diagram" <?php echo $statsChart === 'diagram' ? 'selected' : ''; ?>>Diagram</option>
+              <option value="slices" <?php echo $statsChart === 'slices' ? 'selected' : ''; ?>>Slices</option>
+            </select>
+
+            <button class="btn-edit" type="submit">Apply statistics view</button>
+          </form>
+
+          <?php
+            $topUser = $statsTopUsers[0] ?? null;
+            $totalLogins = 0;
+            foreach ($statsTopUsers as $topRow) {
+              $totalLogins += (int) ($topRow['login_count_user'] ?? 0);
+            }
+          ?>
+
+          <div class="stats-mini">
+            <div>
+              <strong>Role filter</strong>
+              <?php echo htmlspecialchars($statsRole !== '' ? $statsRole : 'All roles'); ?>
+            </div>
+            <div>
+              <strong>Total logins in top</strong>
+              <?php echo htmlspecialchars((string) $totalLogins); ?>
+            </div>
+            <div>
+              <strong>Most active user</strong>
+              <?php echo htmlspecialchars((string) ($topUser['name_user'] ?? 'No data')); ?>
+            </div>
+            <div>
+              <strong>Highest login count</strong>
+              <?php echo htmlspecialchars((string) ($topUser['login_count_user'] ?? 0)); ?>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stats-card">
+              <h3>Top users by login count</h3>
+              <?php if (!empty($statsTopUsers)): ?>
+                <canvas id="topUsersChart" height="180"></canvas>
+              <?php else: ?>
+                <div class="empty">No statistics available for this role.</div>
+              <?php endif; ?>
+            </div>
+
+            <div class="stats-card">
+              <h3>Role distribution by total logins</h3>
+              <?php if (!empty($statsRoleDistribution)): ?>
+                <canvas id="rolesChart" height="180"></canvas>
+              <?php else: ?>
+                <div class="empty">No role-based data available.</div>
+              <?php endif; ?>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
+
       <?php if (empty($users)): ?>
         <div class="empty">No users found in the database.</div>
       <?php else: ?>
@@ -586,6 +807,7 @@ if (!empty($users)) {
                         $editParams = ['edit_id' => (string) ($user['id_user'] ?? '')];
                         if ($searchTerm !== '') { $editParams['q'] = $searchTerm; }
                         if ($genderFilter !== '') { $editParams['gender'] = $genderFilter; }
+                        if ($currentPage > 1) { $editParams['page'] = $currentPage; }
                         echo htmlspecialchars(http_build_query($editParams));
                       ?>">Edit</a>
 
@@ -645,5 +867,92 @@ if (!empty($users)) {
       <?php endif; ?>
     </div>
   </div>
+
+  <?php if ($showStatistics): ?>
+    <?php
+      $topUserLabels = [];
+      $topUserValues = [];
+      foreach ($statsTopUsers as $row) {
+        $topUserLabels[] = (string) (($row['name_user'] ?? 'User') . ' (#' . ($row['id_user'] ?? '') . ')');
+        $topUserValues[] = (int) ($row['login_count_user'] ?? 0);
+      }
+
+      $roleLabels = [];
+      $roleValues = [];
+      foreach ($statsRoleDistribution as $row) {
+        $roleLabels[] = (string) ($row['role_user'] ?? 'unknown');
+        $roleValues[] = (int) ($row['total_logins'] ?? 0);
+      }
+
+      $chartType = $statsChart === 'slices' ? 'pie' : 'bar';
+    ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script>
+      (function () {
+        const chartType = <?php echo json_encode($chartType); ?>;
+        const topLabels = <?php echo json_encode($topUserLabels); ?>;
+        const topData = <?php echo json_encode($topUserValues); ?>;
+        const roleLabels = <?php echo json_encode($roleLabels); ?>;
+        const roleData = <?php echo json_encode($roleValues); ?>;
+
+        const palette = ['#4bae52', '#f5c842', '#d94f00', '#1f6f78', '#7d5cff', '#ef476f', '#118ab2', '#073b4c', '#ff9f1c', '#2ec4b6'];
+
+        const topCanvas = document.getElementById('topUsersChart');
+        if (topCanvas && topLabels.length > 0) {
+          new Chart(topCanvas, {
+            type: chartType,
+            data: {
+              labels: topLabels,
+              datasets: [{
+                label: 'Login count',
+                data: topData,
+                backgroundColor: palette,
+                borderColor: '#1c1a10',
+                borderWidth: chartType === 'bar' ? 1 : 0
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: chartType === 'bar' ? {
+                y: {
+                  beginAtZero: true,
+                  ticks: { precision: 0 }
+                }
+              } : {}
+            }
+          });
+        }
+
+        const roleCanvas = document.getElementById('rolesChart');
+        if (roleCanvas && roleLabels.length > 0) {
+          new Chart(roleCanvas, {
+            type: chartType,
+            data: {
+              labels: roleLabels,
+              datasets: [{
+                label: 'Total logins by role',
+                data: roleData,
+                backgroundColor: palette,
+                borderColor: '#1c1a10',
+                borderWidth: chartType === 'bar' ? 1 : 0
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: chartType === 'bar' ? {
+                y: {
+                  beginAtZero: true,
+                  ticks: { precision: 0 }
+                }
+              } : {}
+            }
+          });
+        }
+      })();
+    </script>
+  <?php endif; ?>
 </body>
 </html>

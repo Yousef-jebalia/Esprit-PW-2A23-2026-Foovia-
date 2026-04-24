@@ -27,7 +27,8 @@ class Controller_user {
             role_user,
             subscription_user,
             account_state_user,
-            duration_user
+            duration_user,
+            login_count_user
         ) VALUES (
             :name,
             :lastname,
@@ -47,7 +48,8 @@ class Controller_user {
             :role,
             :subscription,
             :account_state,
-            :duration
+            :duration,
+            :login_count
         )";
 
         $db = config::getConnexion();
@@ -74,7 +76,8 @@ class Controller_user {
                 'role'      => $user->getRoleUser(),
                 'subscription' => $user->getSubscriptionUser(),
                 'account_state' => $user->getAccountStateUser(),
-                'duration' => $user->getDurationUser()
+                'duration' => $user->getDurationUser(),
+                'login_count' => 0
             ];
 
             error_log("======== INSERT PARAMS ========");
@@ -115,6 +118,113 @@ class Controller_user {
 
     public function listusers() {
         return $this->list_users();
+    }
+
+    public function increment_user_login_count(int $userId): bool {
+
+        $sql = "UPDATE user
+                SET login_count_user = COALESCE(login_count_user, 0) + 1
+                WHERE id_user = :id";
+        $db = config::getConnexion();
+
+        try {
+            $query = $db->prepare($sql);
+            return $query->execute(['id' => $userId]);
+        } catch (Exception $e) {
+            error_log('Error incrementing login count: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function get_user_login_statistics(int $userId): ?array {
+
+        $sql = "SELECT id_user, name_user, email_user, COALESCE(login_count_user, 0) AS login_count_user
+                FROM user
+                WHERE id_user = :id";
+        $db = config::getConnexion();
+
+        try {
+            $query = $db->prepare($sql);
+            $query->execute(['id' => $userId]);
+            $result = $query->fetch();
+            return $result ?: null;
+        } catch (Exception $e) {
+            error_log('Error reading login statistics: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function get_top_logged_users(int $limit = 10, string $role = ''): array {
+
+        $sql = "SELECT id_user, name_user, email_user, role_user, COALESCE(login_count_user, 0) AS login_count_user
+                FROM user";
+
+        $params = [];
+        if ($role !== '') {
+            $sql .= " WHERE role_user = :role";
+            $params['role'] = $role;
+        }
+
+        $sql .= " ORDER BY login_count_user DESC, id_user ASC LIMIT :limit";
+        $db = config::getConnexion();
+
+        try {
+            $query = $db->prepare($sql);
+
+            if ($role !== '') {
+                $query->bindValue(':role', $params['role'], PDO::PARAM_STR);
+            }
+
+            $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $query->execute();
+            return $query->fetchAll();
+        } catch (Exception $e) {
+            error_log('Error reading top logged users: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function get_login_role_distribution(): array {
+
+        $sql = "SELECT role_user,
+                       COUNT(*) AS users_count,
+                       SUM(COALESCE(login_count_user, 0)) AS total_logins
+                FROM user
+                GROUP BY role_user
+                ORDER BY total_logins DESC, role_user ASC";
+        $db = config::getConnexion();
+
+        try {
+            $query = $db->query($sql);
+            return $query->fetchAll();
+        } catch (Exception $e) {
+            error_log('Error reading role login distribution: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function get_available_roles(): array {
+
+        $sql = "SELECT DISTINCT role_user
+                FROM user
+                WHERE role_user IS NOT NULL AND role_user <> ''
+                ORDER BY role_user ASC";
+        $db = config::getConnexion();
+
+        try {
+            $query = $db->query($sql);
+            $rows = $query->fetchAll();
+            $roles = [];
+
+            foreach ($rows as $row) {
+                $roles[] = (string) ($row['role_user'] ?? '');
+            }
+
+            return $roles;
+        } catch (Exception $e) {
+            error_log('Error reading available roles: ' . $e->getMessage());
+            return [];
+        }
     }
 
     public function search_users(string $term) {
