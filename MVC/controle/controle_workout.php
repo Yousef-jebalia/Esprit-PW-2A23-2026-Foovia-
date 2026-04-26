@@ -9,14 +9,13 @@ include_once __DIR__ . '/../model/config.php';
 class controle_workout
 {
     function add_workout($workout) {
-        $sql = "INSERT INTO workout (name_work, pic_work, nb_work, cal_work, duree_work, id_user)
-                VALUES (:name_work, :pic_work, :nb_work, :cal_work, :duree_work, :id_user)";
+    $sql = "INSERT INTO workout (name_work, pic_work, cal_work, duree_work, id_user)
+        VALUES (:name_work, :pic_work, :cal_work, :duree_work, :id_user)";
         $db = config::getConnexion();
         try {
             $query = $db->prepare($sql);
             $query->bindValue('name_work',  $workout->getNameWork());
             $query->bindValue('pic_work',   $workout->getPicWork(), PDO::PARAM_LOB);
-            $query->bindValue('nb_work',    $workout->getNbWork());
             $query->bindValue('cal_work',   $workout->getCalWork());
             $query->bindValue('duree_work', $workout->getDureeWork());
             $query->bindValue('id_user',    $workout->getIdUser());
@@ -35,7 +34,6 @@ class controle_workout
                 'UPDATE workout SET
                     name_work  = :name_work,
                     pic_work   = :pic_work,
-                    nb_work    = :nb_work,
                     cal_work   = :cal_work,
                     duree_work = :duree_work,
                     id_user    = :id_user
@@ -45,7 +43,6 @@ class controle_workout
                 'id'         => $id,
                 'name_work'  => $workout->getNameWork(),
                 'pic_work'   => $workout->getPicWork(),
-                'nb_work'    => $workout->getNbWork(),
                 'cal_work'   => $workout->getCalWork(),
                 'duree_work' => $workout->getDureeWork(),
                 'id_user'    => $workout->getIdUser(),
@@ -91,9 +88,19 @@ class controle_workout
 
                 foreach ($selectedExercises as $item) {
                     $idEx = (int)($item['id_ex'] ?? 0);
-                    $sets = (int)($item['sets'] ?? 0);
-                    $weight = (float)($item['weight'] ?? 0);
-                    $time = (int)($item['time'] ?? 0);
+                    $typeEx = strtolower(trim((string)($item['type_ex'] ?? '')));
+                    $isCardio = ($typeEx === 'cardio');
+
+                    if ($isCardio) {
+                        $sets = 0;
+                        $weight = 0;
+                        $time = max(1, (int)($item['time'] ?? 0));
+                    } else {
+                        $sets = max(1, (int)($item['sets'] ?? 0));
+                        $weight = max(0, (float)($item['weight'] ?? 0));
+                        // No reps column in DB: store reps in `time` for non-cardio rows.
+                        $time = max(1, (int)($item['reps'] ?? 0));
+                    }
 
                     if ($idEx <= 0) {
                         continue;
@@ -102,9 +109,9 @@ class controle_workout
                     $insert->execute([
                         'id_ex' => $idEx,
                         'id_work' => $workoutId,
-                        'sets' => max(1, $sets),
-                        'weight' => max(0, $weight),
-                        'time' => max(0, $time),
+                        'sets' => $sets,
+                        'weight' => $weight,
+                        'time' => $time,
                     ]);
                 }
             }
@@ -117,6 +124,58 @@ class controle_workout
             }
             return $e->getMessage();
         }
+    }
+
+    function compute_workout_calories(array $selectedExercises): int
+    {
+        if (empty($selectedExercises)) {
+            return 0;
+        }
+
+        $db = config::getConnexion();
+        $ids = [];
+        foreach ($selectedExercises as $item) {
+            $idEx = (int)($item['id_ex'] ?? 0);
+            if ($idEx > 0) {
+                $ids[$idEx] = true;
+            }
+        }
+
+        $exerciseIds = array_keys($ids);
+        if (empty($exerciseIds)) {
+            return 0;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($exerciseIds), '?'));
+        $stmt = $db->prepare("SELECT id_ex, cal_ex FROM exercice WHERE id_ex IN ($placeholders)");
+        $stmt->execute($exerciseIds);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $caloriesPerRepByExercise = [];
+        foreach ($rows as $row) {
+            $caloriesPerRepByExercise[(int)$row['id_ex']] = (float)$row['cal_ex'];
+        }
+
+        $totalCalories = 0.0;
+        foreach ($selectedExercises as $item) {
+            $idEx = (int)($item['id_ex'] ?? 0);
+            if ($idEx <= 0) {
+                continue;
+            }
+
+            $typeEx = strtolower(trim((string)($item['type_ex'] ?? '')));
+            if ($typeEx === 'cardio') {
+                continue;
+            }
+
+            $sets = max(1, (int)($item['sets'] ?? 0));
+            $reps = max(1, (int)($item['reps'] ?? 0));
+            $caloriesPerRep = (float)($caloriesPerRepByExercise[$idEx] ?? 0);
+
+            $totalCalories += $sets * $reps * $caloriesPerRep;
+        }
+
+        return (int)round($totalCalories);
     }
 }
 
@@ -133,8 +192,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Capture Inputs
     $name  = $_POST['work_name'] ?? '';
-    $nb    = (int)($_POST['work_nb'] ?? 0);
-    $cal   = (int)($_POST['work_cal'] ?? 0);
     $duree = (int)($_POST['work_duree'] ?? 0);
     $user  = (int)($_POST['id_user'] ?? 0);
     
@@ -152,7 +209,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $workout = new Workout($name, $pic, $nb, $cal, $duree, $user);
+    $cal = $controller->compute_workout_calories($selectedExercises);
+
+    $workout = new Workout($name, $pic, $cal, $duree, $user);
 
     if ($action === 'update') {
         $workoutId = (int)$_POST['edit_id'];

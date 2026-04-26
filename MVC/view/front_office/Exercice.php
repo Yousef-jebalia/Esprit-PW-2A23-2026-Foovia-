@@ -46,9 +46,39 @@ $exercises = $stmt->fetchAll();
     margin: 0 auto;
   }
 
+  .anatomy-panel {
+    max-width: 1080px;
+    margin: 0 auto 28px;
+    background: var(--panel-bg);
+    border: 1px solid var(--surface-border);
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  }
+
+  .anatomy-frame {
+    width: 100%;
+    height: clamp(440px, 62vh, 650px);
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+  }
+
   .exercise-grid-wrapper {
     overflow-x: auto;
     padding-bottom: 8px;
+  }
+
+  .exercise-filter-status {
+    max-width: 1080px;
+    margin: 0 auto 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    color: var(--page-muted);
+  }
+
+  .exercise-filter-status strong {
+    color: var(--page-text);
   }
 
   .exercise-grid {
@@ -69,6 +99,10 @@ $exercises = $stmt->fetchAll();
     border: 1px solid var(--surface-border);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
     position: relative;
+  }
+
+  .exercise-card.is-hidden {
+    display: none;
   }
 
   .exercise-card-content {
@@ -165,6 +199,19 @@ $exercises = $stmt->fetchAll();
     color: var(--panel-muted);
     font-family: 'DM Sans', sans-serif;
   }
+
+  .empty-state.filtered {
+    display: none;
+    max-width: 1080px;
+    margin: 0 auto;
+    background: var(--panel-bg);
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+  }
+
+  .empty-state.filtered.is-visible {
+    display: block;
+  }
 </style>
 </head>
 <body>
@@ -205,11 +252,33 @@ $exercises = $stmt->fetchAll();
     <p>Browse our comprehensive collection of exercises to build your perfect workout routine.</p>
   </div>
 
+  <div class="anatomy-panel">
+    <iframe
+      id="anatomy-frame"
+      class="anatomy-frame"
+      src="anatomy_man.html"
+      title="Interactive anatomy man"
+      loading="lazy">
+    </iframe>
+  </div>
+
+  <div id="exercise-filter-status" class="exercise-filter-status">
+    <strong>Showing all exercises</strong>
+  </div>
+
 <script>
   // Theme toggle
   (function() {
     const root = document.documentElement;
     const toggle = document.querySelector('.theme-toggle');
+    const anatomyFrame = document.getElementById('anatomy-frame');
+
+    const sendThemeToAnatomy = (theme) => {
+      if (!anatomyFrame || !anatomyFrame.contentWindow) {
+        return;
+      }
+      anatomyFrame.contentWindow.postMessage({ type: 'foovia-theme', theme: theme }, '*');
+    };
 
     const setTheme = (theme) => {
       const isDark = theme === 'dark';
@@ -217,12 +286,19 @@ $exercises = $stmt->fetchAll();
       root.style.colorScheme = theme;
       toggle.setAttribute('aria-pressed', String(isDark));
       toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+      sendThemeToAnatomy(theme);
     };
 
     const stored = localStorage.getItem('theme');
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initialTheme = stored || (prefersDark ? 'dark' : 'light');
     setTheme(initialTheme);
+
+    if (anatomyFrame) {
+      anatomyFrame.addEventListener('load', () => {
+        sendThemeToAnatomy(root.getAttribute('data-theme') || initialTheme);
+      });
+    }
 
     toggle.addEventListener('click', () => {
       const currentTheme = root.getAttribute('data-theme') || 'light';
@@ -240,9 +316,14 @@ $exercises = $stmt->fetchAll();
         <?php if (empty($exercises)): ?>
           <div class="empty-state">No Exercises Yet</div>
         <?php else: ?>
-          <div class="exercise-grid">
+          <div id="exercise-grid" class="exercise-grid">
             <?php foreach ($exercises as $ex): ?>
-              <article id="card-<?= (int)$ex['id_ex'] ?>" class="exercise-card">
+              <article
+                id="card-<?= (int)$ex['id_ex'] ?>"
+                class="exercise-card"
+                data-muscle="<?= htmlspecialchars((string)$ex['muscle_ex'], ENT_QUOTES) ?>"
+                data-type="<?= htmlspecialchars((string)$ex['type_ex'], ENT_QUOTES) ?>"
+                data-name="<?= htmlspecialchars((string)$ex['name_ex'], ENT_QUOTES) ?>">
                 <div class="exercise-card-content">
                   <?php if (!empty($ex['gif_ex'])): ?>
                     <img src="data:image/gif;base64,<?= base64_encode($ex['gif_ex']) ?>" class="exercise-gif" alt="<?= htmlspecialchars($ex['name_ex']) ?>" />
@@ -267,8 +348,90 @@ $exercises = $stmt->fetchAll();
               </article>
             <?php endforeach; ?>
           </div>
+          <div id="exercise-filter-empty" class="empty-state filtered">No exercises match the selected anatomy muscles.</div>
         <?php endif; ?>
       </div>
+
+      <script>
+        (function() {
+          const cards = Array.from(document.querySelectorAll('.exercise-card'));
+          const status = document.getElementById('exercise-filter-status');
+          const emptyState = document.getElementById('exercise-filter-empty');
+
+          const normalize = (text) =>
+            String(text || '')
+              .toLowerCase()
+              .replace(/[^a-z0-9\s]/g, ' ')
+              .replace(/\s+/g, ' ')
+              .trim();
+
+          const muscleKeywordMap = {
+            Hamstrings: ['hamstring'],
+            Glutes: ['glute'],
+            Lats: ['lats', 'lat', 'back'],
+            Traps: ['trap', 'trapez'],
+            Triceps: ['tricep'],
+            Forearms: ['forearm'],
+            Biceps: ['bicep'],
+            Obliques: ['oblique'],
+            Abs: ['abs', 'abdom', 'core'],
+            Neck: ['neck'],
+            Delts: ['delt', 'shoulder'],
+            Chest: ['chest', 'pect'],
+            Quadriceps: ['quadricep', 'quad', 'thigh'],
+            Calves: ['calf', 'calves']
+          };
+
+          cards.forEach((card) => {
+            const combinedText = [card.dataset.name, card.dataset.type, card.dataset.muscle].join(' ');
+            card.dataset.search = normalize(combinedText);
+          });
+
+          const applyFilter = (selectedMuscles) => {
+            const muscles = Array.isArray(selectedMuscles) ? selectedMuscles : [];
+            const selected = muscles.filter((m) => muscleKeywordMap[m]);
+
+            if (selected.length === 0) {
+              cards.forEach((card) => card.classList.remove('is-hidden'));
+              if (status) {
+                status.innerHTML = '<strong>Showing all exercises</strong>';
+              }
+              if (emptyState) {
+                emptyState.classList.remove('is-visible');
+              }
+              return;
+            }
+
+            let visibleCount = 0;
+
+            cards.forEach((card) => {
+              const searchText = card.dataset.search || '';
+              const match = selected.some((muscle) => {
+                const keywords = muscleKeywordMap[muscle] || [];
+                return keywords.some((word) => searchText.includes(word));
+              });
+
+              card.classList.toggle('is-hidden', !match);
+              if (match) visibleCount += 1;
+            });
+
+            if (status) {
+              status.innerHTML = '<strong>' + visibleCount + '</strong> exercise' + (visibleCount === 1 ? '' : 's') + ' matching: ' + selected.join(', ');
+            }
+
+            if (emptyState) {
+              emptyState.classList.toggle('is-visible', visibleCount === 0);
+            }
+          };
+
+          window.addEventListener('message', (event) => {
+            if (!event || !event.data) return;
+            if (event.data.type === 'foovia-muscles') {
+              applyFilter(event.data.muscles);
+            }
+          });
+        })();
+      </script>
 
 </section>
 
