@@ -354,7 +354,6 @@ $reclamations = $controller->get_reclamations();
             <p class="lead mb-4">Share the details of your issue and we’ll take care of the rest with fast, clear updates.</p>
             <div class="d-flex flex-wrap gap-2">
               <a href="support_rec_page.php" class="btn btn-light btn-lg">View claims</a>
-              <a href="add_rec_page.php" class="btn btn-outline-light btn-lg">Add claim</a>
             </div>
           </div>
         </div>

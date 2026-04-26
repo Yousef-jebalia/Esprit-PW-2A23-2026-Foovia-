@@ -58,7 +58,7 @@
       case 'id_user':
         return '';
       case 'comment':
-        if (!value) {
+        if (!value ) {
           return 'Comment is required.';
         }
         if (value.length >= 250) {
@@ -68,6 +68,10 @@
       case 'status':
         if (!value) {
           return 'Status is required.';
+        }
+        if (value.length > 10) {
+          input.value = value.substring(0, 10);
+          return `Status must be less than 10 characters. (${value.length})`;
         }
         return '';
       default:

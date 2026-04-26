@@ -15,7 +15,10 @@ This is main CSS file that contains custom style rules used in this template
 --------------------------------------------------------------*/
 @font-face {
   font-family: 'Boldonse';
-  src: url('assets/Boldonse-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('assets/boldonse-latin-400.woff2') format('woff2');
 }
 
 :root {
@@ -49,7 +52,7 @@ This is main CSS file that contains custom style rules used in this template
 }
 
 body {
-  --heading-font        : "Syne", sans-serif;
+  --heading-font        : 'Boldonse', sans-serif;
   --bs-link-color: #333;
   --bs-link-hover-color:#333;
 
@@ -153,7 +156,22 @@ body, body * {
 }
 
 h1, h2, h3, h4, h5, h6, .heading-font {
-  font-family: 'Syne', sans-serif !important;
+  font-family: 'Boldonse', sans-serif !important;
+}
+
+.display-1,
+.display-2,
+.display-3,
+.display-4,
+.display-5,
+.display-6,
+.lead {
+  font-family: 'Boldonse', sans-serif !important;
+}
+
+header .nav-logo,
+header .nav-logo span {
+  font-family: 'Boldonse', sans-serif !important;
 }
 .btn-primary {
   --bs-btn-color: #fff;
@@ -707,14 +725,6 @@ a.btn-link.text-light:after {
 /* ============ mobile view .end// ============ */
 
 /* Front office page-specific styles (moved from index.php) */
-@font-face {
-        font-family: 'Boldonse';
-        src: url('../assets/Boldonse-Regular.ttf') format('truetype');
-        font-weight: 400;
-        font-style: normal;
-        font-display: swap;
-      }
-
       :root {
         --yellow: #F5C842;
         --green: #4BAE52;
@@ -1103,7 +1113,7 @@ a.btn-link.text-light:after {
         gap: 0.75rem;
         color: inherit;
         text-decoration: none;
-        font-family: 'Syne', sans-serif;
+        font-family: 'Boldonse', sans-serif;
         font-size: 1.05rem;
         font-weight: 800;
         letter-spacing: 0.08em;
@@ -1160,7 +1170,7 @@ a.btn-link.text-light:after {
 
       .foovia-nav .nav-btn {
         padding: 9px 18px;
-        font-family: 'Syne', sans-serif;
+        font-family: 'Boldonse', sans-serif;
         font-weight: 700;
         font-size: 0.84rem;
         letter-spacing: 0.01em;
@@ -1250,7 +1260,7 @@ a.btn-link.text-light:after {
         padding: 1.25rem 1.6rem;
         text-align: center;
         text-decoration: none;
-        font-family: 'Syne', 'Nunito', sans-serif;
+        font-family: 'Boldonse', sans-serif;
         font-size: clamp(1.08rem, 0.98rem + 0.62vw, 1.48rem);
         font-weight: 800;
         letter-spacing: 0.02em;

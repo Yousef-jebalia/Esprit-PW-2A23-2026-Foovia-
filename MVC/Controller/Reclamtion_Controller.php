@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../Model/config.php');
 include(__DIR__ . '/../Model/reclamation.php');
 
+
 class Controller_reclamation {
     //Ajout reclamation
 
@@ -112,6 +113,32 @@ class Controller_reclamation {
             ]);
         } catch (Exception $e) {
             echo 'Error: ' . $e->getMessage();
+        }
+    }
+
+    public function get_all_claim_ids(): array {
+        $sql = "SELECT id_reclam FROM reclamation";
+        $db = config::getConnexion();
+        try {
+            $query = $db->prepare($sql);
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_COLUMN);
+        } catch (Exception $e) {
+            echo 'Error: ' . $e->getMessage();
+            return [];
+        }
+    }
+
+    public function get_all_user_ids(): array {
+        $sql = "SELECT DISTINCT id_user FROM reclamation";
+        $db = config::getConnexion();
+        try {
+            $query = $db->prepare($sql);
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_COLUMN);
+        } catch (Exception $e) {
+            echo 'Error: ' . $e->getMessage();
+            return [];
         }
     }
 }
