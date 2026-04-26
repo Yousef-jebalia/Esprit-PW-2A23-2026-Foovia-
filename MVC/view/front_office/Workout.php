@@ -1,12 +1,38 @@
+<?php
+require_once __DIR__ . '/../../model/config.php';
+
+$db = config::getConnexion();
+$categories = $db->query('SELECT id_cat, name_cat FROM work_categorie ORDER BY name_cat ASC')->fetchAll();
+$workouts = $db->query('SELECT id_work, name_work, cal_work, duree_work, id_cat, pic_work FROM workout ORDER BY id_work DESC')->fetchAll();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FOOVIA — Eat Smart. Live Bold.</title>
+<title>Workouts — FOOVIA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<style>
+  .workout-page { min-height: 100vh; padding: 120px 48px 40px; background: var(--page-bg); }
+  .workout-header { text-align: center; margin-bottom: 40px; }
+  .workout-header h1 { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; color: var(--page-text); margin-bottom: 8px; }
+  .category-section { margin-bottom: 48px; max-width: 1200px; margin-left: auto; margin-right: auto; }
+  .category-title { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--page-text); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--green); }
+  .workout-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+  .workout-item { display: flex; flex-direction: column; background: var(--panel-bg); border: 1px solid var(--surface-border); border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+  .workout-item:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); }
+  .workout-image { width: 100%; height: 180px; object-fit: cover; background: var(--surface-2); }
+  .workout-image-empty { width: 100%; height: 180px; background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface-2) 100%); display: flex; align-items: center; justify-content: center; color: var(--page-muted); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; }
+  .workout-info { padding: 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .workout-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--page-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .workout-meta { display: flex; gap: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--page-muted); }
+  .meta-item { display: flex; align-items: center; gap: 4px; }
+  .meta-label { color: var(--green); font-weight: 600; }
+  .empty-cat { color: var(--page-muted); font-family: 'DM Sans', sans-serif; padding: 20px; text-align: center; }
+</style>
 </head>
 <body>
 
@@ -37,6 +63,49 @@
   </div>
 </nav>
 
+
+<!-- WORKOUT PAGE -->
+<section class="workout-page">
+  <div class="workout-header">
+    <h1>Workouts by Category</h1>
+  </div>
+
+  <?php foreach ($categories as $category): ?>
+    <?php $catWorkouts = array_filter($workouts, fn($w) => (int)$w['id_cat'] === (int)$category['id_cat']); ?>
+    <div class="category-section">
+      <h2 class="category-title"><?php echo htmlspecialchars($category['name_cat']); ?></h2>
+      
+      <?php if (empty($catWorkouts)): ?>
+        <div class="empty-cat">No workouts in this category</div>
+      <?php else: ?>
+        <ul class="workout-list">
+          <?php foreach ($catWorkouts as $workout): ?>
+            <li class="workout-item">
+              <?php if (!empty($workout['pic_work'])): ?>
+                <img src="data:image/jpeg;base64,<?php echo base64_encode($workout['pic_work']); ?>" alt="<?php echo htmlspecialchars($workout['name_work']); ?>" class="workout-image">
+              <?php else: ?>
+                <div class="workout-image-empty">No Image</div>
+              <?php endif; ?>
+              <div class="workout-info">
+                <span class="workout-name"><?php echo htmlspecialchars($workout['name_work']); ?></span>
+                <div class="workout-meta">
+                  <div class="meta-item">
+                    <span class="meta-label">Cal:</span>
+                    <span><?php echo (int)$workout['cal_work']; ?></span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">Time:</span>
+                    <span><?php echo (int)$workout['duree_work']; ?> min</span>
+                  </div>
+                </div>
+              </div>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      <?php endif; ?>
+    </div>
+  <?php endforeach; ?>
+</section>
 
 <script>
   (function() {
