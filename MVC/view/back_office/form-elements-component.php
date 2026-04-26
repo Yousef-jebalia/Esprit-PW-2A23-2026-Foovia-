@@ -163,115 +163,98 @@ function syncExerciseSelectorWithSelection() {
     });
 }
 
-function validateForm() {
-    const name     = document.getElementById('ex_name').value.trim();
-    const type     = document.getElementById('ex_type').value;
-    const muscles  = Array.from(document.querySelectorAll('input[name="ex_target_muscle[]"]:checked'));
-    const calories = document.getElementById('ex_calories').value.trim();
-    const fatigue  = document.getElementById('ex_fatigue').value.trim();
+function validateForm() {//exercise form validation
+    const name = document.getElementById('ex_name').value.trim();
+    const type = document.getElementById('ex_type').value;
+    const muscles = Array.from(document.querySelectorAll('input[name="ex_target_muscle[]"]:checked'));
+    const calories = Number(document.getElementById('ex_calories').value);
+    const fatigue = Number(document.getElementById('ex_fatigue').value);
 
-    let errorMessage = '';
-
-    // Name
-    if (name === '') {
-        errorMessage += 'Exercise name is required.\n';
-    } else if (name.length < 3) {
-        errorMessage += 'Exercise name must be at least 3 characters.\n';
-    } else if (name.length > 100) {
-        errorMessage += 'Exercise name must be less than 100 characters.\n';
-    } 
-
-    // Type
-    if (type === '') {
-        errorMessage += 'Please select an exercise type.\n';
+    if (name.length < 3) {
+        alert('Exercise name must contain at least 3 characters.');
+        return false;
     }
 
-    // Muscles
+    if (!type) {
+        alert('Please select an exercise type.');
+        return false;
+    }
+
     if (muscles.length === 0) {
-        errorMessage += 'Please select at least one target muscle.\n';
-    } else if (muscles.length > 3) {
-        errorMessage += 'You can select a maximum of 3 muscles.\n';
-    } else if (type === 'isolation' && muscles.length > 1) {
-        errorMessage += 'Isolation exercises can only target 1 muscle.\n';
+        alert('Please select at least one target muscle.');
+        return false;
     }
 
-    // Calories
-    if (calories === '') {
-        errorMessage += 'Calories per rep is required.\n';
-    } else if (isNaN(calories) || Number(calories) < 0) {
-        errorMessage += 'Calories must be a positive number.\n';
-    } else if (Number(calories) > 20) {
-        errorMessage += 'Calories per rep seems too high (max 100).\n';
+    if (muscles.length > 3) {
+        alert('You can select a maximum of 3 muscles.');
+        return false;
     }
 
-    // Fatigue
-    if (fatigue === '') {
-        errorMessage += 'Fatigue ratio is required.\n';
-    } else if (isNaN(fatigue) || Number(fatigue) < 0 || Number(fatigue) > 10) {
-        errorMessage += 'Fatigue ratio must be between 0 and 10.\n';
+    if (type === 'isolation' && muscles.length > 1) {
+        alert('Isolation exercise must target only one muscle.');
+        return false;
     }
 
-    // Show error or submit
-    if (errorMessage !== '') {
-        alert(errorMessage);
+    if (!Number.isFinite(calories) || calories < 0 || calories > 100) {
+        alert('Calories per rep must be a number between 0 and 100.');
+        return false;
+    }
+
+    if (!Number.isFinite(fatigue) || fatigue < 0 || fatigue > 10) {
+        alert('Fatigue ratio must be a number between 0 and 10.');
         return false;
     }
 
     return true;
 }
 
+
+
 function validateWorkoutForm() {
-    const name   = document.getElementById('work_name').value.trim();
-    const duree  = document.getElementById('work_duree').value.trim();
+    const name = document.getElementById('work_name').value.trim();
+    const duree = Number(document.getElementById('work_duree').value);
     const selectedExercisesRaw = document.getElementById('selected_exercises').value.trim();
     const selectedCategoryId = document.getElementById('work_id_cat').value;
-    const newCategoryName = document.getElementById('new_work_categorie').value.trim();
 
-    let errorMessage = '';
-
-    // Name
-    if (name === '') {
-        errorMessage += 'Workout name is required.\n';
-    } else if (name.length < 3) {
-        errorMessage += 'Workout name must be at least 3 characters.\n';
-    } else if (name.length > 100) {
-        errorMessage += 'Workout name must be less than 100 characters.\n';
+    if (name.length < 3) {
+        alert('Workout name must contain at least 3 characters.');
+        return false;
     }
 
-    // Duration
-    if (duree === '') {
-        errorMessage += 'Duration is required.\n';
-    } else if (isNaN(duree) || Number(duree) <= 0) {
-        errorMessage += 'Duration must be a positive number.\n';
-    } else if (Number(duree) > 180) {
-        errorMessage += 'Duration seems too long (max 180 minutes).\n';
+    if (!Number.isFinite(duree) || duree <= 0 || duree > 180) {
+        alert('Workout duration must be between 1 and 180 minutes.');
+        return false;
     }
 
-    // Category
-    if (selectedCategoryId === '' && newCategoryName === '') {
-        errorMessage += 'Please select a workout category or create one.\n';
-    } else if (newCategoryName !== '' && newCategoryName.length < 2) {
-        errorMessage += 'New category name must be at least 2 characters.\n';
-    } else if (newCategoryName.length > 60) {
-        errorMessage += 'New category name must be less than 60 characters.\n';
+    if (!selectedCategoryId) {
+        alert('Please select a category.');
+        return false;
     }
 
-    // Selected exercises
     if (selectedExercisesRaw === '') {
-        errorMessage += 'Please select at least one exercise for this workout.\n';
-    } else {
-        try {
-            const parsed = JSON.parse(selectedExercisesRaw);
-            if (!Array.isArray(parsed) || parsed.length === 0) {
-                errorMessage += 'Please select at least one exercise for this workout.\n';
-            }
-        } catch (e) {
-            errorMessage += 'Selected exercises data is invalid. Please select again.\n';
-        }
+        alert('Please select at least one exercise for this workout.');
+        return false;
     }
 
-    if (errorMessage !== '') {
-        alert(errorMessage);
+    try {
+        const parsed = JSON.parse(selectedExercisesRaw);
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+            alert('Please select at least one exercise for this workout.');
+            return false;
+        }
+    } catch (e) {
+        alert('Selected exercises are invalid. Please select again.');
+        return false;
+    }
+
+    return true;
+}
+
+function validateWorkoutCategoryName(categoryName) {
+    const name = String(categoryName || '').trim();
+
+    if (name && (name.length <= 3 || name.length >= 30)) {
+        alert('Category name length must be greater than 3 and less than 30.');
         return false;
     }
 
@@ -288,14 +271,7 @@ function submitNewWorkoutCategory() {
     }
 
     const categoryName = input.value.trim();
-    if (categoryName.length < 2) {
-        alert('Please enter a category name with at least 2 characters.');
-        input.focus();
-        return;
-    }
-
-    if (categoryName.length > 60) {
-        alert('Category name must be less than 60 characters.');
+    if (!validateWorkoutCategoryName(categoryName)) {
         input.focus();
         return;
     }
