@@ -118,8 +118,6 @@ function validateForm() {
 function validateWorkoutForm() {
     const name   = document.getElementById('work_name').value.trim();
     const duree  = document.getElementById('work_duree').value.trim();
-    const cal    = document.getElementById('work_cal').value.trim();
-    const nb     = document.getElementById('work_nb').value.trim();
     const selectedExercisesRaw = document.getElementById('selected_exercises').value.trim();
 
     let errorMessage = '';
@@ -138,26 +136,8 @@ function validateWorkoutForm() {
         errorMessage += 'Duration is required.\n';
     } else if (isNaN(duree) || Number(duree) <= 0) {
         errorMessage += 'Duration must be a positive number.\n';
-    } else if (Number(duree) > 300) {
-        errorMessage += 'Duration seems too long (max 300 minutes).\n';
-    }
-
-    // Calories
-    if (cal === '') {
-        errorMessage += 'Calories burned is required.\n';
-    } else if (isNaN(cal) || Number(cal) < 0) {
-        errorMessage += 'Calories must be a positive number.\n';
-    } else if (Number(cal) > 5000) {
-        errorMessage += 'Calories burned seems too high (max 5000).\n';
-    }
-
-    // Reps/Sets
-    if (nb === '') {
-        errorMessage += 'Sets/Reps is required.\n';
-    } else if (isNaN(nb) || Number(nb) <= 0) {
-        errorMessage += 'Sets/Reps must be a positive number.\n';
-    } else if (Number(nb) > 100) {
-        errorMessage += 'Sets/Reps seems too high (max 100).\n';
+    } else if (Number(duree) > 180) {
+        errorMessage += 'Duration seems too long (max 180 minutes).\n';
     }
 
     // Selected exercises
@@ -182,13 +162,11 @@ function validateWorkoutForm() {
     return true;
 }
 
-function fillEditWorkoutForm(id, name, duree, cal, nb) {
+function fillEditWorkoutForm(id, name, duree) {
     document.getElementById('work-form-action').value = 'update';
     document.getElementById('work-edit-id').value = id;
     document.getElementById('work_name').value = name;
     document.getElementById('work_duree').value = duree;
-    document.getElementById('work_cal').value = cal;
-    document.getElementById('work_nb').value = nb;
     selectedWorkoutExercises = [];
     document.getElementById('selected_exercises').value = '';
     document.getElementById('selected-exercises-summary').innerHTML = 'No exercises selected';
@@ -216,18 +194,24 @@ function applySelectedExercises() {
 
         const idEx = Number(checkbox.value);
         const name = checkbox.dataset.name || ('Exercise #' + idEx);
+        const typeEx = (checkbox.dataset.type || '').toLowerCase();
+        const isCardio = typeEx === 'cardio';
         const setsInput = row.querySelector('.workout-ex-sets');
+        const repsInput = row.querySelector('.workout-ex-reps');
         const weightInput = row.querySelector('.workout-ex-weight');
         const timeInput = row.querySelector('.workout-ex-time');
 
-        const sets = Math.max(1, Number(setsInput.value || 1));
-        const weight = Math.max(0, Number(weightInput.value || 0));
-        const time = Math.max(0, Number(timeInput.value || 0));
+        const sets = isCardio ? 0 : Math.max(1, Number(setsInput.value || 1));
+        const reps = isCardio ? 0 : Math.max(1, Number(repsInput.value || 1));
+        const weight = isCardio ? 0 : Math.max(0, Number(weightInput.value || 0));
+        const time = isCardio ? Math.max(1, Number(timeInput.value || 1)) : 0;
 
         collected.push({
             id_ex: idEx,
             name: name,
+            type_ex: typeEx,
             sets: sets,
+            reps: reps,
             weight: weight,
             time: time
         });
@@ -238,7 +222,9 @@ function applySelectedExercises() {
         selectedWorkoutExercises.map(function(item) {
             return {
                 id_ex: item.id_ex,
+                type_ex: item.type_ex,
                 sets: item.sets,
+                reps: item.reps,
                 weight: item.weight,
                 time: item.time
             };
@@ -250,7 +236,10 @@ function applySelectedExercises() {
         summary.innerHTML = 'No exercises selected';
     } else {
         summary.innerHTML = selectedWorkoutExercises.map(function(item) {
-            return item.name + ' (sets: ' + item.sets + ', weight: ' + item.weight + ', time: ' + item.time + ' min)';
+            if (item.type_ex === 'cardio') {
+                return item.name + ' (cardio: time ' + item.time + ' min)';
+            }
+            return item.name + ' (sets: ' + item.sets + ', reps: ' + item.reps + ', weight: ' + item.weight + ')';
         }).join('<br>');
     }
 
@@ -263,9 +252,23 @@ function toggleExerciseConfig(checkbox) {
         return;
     }
 
-    row.querySelectorAll('.workout-ex-config').forEach(function(input) {
-        input.disabled = !checkbox.checked;
-    });
+    const isCardio = (checkbox.dataset.type || '').toLowerCase() === 'cardio';
+    const setsInput = row.querySelector('.workout-ex-sets');
+    const repsInput = row.querySelector('.workout-ex-reps');
+    const weightInput = row.querySelector('.workout-ex-weight');
+    const timeInput = row.querySelector('.workout-ex-time');
+
+    if (!checkbox.checked) {
+        row.querySelectorAll('.workout-ex-config').forEach(function(input) {
+            input.disabled = true;
+        });
+        return;
+    }
+
+    setsInput.disabled = isCardio;
+    repsInput.disabled = isCardio;
+    weightInput.disabled = isCardio;
+    timeInput.disabled = !isCardio;
 }
 
 function resetWorkoutExerciseSelection() {
@@ -276,11 +279,13 @@ function resetWorkoutExerciseSelection() {
     document.querySelectorAll('.workout-exercise-row').forEach(function(row) {
         const checkbox = row.querySelector('.workout-ex-checkbox');
         const setsInput = row.querySelector('.workout-ex-sets');
+        const repsInput = row.querySelector('.workout-ex-reps');
         const weightInput = row.querySelector('.workout-ex-weight');
         const timeInput = row.querySelector('.workout-ex-time');
 
         checkbox.checked = false;
         setsInput.value = 3;
+        repsInput.value = 10;
         weightInput.value = 0;
         timeInput.value = 30;
 
@@ -310,13 +315,6 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
     document.getElementById('exercise-form').scrollIntoView({ behavior: 'smooth' });
 }
 </script>
-
-
-
-
-
-
-
 
 <body>
     <!-- Pre-loader start -->
@@ -747,9 +745,6 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                         <span style="background: #fff3cd; color: #d97706; padding: 2px 8px; border-radius: 20px;">
                             🔥 <?= (int)$wk['cal_work'] ?> cal
                         </span>
-                        <span style="background: #e8f7ee; color: #28a745; padding: 2px 8px; border-radius: 20px;">
-                            💪 <?= (int)$wk['nb_work'] ?> sets
-                        </span>
                     </div>
                 </div>
 
@@ -766,7 +761,7 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
 
                     <!-- Edit button -->
                     <button type="button"
-                        onclick="fillEditWorkoutForm(<?= $wk['id_work'] ?>, '<?= addslashes($wk['name_work']) ?>', <?= (int)$wk['duree_work'] ?>, <?= (int)$wk['cal_work'] ?>, <?= (int)$wk['nb_work'] ?>)"
+                        onclick="fillEditWorkoutForm(<?= $wk['id_work'] ?>, '<?= addslashes($wk['name_work']) ?>', <?= (int)$wk['duree_work'] ?>)"
                         style="background: none; border: none; color: #4099ff; cursor: pointer; font-size: 16px; padding: 5px;">
                         <i class="ti-pencil"></i>
                     </button>
@@ -805,12 +800,9 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
 
                                 <div style="display: flex; flex-direction: column;">
                                     <label style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">Calories Burned</label>
-                                    <input type="number" id="work_cal" name="work_cal" class="form-input" placeholder="300" min="0" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                </div>
-
-                                <div style="display: flex; flex-direction: column;">
-                                    <label style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">Workout Sets/Reps</label>
-                                    <input type="number" id="work_nb" name="work_nb" class="form-input" placeholder="3" min="1" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                    <div style="padding: 10px; border: 1px dashed #ddd; border-radius: 4px; font-size: 13px; color: #666; background: #fafafa;">
+                                        Calculated automatically from selected exercises.
+                                    </div>
                                 </div>
 
                                 <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -850,7 +842,7 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                             </div>
 
                             <div style="padding: 12px 20px; font-size: 13px; color: #666; border-bottom: 1px solid #eee;">
-                                Select one or more exercises and set the values for sets, weight, and time.
+                                For cardio exercises, set only time. For non-cardio exercises, set sets, reps, and weight.
                             </div>
 
                             <div style="padding: 12px 20px; overflow-y: auto; flex: 1;">
@@ -858,12 +850,13 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                                     <div style="text-align: center; padding: 24px; color: #999;">No exercises available.</div>
                                 <?php else: ?>
                                     <?php foreach ($exercises as $ex): ?>
-                                        <div class="workout-exercise-row" style="display: grid; grid-template-columns: 1.8fr 0.7fr 0.7fr 0.7fr; gap: 10px; align-items: center; padding: 10px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 8px;">
+                                        <div class="workout-exercise-row" style="display: grid; grid-template-columns: 1.8fr 0.6fr 0.6fr 0.6fr 0.6fr; gap: 10px; align-items: center; padding: 10px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 8px;">
                                             <label style="display: flex; align-items: center; gap: 8px; margin: 0; font-weight: 600; cursor: pointer;">
-                                                <input type="checkbox" class="workout-ex-checkbox" value="<?= (int)$ex['id_ex'] ?>" data-name="<?= htmlspecialchars($ex['name_ex'], ENT_QUOTES) ?>" onchange="toggleExerciseConfig(this)">
-                                                <span><?= htmlspecialchars($ex['name_ex']) ?> (id=<?= (int)$ex['id_ex'] ?>)</span>
+                                                <input type="checkbox" class="workout-ex-checkbox" value="<?= (int)$ex['id_ex'] ?>" data-name="<?= htmlspecialchars($ex['name_ex'], ENT_QUOTES) ?>" data-type="<?= htmlspecialchars(strtolower((string)$ex['type_ex']), ENT_QUOTES) ?>" onchange="toggleExerciseConfig(this)">
+                                                <span><?= htmlspecialchars($ex['name_ex']) ?> (<?= htmlspecialchars($ex['type_ex']) ?>)</span>
                                             </label>
                                             <input type="number" class="workout-ex-sets workout-ex-config" min="1" value="3" disabled style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;" title="sets" placeholder="sets">
+                                            <input type="number" class="workout-ex-reps workout-ex-config" min="1" value="10" disabled style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;" title="reps" placeholder="reps">
                                             <input type="number" class="workout-ex-weight workout-ex-config" min="0" value="0" step="0.5" disabled style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;" title="weight" placeholder="weight">
                                             <input type="number" class="workout-ex-time workout-ex-config" min="0" value="30" disabled style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;" title="time" placeholder="time (min)">
                                         </div>
