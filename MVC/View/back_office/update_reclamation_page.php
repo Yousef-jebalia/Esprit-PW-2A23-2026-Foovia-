@@ -26,21 +26,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: Support_admin.php');
             exit;
         } catch (Exception $e) {
-            $error = 'Erreur de mise à jour : ' . $e->getMessage();
+            $error = 'Update error: ' . $e->getMessage();
         }
     } else {
-        $error = 'Les champs Etat et Date de fermeture sont requis.';
+        $error = 'Status and Closing Date are required.';
     }
 }
 
 if (isset($_GET['id']) && $_GET['id'] !== '') {
     $reclamationToEdit = $controller->get_reclamation_by_id($_GET['id']);
     if (!$reclamationToEdit) {
-        $error = 'Réclamation introuvable.';
+        $error = 'Claim not found.';
     }
 } else {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        $error = 'ID de réclamation manquant.';
+        $error = 'Claim ID missing.';
     }
 }
 
@@ -50,7 +50,7 @@ $etat = $reclamationToEdit['etat_reclam'] ?? ($_POST['etat_rec'] ?? '');
 $date_fermeture = $reclamationToEdit['dateferm_reclam'] ?? ($_POST['date_fermeture'] ?? '');
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -69,9 +69,9 @@ $date_fermeture = $reclamationToEdit['dateferm_reclam'] ?? ($_POST['date_fermetu
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-0">Edit Claim</h5>
-                            <small>Modifiez uniquement l'état et la date de fermeture.</small>
+                            <small>Change only the status and closing date.</small>
                         </div>
-                        <a href="Support_admin.php" class="btn btn-secondary btn-sm">Retour</a>
+                        <a href="Support_admin.php" class="btn btn-secondary btn-sm">Back</a>
                     </div>
                     <div class="card-body">
                         <?php if ($error): ?>
@@ -83,7 +83,7 @@ $date_fermeture = $reclamationToEdit['dateferm_reclam'] ?? ($_POST['date_fermetu
                         <form method="post" novalidate>
                             <input type="hidden" name="id_recl" value="<?php echo htmlspecialchars($id_recl); ?>">
                             <div class="mb-3">
-                                <label for="id_recl" class="form-label">ID Réclamation</label>
+                                <label for="id_recl" class="form-label">Claim ID</label>
                                 <input type="text" class="form-control" id="id_recl" value="<?php echo htmlspecialchars($id_recl); ?>" readonly>
                             </div>
                             <div class="mb-3">
@@ -98,7 +98,7 @@ $date_fermeture = $reclamationToEdit['dateferm_reclam'] ?? ($_POST['date_fermetu
                                 <label for="date_fermeture" class="form-label">Closing Date</label>
                                 <input type="date" class="form-control" id="date_fermeture" name="date_fermeture" value="<?php echo htmlspecialchars($date_fermeture); ?>">
                             </div>
-                            <button type="submit" class="btn btn-success">Mettre à jour</button>
+                            <button type="submit" class="btn btn-success">Update</button>
                         </form>
                     </div>
                 </div>

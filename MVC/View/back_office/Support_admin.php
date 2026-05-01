@@ -250,150 +250,7 @@ $reclamations = $reclamationController->get_reclamations();
                                     </a>
                                 </li>
                             </ul>
-                            <div class="pcoded-navigation-label">UI Element</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="pcoded-hasmenu">
-                                    <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i><b>BC</b></span>
-                                        <span class="pcoded-mtext">Basic</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                    <ul class="pcoded-submenu">
-                                        <li class=" ">
-                                            <a href="breadcrumb.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Breadcrumbs</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class=" ">
-                                            <a href="button.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Button</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class="">
-                                            <a href="accordion.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Accordion</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class=" ">
-                                            <a href="tabs.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Tabs</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class=" ">
-                                            <a href="color.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Color</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class=" ">
-                                            <a href="label-badge.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Label Badge</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class=" ">
-                                            <a href="tooltip.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Tooltip And Popover</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class=" ">
-                                            <a href="typography.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Typography</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class=" ">
-                                            <a href="notification.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Notifications</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                            <div class="pcoded-navigation-label">Forms</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="form-elements-component.html" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-layers"></i><b>FC</b></span>
-                                        <span class="pcoded-mtext">Form</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <div class="pcoded-navigation-label">Tables</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="bs-basic-table.html" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-receipt"></i><b>B</b></span>
-                                        <span class="pcoded-mtext">Table</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <div class="pcoded-navigation-label">Chart And Maps</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="chart-morris.html" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-bar-chart-alt"></i><b>C</b></span>
-                                        <span class="pcoded-mtext">Charts</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="map-google.html" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-map-alt"></i><b>M</b></span>
-                                        <span class="pcoded-mtext">Maps</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <div class="pcoded-navigation-label">Pages</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="pcoded-hasmenu active pcoded-trigger">
-                                    <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-id-badge"></i><b>A</b></span>
-                                        <span class="pcoded-mtext">Pages</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                    <ul class="pcoded-submenu">
-                                        <li class="">
-                                            <a href="auth-normal-sign-in.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Login</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class="">
-                                            <a href="auth-sign-up.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Registration</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class="active">
-                                            <a href="sample-page.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-layout-sidebar-left"></i><b>S</b></span>
-                                                <span class="pcoded-mtext">Support page</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
+                                 </li>
                             </ul>
                         </div>
                     </nav>
@@ -430,10 +287,10 @@ $reclamations = $reclamationController->get_reclamations();
                                             <div class="card">
                                                 <div class="card-header d-flex align-items-center justify-content-between">
                                                     <div>
-                                                        <h5 class="mb-0">Liste des traitements</h5>
-                                                        <span>Gestion des traitements enregistrs</span>
+                                                        <h5 class="mb-0">Treatments List</h5>
+                                                        <span>Manage saved treatments</span>
                                                     </div>
-                                                    <a href="add_traitement_page.php" class="btn btn-primary btn-sm">Ajouter traitemant</a>
+                                                    <a href="add_traitement_page.php" class="btn btn-primary btn-sm">Add treatment</a>
                                                 </div>
                                                 <div class="card-block">
                                                     <?php if (!empty($error)): ?>
@@ -480,7 +337,7 @@ $reclamations = $reclamationController->get_reclamations();
                                                                     <?php endforeach; ?>
                                                                 <?php else: ?>
                                                                     <tr>
-                                                                        <td colspan="7" class="text-center">Aucun traitement trouvé.</td>
+                                                                        <td colspan="7" class="text-center">No treatments found.</td>
                                                                     </tr>
                                                                 <?php endif; ?>
                                                             </tbody>
@@ -493,8 +350,8 @@ $reclamations = $reclamationController->get_reclamations();
                                             <div class="card">
                                                 <div class="card-header d-flex align-items-center justify-content-between">
                                                     <div>
-                                                        <h5 class="mb-0">Liste des réclamations</h5>
-                                                        <span>Gestion des réclamations enregistrées</span>
+                                                        <h5 class="mb-0">Claims List</h5>
+                                                        <span>Manage saved claims</span>
                                                     </div>
                                                 </div>
                                                 <div class="card-block">
@@ -519,8 +376,8 @@ $reclamations = $reclamationController->get_reclamations();
                                                                 <?php if (!empty($reclamations)): ?>
                                                                     <?php foreach ($reclamations as $reclamation): ?>
                                                                         <tr>
-                                                                            <td><?php echo htmlspecialchars($reclamation['id_reclam']); ?></td>
-                                                                            <td><?php echo htmlspecialchars($reclamation['id_user']); ?></td>
+                                                                            <td class="claim-id"><?php echo htmlspecialchars($reclamation['id_reclam']); ?></td>
+                                                                            <td class="user-id"><?php echo htmlspecialchars($reclamation['id_user']); ?></td>
                                                                             <td><?php echo htmlspecialchars($reclamation['description_reclam']); ?></td>
                                                                             <td><?php echo htmlspecialchars($reclamation['etat_reclam']); ?></td>
                                                                             <td><?php echo htmlspecialchars($reclamation['type_reclam']); ?></td>
@@ -528,6 +385,7 @@ $reclamations = $reclamationController->get_reclamations();
                                                                             <td><?php echo htmlspecialchars($reclamation['dateferm_reclam'] ?? '-'); ?></td>
                                                                             <td>
                                                                                 <a href="update_reclamation_page.php?id=<?php echo urlencode($reclamation['id_reclam']); ?>" class="btn btn-warning btn-sm">Edit</a>
+                                                                                <button type="button" class="btn btn-info btn-sm handle-treatment-btn" style="margin-left:8px;">Handle</button>
                                                                                 <form method="post" style="display:inline-block; margin-left:8px;" onsubmit="return confirm('Delete this claim?');">
                                                                                     <input type="hidden" name="action" value="delete_reclamation">
                                                                                     <input type="hidden" name="id_reclamation" value="<?php echo htmlspecialchars($reclamation['id_reclam']); ?>">
@@ -538,7 +396,7 @@ $reclamations = $reclamationController->get_reclamations();
                                                                     <?php endforeach; ?>
                                                                 <?php else: ?>
                                                                     <tr>
-                                                                        <td colspan="8" class="text-center">Aucune réclamation trouvée.</td>
+                                                                        <td colspan="8" class="text-center">No claims found.</td>
                                                                     </tr>
                                                                 <?php endif; ?>
                                                             </tbody>
@@ -587,6 +445,17 @@ $reclamations = $reclamationController->get_reclamations();
 
             attachSearch('#traitement-search');
             attachSearch('#reclamation-search');
+
+            $(document).on('click', '.handle-treatment-btn', function() {
+                var row = $(this).closest('tr');
+                var claimId = row.find('.claim-id').text().trim();
+                var userId = row.find('.user-id').text().trim();
+                if (!claimId || !userId) {
+                    alert('Unable to determine claim or user ID from this row.');
+                    return;
+                }
+                window.location.href = 'add_traitement_page.php?id_reclam=' + encodeURIComponent(claimId) + '&id_user=' + encodeURIComponent(userId);
+            });
         });
     </script>
 </body>

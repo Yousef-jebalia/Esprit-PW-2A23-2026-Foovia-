@@ -84,11 +84,21 @@ $reclamations = $controller->get_reclamations();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <style>
-      .support-rec-body { background-color: #FDF8EE; }
-      html[data-theme="dark"] .support-rec-body { background-color: var(--bs-body-bg, #1a1a1a); color: var(--bs-body-color, #e0e0e0); }
-      html[data-theme="dark"] header.support-page-header { background-color: var(--bs-body-bg, #1a1a1a) !important; }
-      html[data-theme="dark"] .theme-toggle .icon-sun,
-      html[data-theme="dark"] .theme-toggle .icon-moon { color: #e0e0e0; }
+      .support-rec-body {
+        background-color: var(--page-bg);
+        color: var(--page-text);
+      }
+      :root[data-theme="dark"] .support-rec-body {
+        background-color: var(--page-bg);
+        color: var(--page-text);
+      }
+      :root[data-theme="dark"] header.support-page-header {
+        background-color: var(--nav-bg) !important;
+      }
+      :root[data-theme="dark"] .theme-toggle .icon-sun,
+      :root[data-theme="dark"] .theme-toggle .icon-moon {
+        color: #e0e0e0;
+      }
       .support-hero-anim > *,
       #support-claims-section .support-claims-title,
       #support-claims-section #reclamation-search,
@@ -109,8 +119,8 @@ $reclamations = $controller->get_reclamations();
         border-radius: 1rem;
       }
       .support-team-card__surface {
-        background: #fff;
-        border: 1px solid rgba(0, 0, 0, 0.08);
+        background: var(--surface);
+        border: 1px solid var(--surface-border);
         border-radius: 1rem;
         overflow: hidden;
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
@@ -148,16 +158,40 @@ $reclamations = $controller->get_reclamations();
         opacity: 1;
         padding: 0 1.25rem 1.35rem;
       }
-      html[data-theme="dark"] .support-team-card__surface {
-        background: #2a2d32;
-        border-color: rgba(255, 255, 255, 0.1);
+      :root[data-theme="dark"] .support-team-card__surface {
+        background: var(--surface);
+        border-color: var(--surface-border);
       }
-      html[data-theme="dark"] .support-team-card__drawer .text-muted {
+      :root[data-theme="dark"] .support-team-card__drawer .text-muted {
         color: rgba(255, 255, 255, 0.55) !important;
+      }
+      #support-claims-section #reclamation-search {
+        background-color: var(--panel-bg);
+        color: var(--panel-text);
+        border-color: var(--surface-border);
+      }
+      :root[data-theme="dark"] #support-claims-section #reclamation-search {
+        background-color: var(--surface);
+        color: var(--panel-text);
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+      :root[data-theme="dark"] #reclamation-table,
+      :root[data-theme="dark"] #reclamation-table td,
+      :root[data-theme="dark"] #reclamation-table th {
+        color: var(--page-text);
+      }
+      :root[data-theme="dark"] #reclamation-table thead th {
+        background-color: var(--surface-2);
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+      :root[data-theme="dark"] #reclamation-table tbody td {
+        background-color: var(--surface);
+        border-color: rgba(255, 255, 255, 0.08);
       }
     </style>
   </head>
   <body class="support-rec-body">
+    
 
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
       <defs>
@@ -217,6 +251,33 @@ $reclamations = $controller->get_reclamations();
         <symbol xmlns="http://www.w3.org/2000/svg" id="pet" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M1.5 9.5c.552 0 1-.672 1-1.5s-.448-1.5-1-1.5s-1 .672-1 1.5s.448 1.5 1 1.5m3-4.5c.552 0 1-.672 1-1.5S5.052 2 4.5 2s-1 .672-1 1.5s.448 1.5 1 1.5m5 0c.552 0 1-.672 1-1.5S10.052 2 9.5 2s-1 .672-1 1.5s.448 1.5 1 1.5m3 4.5c.552 0 1-.672 1-1.5s-.448-1.5-1-1.5s-1 .672-1 1.5s.448 1.5 1 1.5M10 10c0 1.38-1.62 2-3 2s-3-.62-3-2s1-3.5 3-3.5s3 2.12 3 3.5"/></symbol>
       </defs>
     </svg>
+    <nav>
+  <a href="#" class="nav-logo">
+    <img src="assets/Plan de travail 1 no bg (3) (1).png" alt="FOOVIA Logo" style="height: 50px; width: auto;">
+    FOOVIA
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#marketplace">Marketplace</a></li>
+    <li><a href="#community">Community</a></li>
+    <li><a href="support_rec_page.php">Support</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="../back_office/Support_admin.php" class="nav-btn nav-backoffice">Backoffice</a>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"></path>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
+      </svg>
+    </button>
+    <a href="signin.html" class="nav-btn nav-signin">Sign In</a>
+    <a href="signup.html" class="nav-btn nav-signup">Sign Up</a>
+  </div>
+</nav>
 
     <div class="preloader-wrapper">
       <div class="preloader">
@@ -395,55 +456,44 @@ $reclamations = $controller->get_reclamations();
 
     </div>
 
-    <header class="bg-body shadow-sm support-page-header border-bottom">
-      <div class="container py-4">
-        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
-          <a href="#" class="nav-logo d-flex align-items-center gap-2 text-decoration-none text-body">
-            <img src="assets/Plan de travail 1 no bg (3) (1).png" alt="FOOVIA Logo" style="height: 50px; width: auto;">
-            <span class="fw-bold">FOOVIA</span>
-          </a>
-          <div class="d-flex flex-wrap align-items-center gap-2">
-            <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
-              <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="4"></circle>
-                <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"></path>
-              </svg>
-              <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
-              </svg>
-            </button>
-            <a href="support_rec_page.php" class="btn btn-outline-primary">Support</a>
-            <a href="add_rec_page.php" class="btn btn-primary">Create claim</a>
-            <a href="../back_office/Support_admin.php" class="btn btn-outline-secondary">Back office</a>
-          </div>
-        </div>
-      </div>
-      
-    </header>
+    <section class="hero">
+  <div class="hero-text">
     
-    <section class="py-6 text-white" style="background: linear-gradient(180deg, rgba(27, 79, 43, .75), rgba(27, 79, 43, .35)), url('images/banner-1.jpg') center/cover no-repeat;">
-      <div class="container py-5">
-        <div class="row align-items-center">
-          <div class="col-lg-7 support-hero-anim">
-            <p class="text-uppercase small mb-3">Support center</p>
-            <h1 class="display-5 fw-bold mb-3">Review, search, and manage your claims in one place.</h1>
-            <p class="lead mb-4">Track claim status or submit a new request with confidence.</p>
-            <div class="d-flex flex-wrap gap-2">
-              <a href="support_rec_page.php" class="btn btn-outline-light btn-lg">Refresh list</a>
-            </div>
-          </div>
-        </div>
+    <h1 class="hero-title">
+      Eat smart.<br>
+      Train <span class="accent">better.</span><br>
+      Waste <span class="accent2">nothing.</span>
+    </h1>
+    <div class="hero-actions mt-4">
+      <button id="refresh-claims-btn" type="button" class="btn-secondary">Refresh</button>
+    </div>
+
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-card-stack">
+      <div class="hcard hcard-pill pill-1">
+        <div class="dot"></div>
+        Macros tracked ✓
       </div>
-      
-      
-      
-
-
-
-
-
-      <!--------------------------------------------------------------------->
-    </section>
+      <div class="hcard hcard-main">
+        <div class="logo-in-card">
+          <img src="assets/Plan de travail 1 no bg (3) (1).png" alt="FOOVIA logo">
+        </div>
+        <h3>FOOVIA</h3>
+        <p>Your personalised nutrition & fitness guide, available 24/7.</p>
+      </div>
+      <div class="hcard hcard-pill pill-2">
+        <div class="dot"></div>
+        Workout ready 💪
+      </div>
+      <div class="hcard hcard-pill pill-3">
+        <div class="dot"></div>
+        Market fresh 🛒
+      </div>
+    </div>
+  </div>
+</section>
     <section id="support-claims-section">
         <div class="container mt-5">
             <?php if (!empty($error)): ?>
@@ -460,6 +510,7 @@ $reclamations = $controller->get_reclamations();
         <div class="container mt-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="mb-0 support-claims-title">List of Claims</h2>
+                <a href="add_rec_page.php" class="btn btn-primary">Create Claim</a>
             </div>
             <div class="mb-3">
                 <input id="reclamation-search" type="text" class="form-control" style="border: 2px solid #ddd; border-radius: 8px;" placeholder="Search in the list of claims...">
@@ -515,7 +566,7 @@ $reclamations = $controller->get_reclamations();
           <li><a href="#creer-faq-convertit" style="text-decoration: none;">How can i give you 5 stars rating?</a></li>
           <li><a href="#faq-ecommerce" style="text-decoration: none;">Who created this amazing platform ?</a></li>
           <li><a href="#outils-faq" style="text-decoration: none;">Are there reductions offers?</a></li>
-          <li><a href="#outils-faq" style="text-decoration: none;">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a></li>
+          <li><a href="#outils-faq" style="text-decoration: none;">How to edit my profile information && data ?</a></li>
           </ul>
         </div>
         </section>
@@ -538,7 +589,7 @@ $reclamations = $controller->get_reclamations();
               <article class="support-team-card" tabindex="0" aria-label="Sara Mezzi, Head of Support, sara.mezzi@foovia.com, +216 55 100 077">
                 <div class="support-team-card__surface">
                   <figure class="support-team-card__figure">
-                    <img class="support-team-card__photo" src="assets/CoolBob.png" width="140" height="140" alt="Cool Bob">
+                    <img class="support-team-card__photo" src="" width="140" height="140" alt="agent 2">
                   </figure>
                   <div class="support-team-card__drawer">
                     <h3 class="h5 mb-1 text-body">Cool Bob</h3>
@@ -553,7 +604,7 @@ $reclamations = $controller->get_reclamations();
               <article class="support-team-card" tabindex="0" aria-label="Karim Ben Salah, Claims specialist, karim.bensalah@foovia.com, +216 98 203 040">
                 <div class="support-team-card__surface">
                   <figure class="support-team-card__figure">
-                    <img class="support-team-card__photo" src="assets/huh.jpg" width="140" height="140" alt="Salah huh">
+                    <img class="support-team-card__photo" src="" width="140" height="140" alt="agent 1">
                   </figure>
                   <div class="support-team-card__drawer">
                     <h3 class="h5 mb-1 text-body">Salah</h3>
@@ -568,7 +619,7 @@ $reclamations = $controller->get_reclamations();
               <article class="support-team-card" tabindex="0" aria-label="Leïla Oueslati, Customer success, leila.oueslati@foovia.com, +216 22 114 455">
                 <div class="support-team-card__surface">
                   <figure class="support-team-card__figure">
-                    <img class="support-team-card__photo" src="assets/monkey.jpg" width="140" height="140" alt="Mr x">
+                    <img class="support-team-card__photo" src="" width="140" height="140" alt="agent 3">
                   </figure>
                   <div class="support-team-card__drawer">
                     <h3 class="h5 mb-1 text-body">Mr x</h3>
@@ -657,29 +708,28 @@ $reclamations = $controller->get_reclamations();
     <script src="js/plugins.js"></script>
     <script src="js/script.js"></script>
     <script>
-      (function () {
-        var root = document.documentElement;
-        var toggle = document.querySelector('.theme-toggle');
-        if (!toggle) return;
+      (function() {
+        const root = document.documentElement;
+        const toggle = document.querySelector('.theme-toggle');
 
-        function setTheme(theme) {
-          var isDark = theme === 'dark';
+        const setTheme = (theme) => {
+          const isDark = theme === 'dark';
           root.setAttribute('data-theme', theme);
           root.style.colorScheme = theme;
           toggle.setAttribute('aria-pressed', String(isDark));
           toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
-        }
+        };
 
-        var stored = localStorage.getItem('theme');
-        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var initial = stored || (prefersDark ? 'dark' : 'light');
-        setTheme(initial);
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = stored || (prefersDark ? 'dark' : 'light');
+        setTheme(initialTheme);
 
-        toggle.addEventListener('click', function () {
-          var current = root.getAttribute('data-theme') || 'light';
-          var next = current === 'dark' ? 'light' : 'dark';
-          localStorage.setItem('theme', next);
-          setTheme(next);
+        toggle.addEventListener('click', () => {
+          const currentTheme = root.getAttribute('data-theme') || 'light';
+          const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          localStorage.setItem('theme', nextTheme);
+          setTheme(nextTheme);
         });
       })();
     </script>
@@ -691,6 +741,10 @@ $reclamations = $controller->get_reclamations();
                     var rowText = $(this).text().toLowerCase();
                     $(this).toggle(rowText.indexOf(query) !== -1);
                 });
+            });
+
+            $('#refresh-claims-btn').on('click', function() {
+                location.reload();
             });
         });
     </script>

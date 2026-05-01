@@ -36,11 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$id_reclam = $id_reclam ?? '';
+$id_reclam = $_GET['id_reclam'] ?? $id_reclam ?? '';
 $comment = $comment ?? '';
 $status = $status ?? '';
 $date_trait = $date_trait ?? '';
-$id_user = $id_user ?? '';
+$id_user = $_GET['id_user'] ?? $id_user ?? '';
 $editMode = false;
 ?>
 <!DOCTYPE html>
@@ -79,14 +79,19 @@ $editMode = false;
                             <input type="hidden" name="action" value="add">
                             <div class="mb-3">
                                 <label for="id_reclam" class="form-label">Claim ID</label>
-                                <select class="form-control" id="id_reclam" name="id_reclam">
-                                    <option value="">-- Select Claim ID --</option>
-                                    <?php foreach ($claimIds as $claimId): ?>
-                                        <option value="<?php echo htmlspecialchars($claimId); ?>" <?php echo $id_reclam === $claimId ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($claimId); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <?php if ($id_reclam !== ''): ?>
+                                    <input type="hidden" name="id_reclam" value="<?php echo htmlspecialchars($id_reclam); ?>">
+                                    <input type="text" class="form-control" id="id_reclam" value="<?php echo htmlspecialchars($id_reclam); ?>" readonly>
+                                <?php else: ?>
+                                    <select class="form-control" id="id_reclam" name="id_reclam">
+                                        <option value="">-- Select Claim ID --</option>
+                                        <?php foreach ($claimIds as $claimId): ?>
+                                            <option value="<?php echo htmlspecialchars($claimId); ?>" <?php echo $id_reclam === $claimId ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($claimId); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                <?php endif; ?>
                             </div>
                             <div class="mb-3">
                                 <label for="comment" class="form-label">Comment</label>
@@ -102,14 +107,19 @@ $editMode = false;
                             </div>
                             <div class="mb-3">
                                 <label for="id_user" class="form-label">User ID</label>
-                                <select class="form-control" id="id_user" name="id_user">
-                                    <option value="">-- Select User ID --</option>
-                                    <?php foreach ($userIds as $userId): ?>
-                                        <option value="<?php echo htmlspecialchars($userId); ?>" <?php echo $id_user == $userId ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($userId); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <?php if ($id_user !== ''): ?>
+                                    <input type="hidden" name="id_user" value="<?php echo htmlspecialchars($id_user); ?>">
+                                    <input type="text" class="form-control" id="id_user" value="<?php echo htmlspecialchars($id_user); ?>" readonly>
+                                <?php else: ?>
+                                    <select class="form-control" id="id_user" name="id_user">
+                                        <option value="">-- Select User ID --</option>
+                                        <?php foreach ($userIds as $userId): ?>
+                                            <option value="<?php echo htmlspecialchars($userId); ?>" <?php echo $id_user == $userId ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($userId); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                <?php endif; ?>
                             </div>
                             <button type="submit" class="btn btn-success"><?php echo $editMode ? 'Update' : 'Add'; ?></button>
                         </form>

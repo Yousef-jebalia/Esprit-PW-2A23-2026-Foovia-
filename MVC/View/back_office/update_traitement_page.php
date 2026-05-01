@@ -34,11 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (isset($_GET['id']) && $_GET['id'] !== '') {
     $traitementToEdit = $controller->get_traitement_by_id($_GET['id']);
     if (!$traitementToEdit) {
-        $error = 'Traitement introuvable.';
+        $error = 'Treatment not found.';
     }
 } else {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        $error = 'ID du traitement manquant.';
+        $error = 'Treatment ID missing.';
     }
 }
 
@@ -68,9 +68,9 @@ $id_user = $traitementToEdit['id_user'] ?? ($_POST['id_user'] ?? '');
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-0">Edit Treatment</h5>
-                            <small>Modifiez les informations du traitement existant.</small>
+                            <small>Edit the existing treatment details.</small>
                         </div>
-                        <a href="Support_admin.php" class="btn btn-secondary btn-sm">Retour</a>
+                        <a href="Support_admin.php" class="btn btn-secondary btn-sm">Back</a>
                     </div>
                     <div class="card-body">
                         <?php if ($error): ?>
@@ -78,11 +78,11 @@ $id_user = $traitementToEdit['id_user'] ?? ($_POST['id_user'] ?? '');
                         <?php endif; ?>
                         <form method="post" novalidate>
                             <div class="mb-3">
-                                <label for="id_traitement" class="form-label">ID Traitement</label>
+                                <label for="id_traitement" class="form-label">Treatment ID</label>
                                 <input type="text" class="form-control" id="id_traitement" name="id_traitement" value="<?php echo htmlspecialchars($id_traitement); ?>" readonly>
                             </div>
                             <div class="mb-3">
-                                <label for="id_reclam" class="form-label">ID Réclamation</label>
+                                <label for="id_reclam" class="form-label">Claim ID</label>
                                 <input type="text" class="form-control" id="id_reclam" name="id_reclam" value="<?php echo htmlspecialchars($id_reclam); ?>">
                             </div>
                             <div class="mb-3">
@@ -101,7 +101,7 @@ $id_user = $traitementToEdit['id_user'] ?? ($_POST['id_user'] ?? '');
                                 <label for="id_user" class="form-label">ID User</label>
                                 <input type="text" class="form-control" id="id_user" name="id_user" value="<?php echo htmlspecialchars($id_user); ?>">
                             </div>
-                            <button type="submit" class="btn btn-success">Mettre à jour</button>
+                            <button type="submit" class="btn btn-success">Update</button>
                         </form>
                     </div>
                 </div>
