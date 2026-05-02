@@ -1275,7 +1275,7 @@ a.btn-link.text-light:after {
         padding: 0.9rem 1.35rem;
         text-align: center;
         text-decoration: none;
-        font-family: 'Syne', 'Nunito', sans-serif;
+        font-family: 'Boldonse';
         font-size: 0.9rem;
         font-weight: 800;
         letter-spacing: 0.02em;
@@ -1373,7 +1373,7 @@ a.btn-link.text-light:after {
       }
 
       .ingredients-modal-title {
-        font-family: 'Syne', 'Nunito', sans-serif;
+        font-family: 'Boldonse';
         font-size: clamp(1.75rem, 1.45rem + 1vw, 2.2rem);
         line-height: 1.1;
         color: #111008;
@@ -1646,7 +1646,7 @@ a.btn-link.text-light:after {
         background: #fff;
         border-radius: 12px;
         padding: 13px 18px;
-        font-family: 'Syne', 'Nunito', sans-serif;
+        font-family: 'Boldonse';
         font-size: 0.8rem;
         color: #111008;
         flex: 1;
@@ -1657,7 +1657,7 @@ a.btn-link.text-light:after {
         background: #fff;
         border-radius: 12px;
         padding: 13px 20px;
-        font-family: 'Syne', 'Nunito', sans-serif;
+        font-family: 'Boldonse';
         font-size: 0.8rem;
         color: #888;
       }
@@ -1672,7 +1672,7 @@ a.btn-link.text-light:after {
         min-width: 180px;
         background: #4bae52;
         border-color: #4bae52;
-        font-family: 'Syne', 'Nunito', sans-serif;
+        font-family: 'Boldonse';
       }
 
       .ingredient-validate-btn:hover,
@@ -1791,7 +1791,7 @@ a.btn-link.text-light:after {
         border: 1.5px solid rgba(0, 0, 0, 0.1);
         border-radius: 12px;
         padding: 12px 16px;
-        font-family: 'Syne', 'Nunito', sans-serif;
+        font-family: 'Boldonse';
         font-size: 0.82rem;
         font-weight: 700;
         letter-spacing: 0;
@@ -1831,6 +1831,114 @@ a.btn-link.text-light:after {
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
+        position: relative;
+        padding: 16px;
+        text-align: center;
+      }
+
+      .ingredient-picture-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+      }
+
+      .ingredient-picture-preview img.is-visible {
+        display: block;
+      }
+
+      .ingredient-picture-preview span,
+      .ingredient-picture-note {
+        color: #888;
+      }
+
+      .ingredient-picture-note {
+        margin: 12px 0 0;
+        font-size: 0.82rem;
+      }
+
+      .ingredient-picture-analyze {
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-family: 'Boldonse';
+        font-size: 0.84rem;
+        font-weight: 700;
+        background: #111008;
+        color: #fff;
+      }
+
+      .ingredient-picture-analyze:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .ingredient-picture-ai-status {
+        margin: 10px 0 0;
+        font-size: 0.82rem;
+        color: #555;
+        min-height: 1.2em;
+      }
+
+      .ingredient-picture-ai-results {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .ingredient-picture-ai-tag {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 999px;
+        background: #fff;
+        color: #111008;
+        padding: 6px 12px;
+        font-size: 0.76rem;
+        line-height: 1;
+      }
+
+      @media (max-width: 575.98px) {
+        .ingredient-picture-modal {
+          padding: 12px;
+        }
+
+        .ingredient-picture-modal-inner {
+          padding: 20px 16px;
+          border-radius: 20px;
+          max-height: 88vh;
+        }
+
+        .ingredient-picture-grid {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .ingredient-picture-camera,
+        .ingredient-picture-upload {
+          padding: 14px;
+        }
+
+        .ingredient-picture-preview {
+          min-height: 180px;
+        }
+
+        .ingredient-picture-actions {
+          gap: 8px;
+        }
+
+        .ingredient-picture-action,
+        .ingredient-picture-upload-label {
+          padding: 10px 12px;
+          font-size: 0.78rem;
+        }
+
+        .ingredient-picture-analyze {
+          font-size: 0.8rem;
+          padding: 10px 12px;
+        }
+      }
         overflow: hidden;
         position: relative;
         padding: 16px;

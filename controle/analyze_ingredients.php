@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
+require_once __DIR__ . '/../model/config.php';
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   http_response_code(405);
   echo json_encode(['error' => 'Method not allowed']);
@@ -80,6 +82,23 @@ if (!$apiKey) {
   http_response_code(500);
   echo json_encode(['error' => 'Gemini API key is missing on server. Set GEMINI_API_KEY or create C:/xampp/apache/conf/gemini_api_key.txt']);
   exit;
+}
+
+if (!function_exists('foovia_normalize_ingredient_name')) {
+  function foovia_normalize_ingredient_name($value) {
+    $value = trim((string)$value);
+    if ($value === '') {
+      return '';
+    }
+    if (function_exists('mb_strtolower')) {
+      $value = mb_strtolower($value, 'UTF-8');
+    } else {
+      $value = strtolower($value);
+    }
+    $value = preg_replace('/[^\pL\pN]+/u', ' ', $value);
+    $value = preg_replace('/\s+/', ' ', $value);
+    return trim($value);
+  }
 }
 
 $prompt = "You are a food ingredient detector. Analyze the image and identify visible edible ingredients. Return STRICT JSON only in this format: {\"ingredients\":[\"name1\",\"name2\"]}. Use short lowercase ingredient names. No extra text.";
@@ -191,6 +210,85 @@ if (is_array($parsed) && isset($parsed['ingredients']) && is_array($parsed['ingr
 
 $ingredients = array_values(array_unique($ingredients));
 
+$matchedIngredients = [];
+$unmatchedIngredients = [];
+
+if (!empty($ingredients)) {
+  try {
+    $db = config::getConnexion();
+    $stmt = $db->query('SELECT id_ing, name_ing, img_ing FROM ingrediant');
+    $rows = $stmt ? $stmt->fetchAll() : [];
+
+    $catalog = [];
+    $lookup = [];
+    foreach ($rows as $row) {
+      $name = isset($row['name_ing']) ? (string)$row['name_ing'] : '';
+      $normalized = foovia_normalize_ingredient_name($name);
+      if ($normalized === '') {
+        continue;
+      }
+      $catalog[] = [
+        'id' => (int)($row['id_ing'] ?? 0),
+        'name' => $name,
+        'img' => (string)($row['img_ing'] ?? ''),
+        'norm' => $normalized
+      ];
+      if (!isset($lookup[$normalized])) {
+        $lookup[$normalized] = count($catalog) - 1;
+      }
+    }
+
+    $matchedIds = [];
+    foreach ($ingredients as $detectedName) {
+      $normalizedDetected = foovia_normalize_ingredient_name($detectedName);
+      if ($normalizedDetected === '') {
+        continue;
+      }
+
+      $matchedItem = null;
+      if (isset($lookup[$normalizedDetected])) {
+        $matchedItem = $catalog[$lookup[$normalizedDetected]];
+      } else if (strlen($normalizedDetected) >= 3) {
+        $bestIndex = -1;
+        $bestScore = 0;
+        foreach ($catalog as $index => $item) {
+          $candidate = $item['norm'] ?? '';
+          if ($candidate === '') {
+            continue;
+          }
+          if (strpos($candidate, $normalizedDetected) !== false || strpos($normalizedDetected, $candidate) !== false) {
+            $score = min(strlen($candidate), strlen($normalizedDetected));
+            if ($score > $bestScore) {
+              $bestScore = $score;
+              $bestIndex = $index;
+            }
+          }
+        }
+        if ($bestIndex >= 0) {
+          $matchedItem = $catalog[$bestIndex];
+        }
+      }
+
+      if ($matchedItem && !isset($matchedIds[$matchedItem['id']])) {
+        $matchedIds[$matchedItem['id']] = true;
+        $matchedIngredients[] = [
+          'id' => $matchedItem['id'],
+          'name' => $matchedItem['name'],
+          'img' => $matchedItem['img'],
+          'detected' => $detectedName
+        ];
+      } else if (!$matchedItem) {
+        $unmatchedIngredients[] = $detectedName;
+      }
+    }
+  } catch (Exception $e) {
+    $matchedIngredients = [];
+    $unmatchedIngredients = [];
+  }
+}
+
 echo json_encode([
   'ingredients' => $ingredients,
+  'matches' => $matchedIngredients,
+  'unmatched' => $unmatchedIngredients,
 ]);

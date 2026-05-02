@@ -150,4 +150,17 @@ class controle_categ_rec{
 
         }
     }
+
+    public function count_recipes_by_category($id_categ_rec){
+        $sql="SELECT COUNT(*) FROM affecter_categ_rec WHERE id_categ_rec = :id_categ_rec";
+        $db=config::getConnexion();
+        try{
+            $query=$db->prepare($sql);
+            $query->execute(['id_categ_rec'=>$id_categ_rec]);
+            return (int)$query->fetchColumn();
+        }catch(Exception $e){
+            echo 'Error: '.$e->getMessage();
+            return 0;
+        }
+    }
 }
