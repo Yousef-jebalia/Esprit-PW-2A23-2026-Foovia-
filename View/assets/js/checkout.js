@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const cartStorageKey = 'fooviaCartItems';
+  const deliveryPlanKey = 'fooviaDeliveryPlan';
+  const deliveryTrackerKey = 'fooviaDeliveryTracker';
+  const smsEndpoint = '../../../Controller/Sms_Controller.php?action=delivery_done';
   const cart = (() => {
     try {
       const parsed = JSON.parse(localStorage.getItem(cartStorageKey) || '[]');
@@ -19,6 +22,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const processingModal = document.querySelector('[data-payment-processing]');
   const successModal = document.querySelector('[data-payment-success]');
   const successReference = document.querySelector('[data-success-reference]');
+  const deliveryCard = document.querySelector('[data-checkout-delivery-card]');
+  const deliveryPointNode = document.querySelector('[data-checkout-delivery-point]');
+  const deliveryDestinationNode = document.querySelector('[data-checkout-destination]');
+  const deliveryEstimateNode = document.querySelector('[data-checkout-estimate]');
+  const deliveryPaymentNode = document.querySelector('[data-checkout-payment]');
+  const deliveryWeatherNode = document.querySelector('[data-checkout-weather]');
+  const successDeliveryBlock = document.querySelector('[data-success-delivery-block]');
+  const successDeliveryNode = document.querySelector('[data-success-delivery]');
+  const deliveryPlan = (() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(deliveryPlanKey) || 'null');
+      return parsed && typeof parsed === 'object' ? parsed : null;
+    } catch (error) {
+      return null;
+    }
+  })();
 
   const holderField = document.querySelector('[data-field="holder_name"]');
   const emailField = document.querySelector('[data-field="email"]');
@@ -39,6 +58,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const formatPrice = (value) => {
     const price = Number(value || 0);
     return `${price.toFixed(3).replace(/\.?0+$/, '')} TND`;
+  };
+
+  const formatMinutes = (minutes) => {
+    if (minutes < 1) {
+      return `${Math.max(1, Math.round(minutes * 60))} sec`;
+    }
+    if (!Number.isFinite(minutes)) {
+      return 'Not available';
+    }
+    if (minutes < 60) {
+      return `${minutes} min`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const remaining = minutes % 60;
+    return remaining === 0 ? `${hours} h` : `${hours} h ${remaining} min`;
   };
 
   const setError = (field, message) => {
@@ -67,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const subtotal = cart.reduce((sum, item) => sum + (Number(item.price || 0) * Number(item.quantity || 0)), 0);
-    const delivery = cart.length > 0 ? 7.5 : 0;
+    const delivery = cart.length > 0 ? Number(deliveryPlan?.deliveryFee ?? 7.5) : 0;
     const fee = cart.length > 0 ? 1.9 : 0;
     const total = subtotal + delivery + fee;
 
@@ -230,14 +264,60 @@ document.addEventListener('DOMContentLoaded', () => {
       processingModal.hidden = true;
     }
 
+    const orderReference = `FV-${Date.now().toString().slice(-6)}`;
+    if (deliveryPlan) {
+      const etaMinutes = Number(deliveryPlan.etaMinutes || 0);
+      const now = Date.now();
+      localStorage.setItem(deliveryTrackerKey, JSON.stringify({
+        reference: orderReference,
+        hubName: deliveryPlan.hub?.name || 'Selected dispatch point',
+        destinationLabel: deliveryPlan.destination?.label || 'Your location',
+        phone: (phoneField?.value || '').trim(),
+        paymentMethod: 'card',
+        smsEndpoint,
+        etaMinutes,
+        startedAt: now,
+        etaEndsAt: now + (etaMinutes * 60 * 1000),
+        status: 'in_transit'
+      }));
+    }
+
     localStorage.removeItem(cartStorageKey);
+    localStorage.removeItem(deliveryPlanKey);
     if (successReference) {
-      successReference.textContent = `FV-${Date.now().toString().slice(-6)}`;
+      successReference.textContent = orderReference;
+    }
+    if (successDeliveryBlock && successDeliveryNode && deliveryPlan) {
+      successDeliveryBlock.hidden = false;
+      successDeliveryNode.textContent = `${formatMinutes(Number(deliveryPlan.etaMinutes || 0))} from ${deliveryPlan.hub?.name || 'selected point'}`;
     }
     if (successModal) {
       successModal.hidden = false;
     }
   };
+
+  if (deliveryPlan && deliveryCard) {
+    deliveryCard.hidden = false;
+    if (deliveryPointNode) {
+      deliveryPointNode.textContent = deliveryPlan.hub?.name || 'Selected dispatch point';
+    }
+    if (deliveryDestinationNode) {
+      deliveryDestinationNode.textContent = deliveryPlan.destination?.label || 'Your location';
+    }
+    if (deliveryEstimateNode) {
+      deliveryEstimateNode.textContent = formatMinutes(Number(deliveryPlan.etaMinutes || 0));
+    }
+    if (deliveryPaymentNode) {
+      deliveryPaymentNode.textContent = deliveryPlan.paymentMethod === 'card' ? 'Card payment' : 'Cash on delivery';
+    }
+    if (deliveryWeatherNode) {
+      const weatherLabel = deliveryPlan.weather?.label || 'Standard delivery conditions';
+      const surcharge = Number(deliveryPlan.weather?.surcharge ?? 0);
+      deliveryWeatherNode.textContent = surcharge > 0
+        ? `${weatherLabel} (+${formatPrice(surcharge)} TND)`
+        : weatherLabel;
+    }
+  }
 
   [holderField, emailField, numberField, expiryField, cvvField, phoneField, addressField, cityField, postalField, countryField]
     .filter(Boolean)

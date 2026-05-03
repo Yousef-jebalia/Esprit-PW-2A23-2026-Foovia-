@@ -125,6 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   const markerLayer = L.layerGroup();
+  let userLocationMarker = null;
+  const prettyTileConfig = {
+    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+  };
 
   const setStatus = (message) => {
     if (statusElement) statusElement.textContent = message;
@@ -136,8 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   markerLayer.addTo(map);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+  L.tileLayer(prettyTileConfig.url, {
+    attribution: prettyTileConfig.attribution,
+    subdomains: 'abcd',
+    maxZoom: 20
   }).addTo(map);
 
   const userIcon = L.divIcon({
@@ -167,6 +174,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isCarrefourName(name)) return 'carrefour';
     return 'market';
   };
+
+  const allSavedStores = Object.values(fallbackStores)
+    .flat()
+    .filter((store, index, stores) => stores.findIndex((candidate) =>
+      candidate.name === store.name
+      && candidate.lat === store.lat
+      && candidate.lng === store.lng
+    ) === index)
+    .map((store) => ({
+      ...store,
+      brand: detectBrand(store.name)
+    }));
 
   const createBrandIcon = (brandKey) => {
     const brand = brandDefinitions[brandKey] || brandDefinitions.market;
@@ -246,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const addMarketMarkers = (stores, center, statusPrefix) => {
     markerLayer.clearLayers();
-    L.marker([center.lat, center.lng], { icon: userIcon }).addTo(markerLayer).bindTooltip('Search center');
+    userLocationMarker = L.marker([center.lat, center.lng], { icon: userIcon }).addTo(markerLayer).bindTooltip('Your location');
 
     const bounds = L.latLngBounds([[center.lat, center.lng]]);
     stores.forEach((store) => {
@@ -266,6 +285,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     map.fitBounds(bounds, { padding: [36, 36], maxZoom: 15 });
     setStatus(`${statusPrefix}: ${stores.length} market(s) shown. Stores named ${arabicAziza} display as Aziza.`);
+  };
+
+  const addNationwideMarkers = (stores, statusPrefix, userCenter = null, focusOnUser = false) => {
+    markerLayer.clearLayers();
+
+    const bounds = L.latLngBounds([]);
+    if (userCenter) {
+      userLocationMarker = L.marker([userCenter.lat, userCenter.lng], { icon: userIcon }).addTo(markerLayer).bindTooltip('Your location');
+      bounds.extend([userCenter.lat, userCenter.lng]);
+    }
+    stores.forEach((store) => {
+      const brand = store.brand || detectBrand(store.name);
+      bounds.extend([store.lat, store.lng]);
+      L.marker([store.lat, store.lng], { icon: createBrandIcon(brand) })
+        .addTo(markerLayer)
+        .bindPopup(tooltipHtml(store.name, brand), {
+          autoPan: true,
+          closeButton: false,
+          className: `foovia-aziza-tooltip-wrap ${brandDefinitions[brand]?.tooltipClass || 'foovia-tooltip-market'}`,
+          offset: [0, -44],
+          maxWidth: 260,
+          minWidth: 220
+        });
+    });
+
+    if (userCenter && focusOnUser) {
+      map.setView([userCenter.lat, userCenter.lng], 11);
+    } else if (bounds.isValid()) {
+      map.fitBounds(bounds, { padding: [42, 42], maxZoom: 8 });
+    }
+
+    setStatus(`${statusPrefix}: ${stores.length} market(s) shown across Foovia cities.`);
   };
 
   const buildQuery = (center) => `
@@ -331,6 +382,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const loadSelectedCity = () => {
     const selected = citySelect?.value || 'auto';
+    if (selected === 'all') {
+      addNationwideMarkers(allSavedStores, 'All saved markets');
+      return;
+    }
     if (selected !== 'auto') {
       const city = cityCenters[selected] || cityCenters[defaultCity];
       loadStores(city, selected, `around ${city.label}`);
@@ -344,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!('geolocation' in navigator)) {
       const city = cityCenters[defaultCity];
       setStatus('Geolocation is not available, showing Tunis.');
-      loadStores(city, defaultCity, 'around Tunis');
+      loadStores(city, 'tunis', 'around Tunis');
       return;
     }
 
@@ -354,12 +409,17 @@ document.addEventListener('DOMContentLoaded', () => {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
+        if ((citySelect?.value || 'auto') === 'all') {
+          addNationwideMarkers(allSavedStores, 'All saved markets', center, false);
+          setStatus('All saved markets shown around your current location.');
+          return;
+        }
         loadStores(center, closestCityKey(center), 'near your browser location');
       },
       () => {
-        const city = cityCenters[defaultCity];
+        const city = cityCenters.tunis;
         setStatus('Location was not allowed, showing Tunis.');
-        loadStores(city, defaultCity, 'around Tunis');
+        loadStores(city, 'tunis', 'around Tunis');
       },
       { enableHighAccuracy: true, timeout: 9000 }
     );
@@ -368,5 +428,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (citySearch) citySearch.addEventListener('click', loadSelectedCity);
   if (citySelect) citySelect.addEventListener('change', loadSelectedCity);
 
+  if (citySelect) {
+    citySelect.value = 'all';
+  }
   loadBrowserLocation();
 });

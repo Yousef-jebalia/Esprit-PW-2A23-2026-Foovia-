@@ -178,7 +178,7 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
     <link rel="stylesheet" type="text/css" href="css/vendor.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" type="text/css" href="../../assets/css/marketplace.css?v=foovia-hero-hover-brand-1">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/marketplace.css?v=weather-ui-1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -301,9 +301,21 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
                                 <?php endforeach; ?>
                             </div>
                             <div class="foovia-recommend-stats">
-                                <div><i></i><strong><?= count($products) ?></strong><span>Products live</span></div>
-                                <div><i></i><strong><?= count($stores) ?></strong><span>Stores linked</span></div>
-                                <div><i></i><strong><?= max(array_sum(array_map(static fn (array $product): int => (int) $product['quantity_march'], $products)), 0) ?></strong><span>Total stock</span></div>
+                                <div>
+                                    <i><img src="../../assets/imges-autre/product-icon.svg" alt="Products"></i>
+                                    <strong><?= count($products) ?></strong>
+                                    <span>Products live</span>
+                                </div>
+                                <div>
+                                    <i><img src="../../assets/imges-autre/shop-icon.svg" alt="Stores"></i>
+                                    <strong><?= count($stores) ?></strong>
+                                    <span>Stores linked</span>
+                                </div>
+                                <div>
+                                    <i><img src="../../assets/imges-autre/package-delivery-icon.svg" alt="Stock"></i>
+                                    <strong><?= max(array_sum(array_map(static fn (array $product): int => (int) $product['quantity_march'], $products)), 0) ?></strong>
+                                    <span>Total stock</span>
+                                </div>
                             </div>
                         </section>
                     <?php endif; ?>
@@ -510,6 +522,7 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
                         <p>Allow location access or choose a nearby city. Foovia will place pins for nearby markets, and stores named عزيزة are shown as Aziza.</p>
                         <div class="foovia-map-controls">
                             <select data-aziza-city-select>
+                                <option value="all">All Foovia markets</option>
                                 <option value="auto">Use my location</option>
                                 <option value="tunis">Tunis</option>
                                 <option value="ariana">Ariana</option>
@@ -559,6 +572,35 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
         <span data-cart-count>0</span>
     </button>
 
+    <button type="button" class="foovia-delivery-notice" data-delivery-notice hidden>
+        <span class="foovia-delivery-notice__pulse"></span>
+        <span class="foovia-delivery-notice__copy">
+            <strong data-delivery-notice-title>Delivery update</strong>
+            <small data-delivery-notice-text>Your order is on the way.</small>
+        </span>
+    </button>
+
+    <div class="foovia-delivery-tracker-modal" data-delivery-tracker-modal hidden>
+        <div class="foovia-delivery-tracker-panel">
+            <button type="button" class="foovia-picker-close" data-delivery-tracker-close aria-label="Close">x</button>
+            <span class="foovia-section-chip">Delivery status</span>
+            <h2 data-delivery-tracker-title>Your order is on the way</h2>
+            <p class="foovia-delivery-tracker-copy" data-delivery-tracker-copy>
+                Foovia is preparing your countdown.
+            </p>
+            <div class="foovia-delivery-tracker-ring">
+                <strong data-delivery-tracker-countdown>00:00</strong>
+                <small>Estimated time left</small>
+            </div>
+            <div class="foovia-delivery-tracker-grid">
+                <div><span>Reference</span><strong data-delivery-tracker-reference>FV-000000</strong></div>
+                <div><span>Dispatch point</span><strong data-delivery-tracker-hub>Selected store</strong></div>
+                <div><span>Destination</span><strong data-delivery-tracker-destination>Your location</strong></div>
+                <div><span>Status</span><strong data-delivery-tracker-status>In transit</strong></div>
+            </div>
+        </div>
+    </div>
+
     <div class="foovia-cart-picker" data-cart-picker hidden>
         <div class="foovia-cart-picker-panel">
             <button type="button" class="foovia-picker-close" data-picker-close aria-label="Close">x</button>
@@ -592,6 +634,42 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
         </div>
     </div>
 
+    <div class="foovia-delivery-planner" data-delivery-planner hidden>
+        <div class="foovia-delivery-planner-panel">
+            <div class="foovia-cart-header">
+                <h2>Delivery planner</h2>
+                <button type="button" data-delivery-close aria-label="Close delivery planner">x</button>
+            </div>
+            <p class="foovia-delivery-copy">Choose the store point that will dispatch your order. Foovia will estimate the arrival time automatically from the map.</p>
+            <div class="foovia-delivery-map" data-delivery-map></div>
+            <div class="foovia-delivery-summary">
+                <div><span>Dispatch point</span><strong data-delivery-point>Choose a point on the map</strong></div>
+                <div><span>Destination</span><strong data-delivery-destination>Your current location</strong></div>
+                <div><span>Estimated arrival</span><strong data-delivery-estimate>Waiting for selection</strong></div>
+            </div>
+            <div class="foovia-weather-compact">
+                <strong data-delivery-weather-badge>Standard delivery conditions · 7.5 TND</strong>
+                <small data-delivery-weather-note>No weather surcharge applied.</small>
+            </div>
+            <label class="foovia-delivery-contact">
+                <span>Phone number for cash delivery updates</span>
+                <input type="text" placeholder="+216 20 000 000" data-delivery-phone>
+            </label>
+            <div class="foovia-delivery-payment">
+                <span class="foovia-store-label">Payment method</span>
+                <div class="foovia-delivery-methods">
+                    <button type="button" class="foovia-delivery-method" data-delivery-method="cash">Cash on delivery</button>
+                    <button type="button" class="foovia-delivery-method" data-delivery-method="card">Pay by card</button>
+                </div>
+            </div>
+            <div class="foovia-delivery-actions">
+                <button type="button" class="foovia-reserve-btn" data-delivery-cash hidden>Confirm cash order</button>
+                <button type="button" class="foovia-cart-btn" data-delivery-card hidden>Continue to card checkout</button>
+            </div>
+            <p class="foovia-delivery-feedback" data-delivery-feedback></p>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         window.FOOVIA_RESERVATION_ENDPOINT = '../../../Controller/Marchandise_Controller.php?action=reserve';
@@ -599,7 +677,8 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="../../assets/js/frontoffice-filters.js"></script>
     <script src="../../assets/js/frontoffice-recommendations.js?v=spotlight-3"></script>
-    <script src="../../assets/js/foovia-cart.js?v=drag-preview-1"></script>
-    <script src="../../assets/js/aziza-map.js?v=stock-click-1"></script>
+    <script src="../../assets/js/foovia-cart.js?v=weather-fee-1"></script>
+    <script src="../../assets/js/aziza-map.js?v=pretty-map-8"></script>
+    <script src="../../assets/js/marketplace-delivery-tracker.js?v=twilio-sms-headless-1"></script>
 </body>
 </html>

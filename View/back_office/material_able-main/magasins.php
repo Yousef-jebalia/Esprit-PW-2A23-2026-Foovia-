@@ -36,7 +36,7 @@ $message = match ($status) {
     <link rel="stylesheet" type="text/css" href="assets/icon/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/jquery.mCustomScrollbar.css">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-    <link rel="stylesheet" type="text/css" href="../../assets/css/marketplace.css?v=foovia-welcome-style-1">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/marketplace.css?v=admin-old-font-1">
 </head>
 <body>
     <div id="pcoded" class="pcoded">

@@ -26,7 +26,8 @@ if ($product === null) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/vendor.css">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" type="text/css" href="../../assets/css/marketplace.css?v=foovia-hero-hover-brand-1">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/marketplace.css?v=weather-ui-1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -220,9 +221,43 @@ if ($product === null) {
         </div>
     </div>
 
+    <div class="foovia-delivery-planner" data-delivery-planner hidden>
+        <div class="foovia-delivery-planner-panel">
+            <div class="foovia-cart-header">
+                <h2>Delivery planner</h2>
+                <button type="button" data-delivery-close aria-label="Close delivery planner">x</button>
+            </div>
+            <p class="foovia-delivery-copy">Choose the store point that will dispatch your order. Foovia will estimate the arrival time automatically from the map.</p>
+            <div class="foovia-delivery-map" data-delivery-map></div>
+            <div class="foovia-delivery-summary">
+                <div><span>Dispatch point</span><strong data-delivery-point>Choose a point on the map</strong></div>
+                <div><span>Destination</span><strong data-delivery-destination>Your current location</strong></div>
+                <div><span>Estimated arrival</span><strong data-delivery-estimate>Waiting for selection</strong></div>
+            </div>
+            <div class="foovia-weather-compact">
+                <strong data-delivery-weather-badge>Standard delivery conditions · 7.5 TND</strong>
+                <small data-delivery-weather-note>No weather surcharge applied.</small>
+            </div>
+            <div class="foovia-delivery-payment">
+                <span class="foovia-store-label">Payment method</span>
+                <div class="foovia-delivery-methods">
+                    <button type="button" class="foovia-delivery-method" data-delivery-method="cash">Cash on delivery</button>
+                    <button type="button" class="foovia-delivery-method" data-delivery-method="card">Pay by card</button>
+                </div>
+            </div>
+            <div class="foovia-delivery-actions">
+                <button type="button" class="foovia-reserve-btn" data-delivery-cash hidden>Confirm cash order</button>
+                <button type="button" class="foovia-cart-btn" data-delivery-card hidden>Continue to card checkout</button>
+            </div>
+            <p class="foovia-delivery-feedback" data-delivery-feedback></p>
+        </div>
+    </div>
+
     <script>
         window.FOOVIA_RESERVATION_ENDPOINT = '../../../Controller/Marchandise_Controller.php?action=reserve';
     </script>
-    <script src="../../assets/js/foovia-cart.js?v=drag-preview-1"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../../assets/js/foovia-cart.js?v=weather-fee-1"></script>
+    <script src="../../assets/js/marketplace-delivery-tracker.js?v=twilio-sms-headless-1"></script>
 </body>
 </html>

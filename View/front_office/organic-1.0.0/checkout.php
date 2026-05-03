@@ -12,7 +12,7 @@ declare(strict_types=1);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/vendor.css">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" type="text/css" href="../../assets/css/marketplace.css?v=foovia-checkout-1">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/marketplace.css?v=weather-ui-1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -70,6 +70,17 @@ declare(strict_types=1);
                     <div class="foovia-checkout-head">
                         <h2>Payment details</h2>
                         <p>Use a realistic test card style form directly inside the project.</p>
+                    </div>
+
+                    <div class="foovia-checkout-delivery-card" data-checkout-delivery-card hidden>
+                        <span class="foovia-section-chip">Delivery plan</span>
+                        <div class="foovia-checkout-delivery-grid">
+                            <div><span>Dispatch point</span><strong data-checkout-delivery-point></strong></div>
+                            <div><span>Destination</span><strong data-checkout-destination></strong></div>
+                            <div><span>Estimated time</span><strong data-checkout-estimate></strong></div>
+                            <div><span>Payment</span><strong data-checkout-payment></strong></div>
+                            <div><span>Weather</span><strong data-checkout-weather></strong></div>
+                        </div>
                     </div>
 
                     <form class="foovia-checkout-form" data-checkout-form>
@@ -182,6 +193,10 @@ declare(strict_types=1);
             <span class="foovia-payment-success-badge">Paid</span>
             <h2>Payment approved</h2>
             <p>Your order has been confirmed and the checkout simulation is complete.</p>
+            <div class="foovia-payment-success-details" data-success-delivery-block hidden>
+                <span>Estimated delivery</span>
+                <strong data-success-delivery></strong>
+            </div>
             <div class="foovia-payment-success-details">
                 <span>Reference</span>
                 <strong data-success-reference>FV-0000</strong>
@@ -190,6 +205,7 @@ declare(strict_types=1);
         </div>
     </div>
 
-    <script src="../../assets/js/checkout.js?v=foovia-checkout-1"></script>
+    <script src="../../assets/js/checkout.js?v=weather-fee-1"></script>
+    <script src="../../assets/js/marketplace-delivery-tracker.js?v=twilio-sms-headless-1"></script>
 </body>
 </html>
