@@ -1,7 +1,7 @@
 <?php
-include '../../controle/controle_Menu.php';
-include '../../controle/controle_categ_rec.php';
-include '../../controle/controle_ingrediant.php';
+include '../../controle/menu_module/controle_Menu.php';
+include '../../controle/menu_module/controle_categ_rec.php';
+include '../../controle/menu_module/controle_ingrediant.php';
 
 $error = "";
 $success = "";
@@ -199,11 +199,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $controller = new Controller_menu();
-$recipes = $controller->list_recipe();
+$allRecipes = $controller->list_recipe();
 $categoryController = new controle_categ_rec();
 $recipeCategories = $categoryController->list_categ_rec();
 $ingrediantController = new Controller_ingrediant();
 $availableIngrediants = $ingrediantController->list_ingrediants();
+
+// Pagination for recipes
+$itemsPerPage = 10;
+$currentPage = isset($_GET['recipe_page']) ? max(1, (int)$_GET['recipe_page']) : 1;
+$totalRecipes = count($allRecipes);
+$totalPages = ceil($totalRecipes / $itemsPerPage);
+$currentPage = min($currentPage, $totalPages);
+$offset = ($currentPage - 1) * $itemsPerPage;
+$recipes = array_slice($allRecipes, $offset, $itemsPerPage);
 ?>
 
 <!DOCTYPE html>
@@ -636,6 +645,34 @@ $availableIngrediants = $ingrediantController->list_ingrediants();
                                                                 </tbody>
                                                             </table>
                                                         </div>
+                                                        <?php if ($totalPages > 1): ?>
+                                                        <nav aria-label="Recipe pagination" style="margin-top: 20px;">
+                                                            <ul class="pagination">
+                                                                <?php if ($currentPage > 1): ?>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?recipe_page=1">First</a>
+                                                                    </li>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?recipe_page=<?php echo $currentPage - 1; ?>">Previous</a>
+                                                                    </li>
+                                                                <?php endif; ?>
+                                                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                                                    <li class="page-item <?php echo ($i === $currentPage) ? 'active' : ''; ?>">
+                                                                        <a class="page-link" href="?recipe_page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                                                    </li>
+                                                                <?php endfor; ?>
+                                                                <?php if ($currentPage < $totalPages): ?>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?recipe_page=<?php echo $currentPage + 1; ?>">Next</a>
+                                                                    </li>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?recipe_page=<?php echo $totalPages; ?>">Last</a>
+                                                                    </li>
+                                                                <?php endif; ?>
+                                                            </ul>
+                                                        </nav>
+                                                        <p class="text-muted" style="margin-top: 10px;">Page <?php echo $currentPage; ?> of <?php echo $totalPages; ?> (<?php echo $totalRecipes; ?> total recipes)</p>
+                                                        <?php endif; ?>
                                                     </div>
                                                 </div>
                                                 <div class="card">

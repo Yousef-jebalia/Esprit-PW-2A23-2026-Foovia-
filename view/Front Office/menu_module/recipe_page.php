@@ -1,8 +1,8 @@
 ﻿<?php
-require_once __DIR__ . '/../../../controle/controle_Menu.php';
+require_once __DIR__ . '/../../../controle/menu_module/controle_Menu.php';
 
-require_once __DIR__ . '/../../../controle/controle_categ_rec.php';
-require_once __DIR__ . '/../../../controle/controle_ingrediant.php';
+require_once __DIR__ . '/../../../controle/menu_module/controle_categ_rec.php';
+require_once __DIR__ . '/../../../controle/menu_module/controle_ingrediant.php';
 
 $controller = new Controller_menu();
 $recipes = $controller->list_recipe();
@@ -261,7 +261,7 @@ ksort($categories);
     <section class="top-cta-section" aria-label="Quick action">
       <div class="container-lg">
         <button type="button" class="top-cta-button" aria-expanded="false" aria-controls="ingredientsPanel" aria-pressed="false">
-          &#129382; By ingredients
+           By ingredients
           <span class="top-cta-count" id="ingredientCountBadge">0</span>
         </button>
       </div>

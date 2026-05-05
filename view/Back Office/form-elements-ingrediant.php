@@ -1,5 +1,5 @@
 <?php
-include '../../controle/controle_ingrediant.php';
+include '../../controle/menu_module/controle_ingrediant.php';
 
 $error = "";
 $success = "";
@@ -79,7 +79,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $controller = new Controller_ingrediant();
-$ingrediants = $controller->list_ingrediants();
+$allIngrediants = $controller->list_ingrediants();
+
+// Pagination for ingredients
+$itemsPerPage = 10;
+$currentPage = isset($_GET['ing_page']) ? max(1, (int)$_GET['ing_page']) : 1;
+$totalIngrediants = count($allIngrediants);
+$totalPages = ceil($totalIngrediants / $itemsPerPage);
+$currentPage = min($currentPage, $totalPages);
+$offset = ($currentPage - 1) * $itemsPerPage;
+$ingrediants = array_slice($allIngrediants, $offset, $itemsPerPage);
 ?>
 
 <!DOCTYPE html>
@@ -501,6 +510,34 @@ $ingrediants = $controller->list_ingrediants();
                                                                 </tbody>
                                                             </table>
                                                         </div>
+                                                        <?php if ($totalPages > 1): ?>
+                                                        <nav aria-label="Ingredient pagination" style="margin-top: 20px;">
+                                                            <ul class="pagination">
+                                                                <?php if ($currentPage > 1): ?>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?ing_page=1">First</a>
+                                                                    </li>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?ing_page=<?php echo $currentPage - 1; ?>">Previous</a>
+                                                                    </li>
+                                                                <?php endif; ?>
+                                                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                                                    <li class="page-item <?php echo ($i === $currentPage) ? 'active' : ''; ?>">
+                                                                        <a class="page-link" href="?ing_page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                                                    </li>
+                                                                <?php endfor; ?>
+                                                                <?php if ($currentPage < $totalPages): ?>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?ing_page=<?php echo $currentPage + 1; ?>">Next</a>
+                                                                    </li>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?ing_page=<?php echo $totalPages; ?>">Last</a>
+                                                                    </li>
+                                                                <?php endif; ?>
+                                                            </ul>
+                                                        </nav>
+                                                        <p class="text-muted" style="margin-top: 10px;">Page <?php echo $currentPage; ?> of <?php echo $totalPages; ?> (<?php echo $totalIngrediants; ?> total ingredients)</p>
+                                                        <?php endif; ?>
                                                     </div>
                                                 </div>
                                                 <div class="card">

@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../../controle/controle_Menu.php';
-require_once __DIR__ . '/../../../controle/controle_categ_rec.php';
+require_once __DIR__ . '/../../../controle/menu_module/controle_Menu.php';
+require_once __DIR__ . '/../../../controle/menu_module/controle_categ_rec.php';
 
 $controller = new Controller_menu();
 $categoryController = new controle_categ_rec();
