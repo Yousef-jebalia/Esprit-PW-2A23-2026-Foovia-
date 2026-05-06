@@ -112,7 +112,7 @@ function generateAIWorkout($workoutName, $targetMuscles, $aiService = 'gemini') 
 }
 
 function saveAIWorkout($workoutName, $aiOutput, $userId, $picWork = null) {
-    require_once __DIR__ . '/../../model/SPORT_MOULE/workout.php';
+    require_once __DIR__ . '/../../Model/SPORT_MOULE/workout.php';
     
     if (!$aiOutput || empty($aiOutput['exercises'])) return null;
     

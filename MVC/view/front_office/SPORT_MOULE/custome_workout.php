@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FOOVIA — Custom Workouts</title>
+<title>FOOVIA â€” Custom Workouts</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -56,7 +56,7 @@
       <span class="accent2">Routine.</span>
     </h1>
     <p class="cw-desc">
-      Design a workout that fits your goals — every rep, every set, every muscle.
+      Design a workout that fits your goals â€” every rep, every set, every muscle.
       Go fully manual or let our AI build a smart plan tailored to the muscles you want to train.
     </p>
   </div>
@@ -70,10 +70,10 @@
 
     <!-- Manual button -->
     <button class="cw-choice-card manual-card" onclick="handleManual()">
-      <div class="cw-card-icon">✏️</div>
+      <div class="cw-card-icon">âœï¸</div>
       <div class="cw-card-body">
         <div class="cw-card-title">Build it Yourself</div>
-        <div class="cw-card-sub">Pick your exercises, set your reps and rest times — full control over every detail.</div>
+        <div class="cw-card-sub">Pick your exercises, set your reps and rest times â€” full control over every detail.</div>
       </div>
       <svg class="cw-card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -82,10 +82,10 @@
 
     <!-- AI button -->
     <button class="cw-choice-card ai-card" onclick="AI_workout_form()">
-      <div class="cw-card-icon">🤖</div>
+      <div class="cw-card-icon">ðŸ¤–</div>
       <div class="cw-card-body">
         <div class="cw-card-title">Generate with AI</div>
-        <div class="cw-card-sub">Tell us your workout name and target muscles — our AI crafts the perfect plan for you.</div>
+        <div class="cw-card-sub">Tell us your workout name and target muscles â€” our AI crafts the perfect plan for you.</div>
       </div>
       <svg class="cw-card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -112,7 +112,7 @@
       <span class="dot"></span> AI Generator
     </div>
     <h2 class="ai-form-title">Design Your Workout</h2>
-    <p class="ai-form-subtitle">Name your session and pick the muscles you want to target — we'll handle the rest.</p>
+    <p class="ai-form-subtitle">Name your session and pick the muscles you want to target â€” we'll handle the rest.</p>
 
     <!-- Workout name -->
     <div class="form-group">
@@ -121,7 +121,7 @@
         class="form-input"
         type="text"
         id="workoutName"
-        placeholder="e.g. Monday Push Day, Leg Destroyer…"
+        placeholder="e.g. Monday Push Day, Leg Destroyerâ€¦"
       />
       <div class="form-error" id="workoutNameError" aria-live="polite"></div>
     </div>
@@ -184,7 +184,7 @@
 
   // Load workouts on page load
   document.addEventListener('DOMContentLoaded', loadAIWorkouts);
-  /* ── THEME TOGGLE ── */
+  /* â”€â”€ THEME TOGGLE â”€â”€ */
   (function() {
     const root   = document.documentElement;
     const toggle = document.querySelector('.theme-toggle');
@@ -205,12 +205,12 @@
     });
   })();
 
-  /* ── MANUAL BUTTON ── */
+  /* â”€â”€ MANUAL BUTTON â”€â”€ */
   function handleManual() {
     alert('This feature will be provided in the next version.');
   }
 
-  /* ── AI FORM OPEN / CLOSE ── */
+  /* â”€â”€ AI FORM OPEN / CLOSE â”€â”€ */
   function AI_workout_form() {
     document.getElementById('aiFormOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -225,7 +225,7 @@
     if (e.target === document.getElementById('aiFormOverlay')) closeAIForm();
   }
 
-  /* ── MUSCLE CHIP TOGGLE ── */
+  /* â”€â”€ MUSCLE CHIP TOGGLE â”€â”€ */
   function toggleChip(el) {
     el.classList.toggle('selected');
     clearFieldError('muscleChips');
@@ -326,7 +326,7 @@
     };
   }
 
-  /* ── SUBMIT ── */
+  /* â”€â”€ SUBMIT â”€â”€ */
   function submitAIWorkout(button) {
     const validated = validateAIWorkoutForm();
     if (!validated.valid) {
@@ -352,7 +352,7 @@
     }
 
     // Call backend to generate and save workout
-    fetch('../../../MVC/controle/SPORT_MOULE/submit_ai_workout.php', {
+    fetch('../../../MVC/Controller/SPORT_MOULE/submit_ai_workout.php', {
       method: 'POST',
       body: formData
     })
@@ -371,7 +371,7 @@
           return;
         }
 
-        alert(`✅ Workout "${workoutName}" created successfully!`);
+        alert(`âœ… Workout "${workoutName}" created successfully!`);
         closeAIForm();
         document.getElementById('workoutName').value = '';
         document.getElementById('work_picture').value = '';
@@ -391,7 +391,7 @@
     });
   }
 
-  /* ── ESC to close ── */
+  /* â”€â”€ ESC to close â”€â”€ */
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeAIForm();
   });
