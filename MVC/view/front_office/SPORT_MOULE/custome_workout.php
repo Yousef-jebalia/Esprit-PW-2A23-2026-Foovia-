@@ -17,9 +17,8 @@ $user_name = $_SESSION['user_name'] ?? 'User';
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-<link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="custome_workout_php.css">
-<link rel="stylesheet" href="foovia.css">
+<link rel="stylesheet" href="../foovia.css">
 
 </head>
 <body>
@@ -27,7 +26,7 @@ $user_name = $_SESSION['user_name'] ?? 'User';
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">
-    <img src="assets/Plan de travail 1 no bg (3) (1).png" alt="FOOVIA Logo" style="height: 50px; width: auto;">
+    <img src="assets/Plan de travail 1 no bg (3) (1).png" alt="FOOVIA Logo" class="nav-logo-img">
     FOOVIA
   </a>
   <ul class="nav-links">
@@ -58,8 +57,8 @@ $user_name = $_SESSION['user_name'] ?? 'User';
         </ul>
       </div>
     <?php else: ?>
-      <a href="foovia-signin.php" class="nav-btn nav-signin">Sign In</a>
-      <a href="../../backoffice/foovia-signup.php" class="nav-btn nav-signup">Sign Up</a>
+      <a href="../foovia-signin.php" class="nav-btn nav-signin">Sign In</a>
+      <a href="../../back_office/foovia-signup.php" class="nav-btn nav-signup">Sign Up</a>
     <?php endif; ?>
   </div>
 </nav>
