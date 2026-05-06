@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/facebook-config.php';
-include_once(__DIR__ . '/../../../Model/config.php');
+include_once(__DIR__ . '/../../Model/config.php');
 
 if (isset($_GET['code'])) {
     // 1. Exchange code for access token

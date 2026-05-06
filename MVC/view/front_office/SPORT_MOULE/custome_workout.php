@@ -1,4 +1,14 @@
-﻿<!DOCTYPE html>
+﻿<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+  header('Location: ../foovia-signin.php');
+  exit;
+}
+$userId = $_SESSION['user_id'];
+$is_logged_in = true;
+$user_name = $_SESSION['user_name'] ?? 'User';
+?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -8,6 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="custome_workout_php.css">
+<link rel="stylesheet" href="foovia.css">
 
 </head>
 <body>
@@ -19,12 +30,12 @@
     FOOVIA
   </a>
   <ul class="nav-links">
-    <li><a href="Exercice.php">Exercice</a></li>
+     <li><a href="Exercice.php">Exercice</a></li>
     <li><a href="Workout.php">Workouts</a></li>
     <li><a href="custome_workout.php">Custom Workouts</a></li>
   </ul>
   <div class="nav-actions">
-    <a href="backoffice.html" class="nav-btn nav-backoffice">Backoffice</a>
+    <a href="foovia-backoffice.php" class="nav-btn nav-backoffice">Backoffice</a>
     <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
       <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="4"></circle>
@@ -34,10 +45,24 @@
         <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
       </svg>
     </button>
-    <a href="signin.html" class="nav-btn nav-signin">Sign In</a>
-    <a href="signup.html" class="nav-btn nav-signup">Sign Up</a>
+    <?php if ($is_logged_in): ?>
+      <div class="dropdown">
+        <a href="#" class="nav-btn dropdown-toggle" role="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+          Welcome, <?php echo htmlspecialchars($user_name); ?>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+          <li><a class="dropdown-item" href="profile.php">My Account</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+        </ul>
+      </div>
+    <?php else: ?>
+      <a href="foovia-signin.php" class="nav-btn nav-signin">Sign In</a>
+      <a href="../backoffice/foovia-signup.php" class="nav-btn nav-signup">Sign Up</a>
+    <?php endif; ?>
   </div>
 </nav>
+
 
 
 
@@ -70,7 +95,7 @@
 
     <!-- Manual button -->
     <button class="cw-choice-card manual-card" onclick="handleManual()">
-      <div class="cw-card-icon">âœï¸</div>
+      <div class="cw-card-icon">🖌</div>
       <div class="cw-card-body">
         <div class="cw-card-title">Build it Yourself</div>
         <div class="cw-card-sub">Pick your exercises, set your reps and rest times â€” full control over every detail.</div>
@@ -82,7 +107,7 @@
 
     <!-- AI button -->
     <button class="cw-choice-card ai-card" onclick="AI_workout_form()">
-      <div class="cw-card-icon">ðŸ¤–</div>
+      <div class="cw-card-icon">🤖</div>
       <div class="cw-card-body">
         <div class="cw-card-title">Generate with AI</div>
         <div class="cw-card-sub">Tell us your workout name and target muscles â€” our AI crafts the perfect plan for you.</div>
@@ -175,11 +200,63 @@
 
 
 <script>
-  // Get user ID (you'll need to set this from your auth system)
-  
+  // Get user ID from PHP session
+  const userId = <?php echo json_encode($userId); ?>;
+  console.log('✓ userId loaded:', userId);
 
-  function showCopyModal(title, message) {//
-    alert(title + '\n\n' + message);
+  function showCopyModal(title, message) {
+    const modalOverlay = document.createElement('div');
+    modalOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;';
+    
+    const modalBox = document.createElement('div');
+    modalBox.style.cssText = 'background:#fff;padding:30px;border-radius:12px;max-width:500px;max-height:70vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
+    
+    const titleEl = document.createElement('h2');
+    titleEl.textContent = title;
+    titleEl.style.cssText = 'margin-top:0;margin-bottom:15px;color:#333;';
+    
+    const messageEl = document.createElement('pre');
+    messageEl.textContent = message;
+    messageEl.style.cssText = 'background:#f5f5f5;padding:15px;border-radius:8px;overflow:auto;max-height:300px;color:#d32f2f;font-size:13px;margin:0 0 15px 0;word-wrap:break-word;white-space:pre-wrap;';
+    
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = 'display:flex;gap:10px;';
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'Close';
+    closeBtn.style.cssText = 'flex:1;padding:10px 15px;background:#333;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:bold;';
+    closeBtn.addEventListener('click', () => {
+      modalOverlay.remove();
+    });
+    
+    const copyBtn = document.createElement('button');
+    copyBtn.textContent = 'Copy & Close';
+    copyBtn.style.cssText = 'flex:1;padding:10px 15px;background:#1976d2;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:bold;';
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(message).then(() => {
+        modalOverlay.remove();
+        alert('✓ Error message copied to clipboard');
+      }).catch(err => {
+        alert('Failed to copy: ' + err.message);
+      });
+    });
+    
+    buttonContainer.appendChild(closeBtn);
+    buttonContainer.appendChild(copyBtn);
+    
+    modalBox.appendChild(titleEl);
+    modalBox.appendChild(messageEl);
+    modalBox.appendChild(buttonContainer);
+    
+    modalOverlay.appendChild(modalBox);
+    document.body.appendChild(modalOverlay);
+  }
+
+  // Load AI-generated workouts
+  function loadAIWorkouts() {
+    console.log('Loading AI workouts for user:', userId);
+    // Placeholder for loading workouts from backend
+    // This would fetch and display saved AI workouts in a list
   }
 
   // Load workouts on page load
@@ -351,8 +428,13 @@
       formData.append('work_picture', workoutPicture);
     }
 
-    // Call backend to generate and save workout
-    fetch('../../../MVC/Controller/SPORT_MOULE/submit_ai_workout.php', {
+    // Debug logging
+    console.log('=== Submitting AI Workout ===');
+    console.log('workoutName:', workoutName);
+    console.log('selectedMuscles:', selectedMuscles);
+    console.log('userId:', userId);
+    console.log('Form data entries:', [...formData.entries()]);
+    fetch('../../../Controller/SPORT_MOULE/submit_ai_workout.php', {
       method: 'POST',
       body: formData
     })

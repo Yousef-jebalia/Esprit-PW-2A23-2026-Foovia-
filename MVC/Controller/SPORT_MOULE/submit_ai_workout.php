@@ -1,4 +1,5 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
@@ -19,7 +20,7 @@ try {
     } else {
         $workoutName = trim((string)($_POST['workoutName'] ?? ''));
         $targetMuscles = json_decode((string)($_POST['targetMuscles'] ?? '[]'), true);
-        $userId = $_POST['userId'] ?? null;
+        $userId = $_POST['userId'] ?? ($_SESSION['user_id'] ?? null);
         $aiService = $_POST['aiService'] ?? 'gemini';
         $picWork = null;
 
@@ -28,8 +29,21 @@ try {
         }
     }
 
-    if (!$workoutName || !$userId || empty($targetMuscles)) {
-        echo json_encode(['error' => 'Missing required fields: workoutName, userId, or targetMuscles']);
+    if ($workoutName === '' || $userId === null || $userId === '' || empty($targetMuscles)) {
+        $missing = [];
+        if ($workoutName === '') $missing[] = 'workoutName';
+        if ($userId === null || $userId === '') $missing[] = 'userId';
+        if (empty($targetMuscles)) $missing[] = 'targetMuscles';
+        
+        echo json_encode([
+            'error' => 'Missing required fields: ' . implode(', ', $missing),
+            'debug' => [
+                'workoutName' => $workoutName,
+                'userId' => $userId,
+                'targetMuscles' => $targetMuscles,
+                'POST' => $_POST
+            ]
+        ]);
         exit;
     }
 

@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../Model/config.php';
 
 function generateAIWorkout($workoutName, $targetMuscles, $aiService = 'gemini') {
-    $keyFilePath = 'C:\\API keys\\foovia_api_keys.txt';
+    $keyFilePath = 'C:\\API keys\\foovia_api_keys.txt';//****************************************************************************************************** */
     if (empty($workoutName) || empty($targetMuscles)) return null;
 
     // Fetch exercises from database
@@ -39,36 +39,78 @@ function generateAIWorkout($workoutName, $targetMuscles, $aiService = 'gemini') 
 
     // Read API key from file
     if (!file_exists($keyFilePath)) {
-        return ['error' => "API key mathamech: $keyFilePath"];
+        return ['error' => "API key file not found at: $keyFilePath"];
     }
-
-    
 
     $key = trim(file_get_contents($keyFilePath));
     if (empty($key)) {
-        return ['error' => "winou el API key ??: $keyFilePath"];
+        return ['error' => "API key file is empty: $keyFilePath"];
     }
 
-    $ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$key");
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => ["Content-Type: application/json"],
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode([
-            'contents' => [
-                ['parts' => [['text' => $prompt]]]
-            ]
-        ]),
-        CURLOPT_TIMEOUT => 30
+    $payload = json_encode([
+        'contents' => [
+            ['parts' => [['text' => $prompt]]]
+        ],
+        'generationConfig' => [
+            'responseMimeType' => 'application/json',
+            'temperature' => 0.2,
+            'maxOutputTokens' => 2048,
+        ]
     ]);
 
-    $response = curl_exec($ch);
-    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curlError = curl_error($ch);
-    curl_close($ch);
+    $modelsToTry = [
+        'gemini-2.5-flash',
+        'gemini-2.0-flash',
+    ];
+
+    $response = null;
+    $code = 0;
+    $curlError = '';
+    $lastModel = '';
+
+    foreach ($modelsToTry as $modelName) {
+        $lastModel = $modelName;
+
+        for ($attempt = 1; $attempt <= 3; $attempt++) {
+            $ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=$key");
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPHEADER => ["Content-Type: application/json"],
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => $payload,
+                CURLOPT_TIMEOUT => 30
+            ]);
+
+            $response = curl_exec($ch);
+            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curlError = curl_error($ch);
+            curl_close($ch);
+
+            if ($response && $code < 400) {
+                break 2;
+            }
+
+            if ($code !== 503 || $attempt === 3) {
+                break;
+            }
+
+            usleep(250000 * $attempt);
+        }
+    }
 
     if ($code >= 400 || !$response) {
-        return ['error' => "Gemini API error: HTTP $code. Response: $response. Curl error: $curlError"];
+        $friendlyMessage = $code === 503
+            ? 'Gemini is temporarily overloaded. Please try again in a minute.'
+            : "Gemini API error: HTTP $code. Response: $response. Curl error: $curlError";
+
+        return [
+            'error' => $friendlyMessage,
+            'debug' => [
+                'model' => $lastModel,
+                'http_code' => $code,
+                'curl_error' => $curlError,
+            ]
+        ];
     }
 
     $data = json_decode($response, true);
@@ -85,7 +127,17 @@ function generateAIWorkout($workoutName, $targetMuscles, $aiService = 'gemini') 
     
     $json = json_decode($text, true);
     if (!$json) {
-        return ['error' => "JSON parsing failed. AI response: " . substr($text, 0, 300)];
+        $start = strpos($text, '{');
+        $end = strrpos($text, '}');
+
+        if ($start !== false && $end !== false && $end > $start) {
+            $candidate = substr($text, $start, $end - $start + 1);
+            $json = json_decode($candidate, true);
+        }
+
+        if (!$json) {
+            return ['error' => "JSON parsing failed. AI response: " . substr($text, 0, 300)];
+        }
     }
     
     if (!isset($json['duration_minutes']) || !isset($json['exercises'])) {

@@ -3,8 +3,8 @@ require_once __DIR__ . '/google-config.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include_once(__DIR__ . '/../../../Model/config.php');
-include_once(__DIR__ . '/../../../Controller/Controller_user.php');
+include_once(__DIR__ . '/../../Model/config.php');
+include_once(__DIR__ . '/../../Controller/Controller_user.php');
 //zedha chichi famechi mayekhdem el 
 if (!isset($client) || !is_object($client)) {
         $_SESSION['error_message'] = 'Google sign-in is not configured correctly.';

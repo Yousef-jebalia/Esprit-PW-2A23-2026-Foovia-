@@ -1,7 +1,7 @@
 <?php
 // Try to locate Composer autoload in a few likely locations
 $autoloadCandidates = [
-	__DIR__ . '/../../../../vendor/autoload.php',
+	__DIR__ . '/../../../vendor/autoload.php',
 ];
 $autoloadFound = false;
 foreach ($autoloadCandidates as $p) {
@@ -13,7 +13,7 @@ if (!$autoloadFound) {
 
 // Try to locate .env in likely locations
 $envCandidates = [
-	__DIR__ . '/../../../../.env',
+	__DIR__ . '/../../../.env',
 ];
 $envFile = null;
 foreach ($envCandidates as $p) {

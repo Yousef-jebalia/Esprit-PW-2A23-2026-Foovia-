@@ -1,8 +1,8 @@
 ﻿                                <?php
 session_start();
-include_once(__DIR__ . '/../../../Model/config.php');
-include_once(__DIR__ . '/../../../Controller/Controller_user.php');
-require_once __DIR__ . '/../../../../vendor/autoload.php';
+include_once(__DIR__ . '/../../Model/config.php');
+include_once(__DIR__ . '/../../Controller/Controller_user.php');
+require_once __DIR__ . '/../../../vendor/autoload.php';
 require_once __DIR__ . '/../../Support/PHPMailerStubs.php';
 require_once __DIR__ . '/../../../vendor/phpmailer/phpmailer/src/Exception.php';
 require_once __DIR__ . '/../../../vendor/phpmailer/phpmailer/src/PHPMailer.php';
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['forgot_submit'])) {
                     $mail->SMTPAuth   = true;
                     
                     // Load credentials from .env
-                  $envFile = __DIR__ . '/../../../../.env';
+                  $envFile = __DIR__ . '/../../../.env';
                   $env = is_file($envFile) ? parse_ini_file($envFile) : [];
                   if (!is_array($env)) {
                     $env = [];

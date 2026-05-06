@@ -6,8 +6,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-require_once __DIR__ . '/../../../Controller/Controller_user.php';
-require_once __DIR__ . '/../../../Model/config.php';
+require_once __DIR__ . '/../../Controller/Controller_user.php';
+require_once __DIR__ . '/../../Model/config.php';
 
 $controller = new Controller_user();
 

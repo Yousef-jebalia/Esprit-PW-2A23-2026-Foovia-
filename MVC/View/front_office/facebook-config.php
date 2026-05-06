@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 // Try to locate .env in likely locations
 $envCandidates = [
-	__DIR__ . '/../../../../.env',
+	__DIR__ . '/../../../.env',
 ];
 $envFile = null;
 foreach ($envCandidates as $p) {

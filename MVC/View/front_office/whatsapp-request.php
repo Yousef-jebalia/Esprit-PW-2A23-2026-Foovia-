@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     session_write_close();
 
     // --- REAL WHATSAPP SENDING VIA TWILIO ---
-    $envFile = __DIR__ . '/../../../../.env';
+    $envFile = __DIR__ . '/../../../.env';
     $env = is_file($envFile) ? parse_ini_file($envFile) : [];
     if (!is_array($env)) {
         $env = [];
