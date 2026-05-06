@@ -62,7 +62,7 @@ if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role'] ?? '') !==
     <p>This is your admin workspace page.</p>
     <div class="actions">
       <a class="primary" href="tabs.php">Open dashboard</a>
-      <a href="../frontoffice/foovia.php">Go to frontoffice</a>
+      <a href="../../front_office/foovia.php">Go to frontoffice</a>
     </div>
   </div>
 </body>

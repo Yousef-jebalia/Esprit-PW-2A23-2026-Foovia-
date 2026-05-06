@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signin_submit'])) {
             $_SESSION['user_email'] = $user['email_user'];
             $_SESSION['user_role'] = $user['role_user'];
 
-            header('Location: ../backoffice/accordion.html');
+            header('Location: ../back_office/USER_MODULE/accordion.html');
             exit;
           } else {
             if ($role !== 'admin') {
@@ -147,8 +147,8 @@ $is_locked = false;
   </div>
 
   <div class="social-btns">
-    <a class="social-btn" href="../frontoffice/foovia-signin.php">Sign in page</a>
-    <a class="social-btn" href="../backoffice/foovia-signup.php">Sign up page</a>
+    <a class="social-btn" href="foovia-signin.php">Sign in page</a>
+    <a class="social-btn" href="../back_office/foovia-signup.php">Sign up page</a>
   </div>
 </div>
 

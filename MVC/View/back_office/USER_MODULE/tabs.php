@@ -349,26 +349,66 @@ if (!empty($users)) {
           <nav class="pcoded-navbar" navbar-theme="theme1" active-item-theme="theme1">
             <div class="pcoded-inner-navbar main-menu">
               <div class="pcoded-navigation-label">Navigation</div>
-              <ul class="pcoded-item pcoded-left-item">
-                <li>
-                  <a href="backoffice_work.php" class="waves-effect waves-dark">
-                    <span class="pcoded-micon"><i class="ti-home"></i></span>
-                    <span class="pcoded-mtext">Backoffice Home</span>
-                  </a>
-                </li>
-                <li class="active">
-                  <a href="tabs.php" class="waves-effect waves-dark">
-                    <span class="pcoded-micon"><i class="ti-layout-tab"></i></span>
-                    <span class="pcoded-mtext">Users Tabs</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="accordion.html" class="waves-effect waves-dark">
-                    <span class="pcoded-micon"><i class="ti-layout-list-post"></i></span>
-                    <span class="pcoded-mtext">Accordion</span>
-                  </a>
-                </li>
-              </ul>
+               <ul class="pcoded-item pcoded-left-item">
+                                <li class="pcoded-hasmenu active pcoded-trigger">
+                                    <a href="javascript:void(0)" class="waves-effect waves-dark">
+                                        <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i><b>BC</b></span>
+                                        <span class="pcoded-mtext">MODULES</span>
+                                        <span class="pcoded-mcaret"></span>
+                                    </a>
+                                    <ul class="pcoded-submenu">
+                                        <li class=" ">
+                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
+                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                                                <span class="pcoded-mtext">SUPPORT</span>
+                                                <span class="pcoded-mcaret"></span>
+                                            </a>
+                                        </li>
+                                        <li class=" ">
+                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
+                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                                                <span class="pcoded-mtext">TRACKING</span>
+                                                <span class="pcoded-mcaret"></span>
+                                            </a>
+                                        </li>
+                                        <li class=" ">
+                                            <a href="tabs.php" class="waves-effect waves-dark">
+                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                                                <span class="pcoded-mtext">USER</span>
+                                                <span class="pcoded-mcaret"></span>
+                                            </a>
+                                        </li>
+                                        <li class=" ">
+                                            <a href="../SPORT_MOULE/form-elements-component.php" class="waves-effect waves-dark">
+                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                                                <span class="pcoded-mtext">SPORT</span>
+                                                <span class="pcoded-mcaret"></span>
+                                            </a>
+                                        </li>
+                                        <li class=" ">
+                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
+                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                                                <span class="pcoded-mtext">MENU</span>
+                                                <span class="pcoded-mcaret"></span>
+                                            </a>
+                                        </li>
+                                        <li class=" ">
+                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
+                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                                                <span class="pcoded-mtext">INGREDIANTS</span>
+                                                <span class="pcoded-mcaret"></span>
+                                            </a>
+                                        </li>
+                                        <li class=" ">
+                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
+                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                                                <span class="pcoded-mtext">MARKETPLACE</span>
+                                                <span class="pcoded-mcaret"></span>
+                                            </a>
+                                        
+                                    </ul>
+                                </li>
+                            </ul>
             </div>
           </nav>
 

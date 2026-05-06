@@ -716,147 +716,63 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                                 </li>
                             </ul>
                             <div class="pcoded-navigation-label">UI Element</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="pcoded-hasmenu">
+                             <ul class="pcoded-item pcoded-left-item">
+                                <li class="pcoded-hasmenu active pcoded-trigger">
                                     <a href="javascript:void(0)" class="waves-effect waves-dark">
                                         <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i><b>BC</b></span>
-                                        <span class="pcoded-mtext">Basic</span>
+                                        <span class="pcoded-mtext">MODULES</span>
                                         <span class="pcoded-mcaret"></span>
                                     </a>
                                     <ul class="pcoded-submenu">
                                         <li class=" ">
-                                            <a href="breadcrumb.html" class="waves-effect waves-dark">
+                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Breadcrumbs</span>
+                                                <span class="pcoded-mtext">SUPPORT</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
                                         <li class=" ">
-                                            <a href="button.html" class="waves-effect waves-dark">
+                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Button</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class="">
-                                            <a href="accordion.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Accordion</span>
+                                                <span class="pcoded-mtext">TRACKING</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
                                         <li class=" ">
-                                            <a href="tabs.html" class="waves-effect waves-dark">
+                                            <a href="../USER_MODULE/tabs.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Tabs</span>
+                                                <span class="pcoded-mtext">USER</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
                                         <li class=" ">
-                                            <a href="color.html" class="waves-effect waves-dark">
+                                            <a href="form-elements-component.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Color</span>
+                                                <span class="pcoded-mtext">SPORT</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
                                         <li class=" ">
-                                            <a href="label-badge.html" class="waves-effect waves-dark">
+                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Label Badge</span>
+                                                <span class="pcoded-mtext">MENU</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
                                         <li class=" ">
-                                            <a href="tooltip.html" class="waves-effect waves-dark">
+                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Tooltip And Popover</span>
+                                                <span class="pcoded-mtext">INGREDIANTS</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
                                         <li class=" ">
-                                            <a href="typography.html" class="waves-effect waves-dark">
+                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Typography</span>
+                                                <span class="pcoded-mtext">MARKETPLACE</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
-                                        </li>
-                                        <li class=" ">
-                                            <a href="notification.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Notifications</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                            <div class="pcoded-navigation-label">Forms</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="active">
-                                    <a href="form-elements-component.php" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-layers"></i><b>FC</b></span>
-                                        <span class="pcoded-mtext">Form</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <div class="pcoded-navigation-label">Tables</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="bs-basic-table.html" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-receipt"></i><b>B</b></span>
-                                        <span class="pcoded-mtext">Table</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <div class="pcoded-navigation-label">Chart And Maps</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="chart-morris.html" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-bar-chart-alt"></i><b>C</b></span>
-                                        <span class="pcoded-mtext">Charts</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="map-google.html" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-map-alt"></i><b>M</b></span>
-                                        <span class="pcoded-mtext">Maps</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <div class="pcoded-navigation-label">Pages</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="pcoded-hasmenu ">
-                                    <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-id-badge"></i><b>A</b></span>
-                                        <span class="pcoded-mtext">Pages</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                    <ul class="pcoded-submenu">
-                                        <li class="">
-                                            <a href="auth-normal-sign-in.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Login</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class="">
-                                            <a href="auth-sign-up.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext">Registration</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class="">
-                                            <a href="sample-page.html" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-layout-sidebar-left"></i><b>S</b></span>
-                                                <span class="pcoded-mtext">Sample Page</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
+                                        
                                     </ul>
                                 </li>
                             </ul>
@@ -940,21 +856,21 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                     </div>
                     <div style="font-size: 12px; color: #666; display: flex; gap: 8px; flex-wrap: wrap;">
                         <span style="background: #e8f0fe; color: #4099ff; padding: 2px 8px; border-radius: 20px;">
-                            â±ï¸ <?= (int)$wk['duree_work'] ?> min
+                            &#9201; <?= (int)$wk['duree_work'] ?> min
                         </span>
                         <span style="background: #fff3cd; color: #d97706; padding: 2px 8px; border-radius: 20px;">
-                            ðŸ”¥ <?= (int)$wk['cal_work'] ?> cal
+                            &#128293; <?= (int)$wk['cal_work'] ?> cal
                         </span>
                         <?php if (!empty($wk['name_cat'])): ?>
                             <span style="background: #e8f7ee; color: #218838; padding: 2px 8px; border-radius: 20px;">
-                                ðŸ—‚ï¸ <?= htmlspecialchars($wk['name_cat']) ?>
+                                &#128451;&#65039; <?= htmlspecialchars($wk['name_cat']) ?>
                             </span>
                         <?php endif; ?>
                     </div>
                 </div>
 
                 <!-- Delete button & edit button -->
-                <form method="POST" action="../../Controller/SPORT_MOULE/controle_workout.php" style="margin: 0; display: flex; gap: 5px;">
+                <form method="POST" action="../../../Controller/SPORT_MOULE/controle_workout.php" style="margin: 0; display: flex; gap: 5px;">
                     <input type="hidden" name="delete_id" value="<?= (int)$wk['id_work'] ?>">
                     
                     <!-- Delete button -->
@@ -982,7 +898,7 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                         <!-- RIGHT SIDE: WORKOUT FORM -->
                         <div style="flex: 0 0 480px; max-width: 480px; background: white; padding: 20px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow-y: auto;">
                             
-                            <form onsubmit="return validateWorkoutForm()" class="workout-form" id="workout-form" action="../../Controller/SPORT_MOULE/controle_workout.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+                            <form onsubmit="return validateWorkoutForm()" class="workout-form" id="workout-form" action="../../../Controller/SPORT_MOULE/controle_workout.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
 
                                 <input type="hidden" name="action" id="work-form-action" value="add">
                                 <input type="hidden" name="edit_id" id="work-edit-id" value="">
@@ -1073,12 +989,12 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                                 </div>
                             </form>
 
-                            <form id="standalone-category-form" action="../../Controller/SPORT_MOULE/controle_workout.php" method="POST" style="display: none;">
+                            <form id="standalone-category-form" action="../../../Controller/SPORT_MOULE/controle_workout.php" method="POST" style="display: none;">
                                 <input type="hidden" name="action" value="add_category">
                                 <input type="hidden" id="standalone_new_work_categorie" name="new_work_categorie" value="">
                             </form>
 
-                            <form id="standalone-delete-category-form" action="../../Controller/SPORT_MOULE/controle_workout.php" method="POST" style="display: none;">
+                            <form id="standalone-delete-category-form" action="../../../Controller/SPORT_MOULE/controle_workout.php" method="POST" style="display: none;">
                                 <input type="hidden" name="action" value="delete_category">
                                 <input type="hidden" id="standalone_delete_id_cat" name="delete_id_cat" value="">
                             </form>
@@ -1130,7 +1046,7 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
 
                                         <!-- LEFT SIDE: EXERCISE FORM -->
                                         <div style="flex: 0 0 480px; max-width: 480px; background: white; padding: 20px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow-y: auto;">
-                                            <form onsubmit="return validateForm()" class="exercise-form" id="exercise-form" action="../../Controller/SPORT_MOULE/controle_exercice.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+                                            <form onsubmit="return validateForm()" class="exercise-form" id="exercise-form" action="../../../Controller/SPORT_MOULE/controle_exercice.php" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
 
                                                 <input type="hidden" name="action" id="form-action" value="add">
                                                 <input type="hidden" name="edit_id" id="edit-id" value="">
@@ -1273,7 +1189,7 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                         </span>
                     </div>
                 </div>
-                <form method="POST" action="../../Controller/SPORT_MOULE/controle_exercice.php" style="margin: 0; display: flex; gap: 5px;">
+                <form method="POST" action="../../../Controller/SPORT_MOULE/controle_exercice.php" style="margin: 0; display: flex; gap: 5px;">
                     <input type="hidden" name="delete_id" value="<?= (int)$ex['id_ex'] ?>">
                     <button type="submit" name="action" value="delete"
                         style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 16px; padding: 5px;"
