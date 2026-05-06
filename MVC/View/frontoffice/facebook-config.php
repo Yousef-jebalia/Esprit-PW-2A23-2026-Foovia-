@@ -1,12 +1,16 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-// Load env securely
-$envFile = __DIR__ . '/../../.env';
-$env = is_file($envFile) ? parse_ini_file($envFile) : [];
-if (!is_array($env)) {
-	$env = [];
+// Try to locate .env in likely locations
+$envCandidates = [
+	__DIR__ . '/../../../.env',
+];
+$envFile = null;
+foreach ($envCandidates as $p) {
+	if (is_file($p)) { $envFile = $p; break; }
 }
+$env = $envFile ? parse_ini_file($envFile) : [];
+if (!is_array($env)) { $env = []; }
 $fb_app_id = $env['FACEBOOK_APP_ID'] ?? '';
 $fb_app_secret = $env['FACEBOOK_APP_SECRET'] ?? '';
 

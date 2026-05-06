@@ -6,8 +6,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-require_once '../../controller/Controller_user.php';
-require_once '../../model/config.php';
+require_once '../../Controller/Controller_user.php';
+require_once '../../Model/config.php';
 
 $controller = new Controller_user();
 

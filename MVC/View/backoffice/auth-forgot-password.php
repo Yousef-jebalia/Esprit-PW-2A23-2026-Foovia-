@@ -1,7 +1,10 @@
 <?php
 session_start();
-include_once(__DIR__ . '/../../model/config.php');
-require_once __DIR__ . '/../../vendor/autoload.php';
+include_once(__DIR__ . '/../../Model/config.php');
+require_once __DIR__ . '/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../Support/PHPMailerStubs.php';
+require_once __DIR__ . '/../../../vendor/phpmailer/phpmailer/src/Exception.php';
+require_once __DIR__ . '/../../../vendor/phpmailer/phpmailer/src/PHPMailer.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -42,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['forgot_submit'])) {
                     $mail->Host       = 'smtp.gmail.com';
                     $mail->SMTPAuth   = true;
                     
-                    $env = parse_ini_file(__DIR__ . '/../../.env');
+                    $env = parse_ini_file(__DIR__ . '/../../../.env');
                     $mail->Username   = $env['SMTP_USERNAME']; 
                     $mail->Password   = $env['SMTP_PASSWORD']; 
                     

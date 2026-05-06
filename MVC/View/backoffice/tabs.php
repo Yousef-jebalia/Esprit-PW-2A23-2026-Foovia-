@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include_once(__DIR__ . '/../../controller/Controller_user.php');
+include_once(__DIR__ . '/../../Controller/Controller_user.php');
 
 $controller = new Controller_user();
 $controller->release_expired_bans();

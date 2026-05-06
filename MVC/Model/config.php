@@ -11,7 +11,7 @@ class config
             $servername="localhost";
             $username="root";
             $password="";
-            $dbname="foovia";
+            $dbname="foovia_db";
             try {
             self::$pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

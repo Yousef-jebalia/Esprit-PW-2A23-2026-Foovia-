@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once(__DIR__ . '/../../model/config.php');
+include_once(__DIR__ . '/../../Model/config.php');
 
 $error_message = '';
 $success_message = '';

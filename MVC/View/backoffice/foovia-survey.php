@@ -1,6 +1,6 @@
 <?php
 session_start();
-include(__DIR__ . '/../../controller/Controller_user.php');
+include(__DIR__ . '/../../Controller/Controller_user.php');
 
 $error_message = '';
 $success_message = '';

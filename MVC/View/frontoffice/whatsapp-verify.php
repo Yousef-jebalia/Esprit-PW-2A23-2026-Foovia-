@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-Type: application/json');
-include_once(__DIR__ . '/../../model/config.php');
+include_once(__DIR__ . '/../../Model/config.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);

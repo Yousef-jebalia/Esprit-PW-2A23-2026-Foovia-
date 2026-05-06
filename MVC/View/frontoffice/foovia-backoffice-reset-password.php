@@ -1,9 +1,9 @@
 <?php
 session_start();
 
-include_once(__DIR__ . '/../../model/config.php');
+include_once(__DIR__ . '/../../Model/config.php');
 
-include_once(__DIR__ . '/../../controller/Controller_user.php');
+include_once(__DIR__ . '/../../Controller/Controller_user.php');
 
 $error_message = '';
 $success_message = '';
