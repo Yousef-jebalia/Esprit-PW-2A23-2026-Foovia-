@@ -1,6 +1,6 @@
 <?php
-require_once(__DIR__ . '/../../model/config.php');
-require_once(__DIR__ . '/../../model/tracking/ObjectifHebdomadaire.php');
+require_once(__DIR__ . '/../../Model/config.php');
+require_once(__DIR__ . '/../../Model/tracking/ObjectifHebdomadaire.php');
 
 class ObjectifHebdomadaire_Controller {
 

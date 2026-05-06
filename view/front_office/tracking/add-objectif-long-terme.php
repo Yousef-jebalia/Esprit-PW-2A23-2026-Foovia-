@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../../controller/tracking/ObjectifLongTerme_Controller.php';
+include '../../../Controller/tracking/ObjectifLongTerme_Controller.php';
 
 // Initialisation des variables
 $error_message = '';

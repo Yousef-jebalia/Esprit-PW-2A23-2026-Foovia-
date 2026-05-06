@@ -1,7 +1,7 @@
 ﻿<?php
 session_start();
-require_once '../../../controller/tracking/ObjectifLongTerme_Controller.php';
-require_once '../../../controller/tracking/ObjectifHebdomadaire_Controller.php';
+require_once '../../../Controller/tracking/ObjectifLongTerme_Controller.php';
+require_once '../../../Controller/tracking/ObjectifHebdomadaire_Controller.php';
 
 $controller = new ObjectifLongTerme_Controller();
 $hebdo_controller = new ObjectifHebdomadaire_Controller();
@@ -1791,7 +1791,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['weekly_delete_objecti
       longTermMacroResultPanel.classList.remove('visible');
 
       try {
-        const response = await fetch('../../../controller/tracking/analyze_goal_ai.php', {
+        const response = await fetch('../../../Controller/tracking/analyze_goal_ai.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -3663,7 +3663,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['weekly_delete_objecti
     }
 
     try {
-      const response = await fetch('../../../controller/tracking/analyze_meal_ai.php', {
+      const response = await fetch('../../../Controller/tracking/analyze_meal_ai.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image_data_url: imageDataURL })

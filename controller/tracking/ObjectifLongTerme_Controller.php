@@ -1,6 +1,6 @@
 <?php
-require_once(__DIR__ . '/../../model/config.php');
-require_once(__DIR__ . '/../../model/tracking/ObjectifLongTerme.php');
+require_once(__DIR__ . '/../../Model/config.php');
+require_once(__DIR__ . '/../../Model/tracking/ObjectifLongTerme.php');
 
 class ObjectifLongTerme_Controller {
 
