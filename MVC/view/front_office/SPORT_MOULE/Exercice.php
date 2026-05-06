@@ -5,7 +5,16 @@ $db = config::getConnexion();
 $stmt = $db->query("SELECT * FROM exercice ORDER BY id_ex DESC");
 $exercises = $stmt->fetchAll();
 ?>
-
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+  header('Location: ../foovia-signin.php');
+  exit;
+}
+$userId = $_SESSION['user_id'];
+$is_logged_in = true;
+$user_name = $_SESSION['user_name'] ?? 'User';
+?>
 
 
 
@@ -31,12 +40,12 @@ $exercises = $stmt->fetchAll();
     FOOVIA
   </a>
   <ul class="nav-links">
-    <li><a href="Exercice.php">Exercice</a></li>
+     <li><a href="Exercice.php">Exercice</a></li>
     <li><a href="Workout.php">Workouts</a></li>
     <li><a href="custome_workout.php">Custom Workouts</a></li>
   </ul>
   <div class="nav-actions">
-    <a href="backoffice.html" class="nav-btn nav-backoffice">Backoffice</a>
+    <a href="foovia-backoffice.php" class="nav-btn nav-backoffice">Backoffice</a>
     <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
       <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="4"></circle>
@@ -46,8 +55,21 @@ $exercises = $stmt->fetchAll();
         <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
       </svg>
     </button>
-    <a href="signin.html" class="nav-btn nav-signin">Sign In</a>
-    <a href="signup.html" class="nav-btn nav-signup">Sign Up</a>
+    <?php if ($is_logged_in): ?>
+      <div class="dropdown">
+        <a href="#" class="nav-btn dropdown-toggle" role="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+          Welcome, <?php echo htmlspecialchars($user_name); ?>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+          <li><a class="dropdown-item" href="../profile.php">My Account</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="../logout.php">Logout</a></li>
+        </ul>
+      </div>
+    <?php else: ?>
+      <a href="foovia-signin.php" class="nav-btn nav-signin">Sign In</a>
+      <a href="../../backoffice/foovia-signup.php" class="nav-btn nav-signup">Sign Up</a>
+    <?php endif; ?>
   </div>
 </nav>
 
@@ -540,6 +562,8 @@ $exercises = $stmt->fetchAll();
       </script>
 
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
 
 </body>
