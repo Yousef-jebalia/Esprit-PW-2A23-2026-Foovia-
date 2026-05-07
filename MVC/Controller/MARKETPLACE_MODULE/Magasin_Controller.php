@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../Model/MARKETPLACE_MODULE/Magasin.php';
+require_once __DIR__ . '/../../Model/MARKETPLACE_MODULE/url_helper.php';
 
 final class MagasinController
 {
@@ -32,7 +33,7 @@ final class MagasinController
             return;
         }
 
-        $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/magasins.php');
+        $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/magasins.php'));
     }
 
     private function save(): void
@@ -43,13 +44,13 @@ final class MagasinController
         try {
             if ($payload['id_mag'] > 0) {
                 $this->magasin->update($payload, is_array($image) ? $image : []);
-                $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/magasins.php?status=updated');
+                $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/magasins.php?status=updated'));
             }
 
             $this->magasin->create($payload, is_array($image) ? $image : []);
-            $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/magasins.php?status=success');
+            $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/magasins.php?status=success'));
         } catch (Throwable $exception) {
-            $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/magasins.php?status=dberror');
+            $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/magasins.php?status=dberror'));
         }
     }
 
@@ -80,9 +81,9 @@ final class MagasinController
     {
         try {
             $this->magasin->delete((int) ($_POST['id_mag'] ?? 0));
-            $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/magasins.php?status=deleted');
+            $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/magasins.php?status=deleted'));
         } catch (Throwable $exception) {
-            $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/magasins.php?status=deleteerror');
+            $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/magasins.php?status=deleteerror'));
         }
     }
 

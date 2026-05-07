@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const serviceWorkerVersion = 'foovia-sw-v2';
   let serviceWorkerRegistration = null;
 
-  const serviceWorkerUrl = '/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/foovia-sw.js';
+  const serviceWorkerUrl = `${window.FOOVIA_APP_BASE || ''}/MVC/View/front_office/MARKETPLACE_MODULE/foovia-sw.js`;
 
   const registerNotificationWorker = async () => {
     if (!('serviceWorker' in navigator)) {

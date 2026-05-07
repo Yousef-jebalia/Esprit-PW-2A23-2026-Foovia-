@@ -3,8 +3,11 @@
 declare(strict_types=1);
 
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
+require_once __DIR__ . '/../../../../Model/MARKETPLACE_MODULE/url_helper.php';
+$appBaseUrl = foovia_app_base_url();
+
 if (!isset($_SESSION['user_id'])) {
-    header('Location: /integration%20foovia/MVC/View/front_office/foovia-signin.php?redirect=marketplace');
+    header('Location: ' . foovia_url('MVC/View/front_office/foovia-signin.php?redirect=marketplace'));
     exit;
 }
 
@@ -48,7 +51,7 @@ if ($product === null) {
     <link rel="stylesheet" type="text/css" href="css/vendor.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" type="text/css" href="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/css/marketplace.css?v=premium-dark-checkout-2">
+    <link rel="stylesheet" type="text/css" href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/css/marketplace.css?v=premium-dark-checkout-2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -59,18 +62,18 @@ if ($product === null) {
     </svg>
 
     <header class="foovia-topbar">
-        <a href="/integration%20foovia/MVC/View/front_office/foovia.php" class="foovia-brand">
-            <img src="/integration%20foovia/MVC/View/front_office/assets/Plan%20de%20travail%201%20no%20bg%20(3)%20(1).png" alt="FOOVIA Logo" class="foovia-logo-img">
+        <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia.php" class="foovia-brand">
+            <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/assets/Plan%20de%20travail%201%20no%20bg%20(3)%20(1).png" alt="FOOVIA Logo" class="foovia-logo-img">
             FOOVIA
         </a>
         <nav class="foovia-nav" aria-label="Primary">
-            <a href="/integration%20foovia/MVC/View/front_office/foovia.php#features">Features</a>
-            <a href="/integration%20foovia/MVC/View/front_office/foovia.php#how">How it works</a>
+            <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia.php#features">Features</a>
+            <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia.php#how">How it works</a>
             <a href="marketplace.php">Marketplace</a>
             <a href="marketplace.php#aziza-map">Community</a>
         </nav>
         <div class="foovia-nav-actions">
-            <a href="/integration%20foovia/MVC/View/front_office/foovia-backoffice.php" class="foovia-nav-btn foovia-nav-backoffice">Backoffice</a>
+            <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia-backoffice.php" class="foovia-nav-btn foovia-nav-backoffice">Backoffice</a>
             <button class="foovia-theme-toggle" type="button" aria-label="Switch display mode">
                 <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="12" cy="12" r="4"></circle>
@@ -85,9 +88,9 @@ if ($product === null) {
                     Welcome, <?php echo htmlspecialchars($userName !== '' ? $userName : 'User'); ?>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="marketUserMenu">
-                    <li><a class="dropdown-item" href="/integration%20foovia/MVC/View/front_office/profile.php">My Account</a></li>
+                    <li><a class="dropdown-item" href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/profile.php">My Account</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/integration%20foovia/MVC/View/front_office/logout.php">Logout</a></li>
+                    <li><a class="dropdown-item" href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/logout.php">Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -103,13 +106,13 @@ if ($product === null) {
                 </div>
             <?php else: ?>
                 <?php
-                    $imageUrl = '/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=' . (int) $product['id_march'];
+                    $imageUrl = foovia_url('MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=' . (int) $product['id_march']);
                     $storePayload = array_map(static fn (array $store): array => [
                         'id' => (int) $store['id_mag'],
                         'name' => (string) $store['name_mag'],
                         'phone' => (string) $store['phone_mag'],
                         'address' => (string) $store['adress_mag'],
-                        'image' => '/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=' . (int) $store['id_mag'],
+                        'image' => foovia_url('MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=' . (int) $store['id_mag']),
                     ], $availableStores);
                 ?>
                 <div class="foovia-detail-layout">
@@ -139,12 +142,12 @@ if ($product === null) {
                                     <div class="foovia-availability-row">
                                         <strong class="foovia-store-hover">
                                             <?php if ((int) ($store['has_image'] ?? 0) === 1): ?>
-                                                <img src="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=<?= (int) $store['id_mag'] ?>" alt="<?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?>">
+                                                <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=<?= (int) $store['id_mag'] ?>" alt="<?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?>">
                                             <?php endif; ?>
                                             <?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?>:
                                             <span class="foovia-store-popover">
                                                 <?php if ((int) ($store['has_image'] ?? 0) === 1): ?>
-                                                    <img src="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=<?= (int) $store['id_mag'] ?>" alt="<?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?>">
+                                                    <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=<?= (int) $store['id_mag'] ?>" alt="<?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?>">
                                                 <?php endif; ?>
                                                 <b><?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?></b>
                                                 <small><?= htmlspecialchars($store['adress_mag'], ENT_QUOTES) ?></small>
@@ -178,7 +181,7 @@ if ($product === null) {
                                         name="detail_store"
                                         value="<?= (int) $store['id_mag'] ?>"
                                         data-store-name="<?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?>"
-                                        data-store-image="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=<?= (int) $store['id_mag'] ?>"
+                                        data-store-image="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=<?= (int) $store['id_mag'] ?>"
                                         <?= $store === $availableStores[0] ? 'checked' : '' ?>
                                     >
                                     <span><?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?></span>
@@ -214,7 +217,7 @@ if ($product === null) {
                                     <article class="market-card">
                                         <div class="market-card-media">
                                             <a href="product-details.php?id=<?= (int) $recommended['id_march'] ?>" class="market-card-image-link">
-                                                <img src="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $recommended['id_march'] ?>" alt="<?= htmlspecialchars($recommended['name_march'], ENT_QUOTES) ?>">
+                                                <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $recommended['id_march'] ?>" alt="<?= htmlspecialchars($recommended['name_march'], ENT_QUOTES) ?>">
                                             </a>
                                         </div>
                                         <div class="market-card-body">
@@ -289,13 +292,14 @@ if ($product === null) {
     </div>
 
     <script>
-        window.FOOVIA_RESERVATION_ENDPOINT = '/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=reserve';
+        window.FOOVIA_APP_BASE = <?= json_encode($appBaseUrl, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+        window.FOOVIA_RESERVATION_ENDPOINT = '<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=reserve';
         window.FOOVIA_USER_SUBSCRIPTION = <?= json_encode($subscriptionUser, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
         window.FOOVIA_CAN_DELIVER = <?= $canUseDelivery ? 'true' : 'false' ?>;
     </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/foovia-cart.js?v=premium-gate-msg-1"></script>
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/marketplace-delivery-tracker.js?v=push-notify-3"></script>
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/foovia-market-theme.js"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/foovia-cart.js?v=premium-gate-msg-1"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/marketplace-delivery-tracker.js?v=push-notify-3"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/foovia-market-theme.js"></script>
 </body>
 </html>

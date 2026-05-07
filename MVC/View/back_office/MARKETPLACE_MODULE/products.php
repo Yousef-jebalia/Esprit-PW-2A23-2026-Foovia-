@@ -17,6 +17,9 @@ $adminEmail = trim((string) ($_SESSION['user_email'] ?? ''));
 require_once __DIR__ . '/../../../Model/MARKETPLACE_MODULE/Marchandise.php';
 require_once __DIR__ . '/../../../Model/MARKETPLACE_MODULE/Magasin.php';
 require_once __DIR__ . '/../../../Model/MARKETPLACE_MODULE/Categorie.php';
+require_once __DIR__ . '/../../../Model/MARKETPLACE_MODULE/url_helper.php';
+
+$appBaseUrl = foovia_app_base_url();
 
 $marchandiseModel = new Marchandise();
 $magasinModel = new Magasin();
@@ -241,7 +244,7 @@ $message = match ($status) {
                                                         <span><?= $isEditing ? 'Select a product, modify the fields below, then save the changes.' : 'Choose stores and food categories before publishing.' ?></span>
                                                     </div>
                                                     <div class="card-block">
-                                                        <form action="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=save" method="post" enctype="multipart/form-data" data-product-form data-editing-mode="<?= $isEditing ? 'true' : 'false' ?>">
+                                                        <form action="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=save" method="post" enctype="multipart/form-data" data-product-form data-editing-mode="<?= $isEditing ? 'true' : 'false' ?>">
                                                             <input type="hidden" name="id_march" value="<?= $isEditing ? (int) $editingProduct['id_march'] : 0 ?>">
                                                             <div class="row">
                                                                 <div class="col-md-6">
@@ -332,7 +335,7 @@ $message = match ($status) {
 
                                                             <div class="admin-preview m-b-20" data-image-preview>
                                                                 <?php if ($isEditing): ?>
-                                                                    <img src="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $editingProduct['id_march'] ?>" alt="<?= htmlspecialchars((string) $editingProduct['name_march'], ENT_QUOTES) ?>">
+                                                                    <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $editingProduct['id_march'] ?>" alt="<?= htmlspecialchars((string) $editingProduct['name_march'], ENT_QUOTES) ?>">
                                                                 <?php else: ?>
                                                                     <span class="text-muted">Image preview will appear here</span>
                                                                 <?php endif; ?>
@@ -396,7 +399,7 @@ $message = match ($status) {
                                                             <?php else: ?>
                                                                 <?php foreach ($products as $product): ?>
                                                                     <tr>
-                                                                        <td><img class="admin-table-thumb" src="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $product['id_march'] ?>" alt="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>"></td>
+                                                                        <td><img class="admin-table-thumb" src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $product['id_march'] ?>" alt="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>"></td>
                                                                         <td><strong><?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?></strong><br><small><?= htmlspecialchars($product['description_march'], ENT_QUOTES) ?></small></td>
                                                                         <td><?= htmlspecialchars($product['store_names'] ?? 'No store', ENT_QUOTES) ?></td>
                                                                         <td><?= htmlspecialchars($formatPrice($product['price_march']), ENT_QUOTES) ?> TND</td>
@@ -410,11 +413,11 @@ $message = match ($status) {
                                                                         </td>
                                                                         <td class="admin-action-cell">
                                                                             <a href="products.php?edit=<?= (int) $product['id_march'] ?>" class="admin-action-btn admin-action-modify">Modify</a>
-                                                                            <form action="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=reset_reservations" method="post">
+                                                                            <form action="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=reset_reservations" method="post">
                                                                                 <input type="hidden" name="id_march" value="<?= (int) $product['id_march'] ?>">
                                                                                 <button type="submit" class="admin-action-btn admin-action-reset">Reset</button>
                                                                             </form>
-                                                                            <form action="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=delete" method="post" data-delete-product-form data-product-name="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>">
+                                                                            <form action="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=delete" method="post" data-delete-product-form data-product-name="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>">
                                                                                 <input type="hidden" name="id_march" value="<?= (int) $product['id_march'] ?>">
                                                                                 <button type="submit" class="admin-action-btn admin-action-delete">Delete</button>
                                                                             </form>

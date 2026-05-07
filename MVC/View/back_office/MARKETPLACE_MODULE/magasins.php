@@ -15,6 +15,9 @@ $adminName = trim((string) ($_SESSION['user_name'] ?? 'Foovia Admin'));
 $adminEmail = trim((string) ($_SESSION['user_email'] ?? ''));
 
 require_once __DIR__ . '/../../../Model/MARKETPLACE_MODULE/Magasin.php';
+require_once __DIR__ . '/../../../Model/MARKETPLACE_MODULE/url_helper.php';
+
+$appBaseUrl = foovia_app_base_url();
 
 $magasinModel = new Magasin();
 $stores = $magasinModel->fetchAll();
@@ -199,7 +202,7 @@ $message = match ($status) {
                                                         <span>Form validation is handled only by JavaScript.</span>
                                                     </div>
                                                     <div class="card-block">
-                                                        <form action="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=save" method="post" enctype="multipart/form-data" data-store-form data-editing-mode="<?= $isEditing ? 'true' : 'false' ?>">
+                                                        <form action="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=save" method="post" enctype="multipart/form-data" data-store-form data-editing-mode="<?= $isEditing ? 'true' : 'false' ?>">
                                                             <input type="hidden" name="id_mag" value="<?= $isEditing ? (int) $editingStore['id_mag'] : 0 ?>">
 
                                                             <div class="form-group">
@@ -237,7 +240,7 @@ $message = match ($status) {
 
                                                             <div class="admin-preview admin-store-preview m-b-20" data-store-image-preview>
                                                                 <?php if ($isEditing && (int) ($editingStore['has_image'] ?? 0) === 1): ?>
-                                                                    <img src="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=<?= (int) $editingStore['id_mag'] ?>" alt="<?= htmlspecialchars((string) $editingStore['name_mag'], ENT_QUOTES) ?>">
+                                                                    <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=<?= (int) $editingStore['id_mag'] ?>" alt="<?= htmlspecialchars((string) $editingStore['name_mag'], ENT_QUOTES) ?>">
                                                                 <?php else: ?>
                                                                     <span class="text-muted">Magasin image preview will appear here</span>
                                                                 <?php endif; ?>
@@ -279,7 +282,7 @@ $message = match ($status) {
                                                                             <tr>
                                                                                 <td>
                                                                                     <?php if ((int) ($store['has_image'] ?? 0) === 1): ?>
-                                                                                        <img class="admin-table-thumb" src="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=<?= (int) $store['id_mag'] ?>" alt="<?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?>">
+                                                                                        <img class="admin-table-thumb" src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=<?= (int) $store['id_mag'] ?>" alt="<?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?>">
                                                                                     <?php else: ?>
                                                                                         <span class="store-thumb-empty">No image</span>
                                                                                     <?php endif; ?>
@@ -290,7 +293,7 @@ $message = match ($status) {
                                                                                 <td><?= htmlspecialchars($store['adress_mag'], ENT_QUOTES) ?></td>
                                                                                 <td class="admin-action-cell">
                                                                                     <a href="magasins.php?edit=<?= (int) $store['id_mag'] ?>" class="admin-action-btn admin-action-modify">Modify</a>
-                                                                                    <form action="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=delete" method="post" data-delete-store-form data-store-name="<?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?>">
+                                                                                    <form action="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=delete" method="post" data-delete-store-form data-store-name="<?= htmlspecialchars($store['name_mag'], ENT_QUOTES) ?>">
                                                                                         <input type="hidden" name="id_mag" value="<?= (int) $store['id_mag'] ?>">
                                                                                         <button type="submit" class="admin-action-btn admin-action-delete">Delete</button>
                                                                                     </form>

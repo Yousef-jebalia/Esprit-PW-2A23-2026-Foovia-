@@ -3,8 +3,11 @@
 declare(strict_types=1);
 
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
+require_once __DIR__ . '/../../../../Model/MARKETPLACE_MODULE/url_helper.php';
+$appBaseUrl = foovia_app_base_url();
+
 if (!isset($_SESSION['user_id'])) {
-    header('Location: /integration%20foovia/MVC/View/front_office/foovia-signin.php?redirect=marketplace');
+    header('Location: ' . foovia_url('MVC/View/front_office/foovia-signin.php?redirect=marketplace'));
     exit;
 }
 $userName = $_SESSION['user_name'] ?? '';
@@ -36,25 +39,25 @@ if (!$canUseDelivery) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/vendor.css">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" type="text/css" href="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/css/marketplace.css?v=premium-dark-checkout-2">
+    <link rel="stylesheet" type="text/css" href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/css/marketplace.css?v=premium-dark-checkout-2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body class="foovia-checkout-body">
     <header class="foovia-topbar">
-        <a href="/integration%20foovia/MVC/View/front_office/foovia.php" class="foovia-brand">
-            <img src="/integration%20foovia/MVC/View/front_office/assets/Plan%20de%20travail%201%20no%20bg%20(3)%20(1).png" alt="FOOVIA Logo" class="foovia-logo-img">
+        <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia.php" class="foovia-brand">
+            <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/assets/Plan%20de%20travail%201%20no%20bg%20(3)%20(1).png" alt="FOOVIA Logo" class="foovia-logo-img">
             FOOVIA
         </a>
         <nav class="foovia-nav" aria-label="Primary">
-            <a href="/integration%20foovia/MVC/View/front_office/foovia.php#features">Features</a>
-            <a href="/integration%20foovia/MVC/View/front_office/foovia.php#how">How it works</a>
+            <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia.php#features">Features</a>
+            <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia.php#how">How it works</a>
             <a href="marketplace.php">Marketplace</a>
             <a href="marketplace.php#aziza-map">Community</a>
         </nav>
         <div class="foovia-nav-actions">
-            <a href="/integration%20foovia/MVC/View/front_office/foovia-backoffice.php" class="foovia-nav-btn foovia-nav-backoffice">Backoffice</a>
+            <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia-backoffice.php" class="foovia-nav-btn foovia-nav-backoffice">Backoffice</a>
             <button class="foovia-theme-toggle" type="button" aria-label="Switch display mode">
                 <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="12" cy="12" r="4"></circle>
@@ -69,9 +72,9 @@ if (!$canUseDelivery) {
                     Welcome, <?php echo htmlspecialchars($userName !== '' ? $userName : 'User'); ?>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="marketUserMenu">
-                    <li><a class="dropdown-item" href="/integration%20foovia/MVC/View/front_office/profile.php">My Account</a></li>
+                    <li><a class="dropdown-item" href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/profile.php">My Account</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/integration%20foovia/MVC/View/front_office/logout.php">Logout</a></li>
+                    <li><a class="dropdown-item" href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/logout.php">Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -241,8 +244,11 @@ if (!$canUseDelivery) {
         </div>
     </div>
 
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/checkout.js?v=push-notify-3"></script>
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/marketplace-delivery-tracker.js?v=push-notify-3"></script>
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/foovia-market-theme.js"></script>
+    <script>
+        window.FOOVIA_APP_BASE = <?= json_encode($appBaseUrl, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+    </script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/checkout.js?v=push-notify-3"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/marketplace-delivery-tracker.js?v=push-notify-3"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/foovia-market-theme.js"></script>
 </body>
 </html>

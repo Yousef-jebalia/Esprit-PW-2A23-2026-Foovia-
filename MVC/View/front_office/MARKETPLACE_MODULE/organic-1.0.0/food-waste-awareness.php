@@ -5,7 +5,9 @@ declare(strict_types=1);
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+require_once __DIR__ . '/../../../../Model/MARKETPLACE_MODULE/url_helper.php';
 
+$appBaseUrl = foovia_app_base_url();
 $userName = $_SESSION['user_name'] ?? '';
 ?>
 <!DOCTYPE html>
@@ -18,19 +20,19 @@ $userName = $_SESSION['user_name'] ?? '';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/vendor.css">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" type="text/css" href="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/css/marketplace.css?v=awareness-experience-1">
+    <link rel="stylesheet" type="text/css" href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/css/marketplace.css?v=awareness-experience-1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body class="foovia-awareness-body">
     <header class="foovia-topbar">
-        <a href="/integration%20foovia/MVC/View/front_office/foovia.php" class="foovia-brand">
-            <img src="/integration%20foovia/MVC/View/front_office/assets/Plan%20de%20travail%201%20no%20bg%20(3)%20(1).png" alt="FOOVIA Logo" class="foovia-logo-img">
+        <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia.php" class="foovia-brand">
+            <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/assets/Plan%20de%20travail%201%20no%20bg%20(3)%20(1).png" alt="FOOVIA Logo" class="foovia-logo-img">
             FOOVIA
         </a>
         <nav class="foovia-nav" aria-label="Primary">
-            <a href="/integration%20foovia/MVC/View/front_office/foovia.php#features">Features</a>
+            <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia.php#features">Features</a>
             <a href="marketplace.php">Marketplace</a>
             <a href="#impact">Impact</a>
             <a href="#calculator">Calculator</a>
@@ -197,7 +199,7 @@ $userName = $_SESSION['user_name'] ?? '';
         </section>
     </main>
 
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/foovia-market-theme.js"></script>
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/food-waste-awareness.js?v=awareness-experience-1"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/foovia-market-theme.js"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/food-waste-awareness.js?v=awareness-experience-1"></script>
 </body>
 </html>

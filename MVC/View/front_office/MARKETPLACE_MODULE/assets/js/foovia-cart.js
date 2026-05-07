@@ -1136,7 +1136,7 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('quantity_reservation', String(quantity));
 
       try {
-        const response = await fetch(window.FOOVIA_RESERVATION_ENDPOINT || '/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=reserve', {
+        const response = await fetch(window.FOOVIA_RESERVATION_ENDPOINT || `${window.FOOVIA_APP_BASE || ''}/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=reserve`, {
           method: 'POST',
           body: formData
         });
@@ -1185,7 +1185,7 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('quantity_reservation', String(parseQuantity(quantityInput?.value)));
 
       try {
-        const response = await fetch(window.FOOVIA_RESERVATION_ENDPOINT || '/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=reserve', {
+        const response = await fetch(window.FOOVIA_RESERVATION_ENDPOINT || `${window.FOOVIA_APP_BASE || ''}/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=reserve`, {
           method: 'POST',
           body: formData
         });

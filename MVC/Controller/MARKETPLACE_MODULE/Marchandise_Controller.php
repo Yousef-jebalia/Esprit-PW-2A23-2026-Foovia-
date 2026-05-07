@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../Model/MARKETPLACE_MODULE/Marchandise.php';
+require_once __DIR__ . '/../../Model/MARKETPLACE_MODULE/url_helper.php';
 
 final class MarchandiseController
 {
@@ -42,7 +43,7 @@ final class MarchandiseController
             return;
         }
 
-        $this->redirect('/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/organic-1.0.0/marketplace.php');
+        $this->redirect(foovia_url('MVC/View/front_office/MARKETPLACE_MODULE/organic-1.0.0/marketplace.php'));
     }
 
     private function save(): void
@@ -53,13 +54,13 @@ final class MarchandiseController
         try {
             if ($payload['id_march'] > 0) {
                 $this->marchandise->update($payload, is_array($image) ? $image : []);
-                $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=updated');
+                $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=updated'));
             }
 
             $this->marchandise->create($payload, is_array($image) ? $image : []);
-            $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=success');
+            $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=success'));
         } catch (Throwable $exception) {
-            $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=dberror');
+            $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=dberror'));
         }
     }
 
@@ -67,9 +68,9 @@ final class MarchandiseController
     {
         try {
             $this->marchandise->delete((int) ($_POST['id_march'] ?? 0));
-            $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=deleted');
+            $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=deleted'));
         } catch (Throwable $exception) {
-            $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=deleteerror');
+            $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=deleteerror'));
         }
     }
 
@@ -98,9 +99,9 @@ final class MarchandiseController
     {
         try {
             $this->marchandise->resetReservations((int) ($_POST['id_march'] ?? 0));
-            $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=reservations_reset');
+            $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=reservations_reset'));
         } catch (Throwable $exception) {
-            $this->redirect('/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=reservationerror');
+            $this->redirect(foovia_url('MVC/View/back_office/MARKETPLACE_MODULE/products.php?status=reservationerror'));
         }
     }
 

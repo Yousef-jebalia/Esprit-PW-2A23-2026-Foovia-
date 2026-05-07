@@ -3,8 +3,11 @@
 declare(strict_types=1);
 
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
+require_once __DIR__ . '/../../../../Model/MARKETPLACE_MODULE/url_helper.php';
+$appBaseUrl = foovia_app_base_url();
+
 if (!isset($_SESSION['user_id'])) {
-    header('Location: /integration%20foovia/MVC/View/front_office/foovia-signin.php?redirect=marketplace');
+    header('Location: ' . foovia_url('MVC/View/front_office/foovia-signin.php?redirect=marketplace'));
     exit;
 }
 
@@ -51,7 +54,7 @@ foreach ($stores as $store) {
     }
 
     $storeName = strtolower((string) $store['name_mag']);
-    $logoUrl = '/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=' . (int) $store['id_mag'];
+    $logoUrl = foovia_url('MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=' . (int) $store['id_mag']);
 
     if ($storeLogoUrls['aziza'] === '' && str_contains($storeName, 'aziza')) {
         $storeLogoUrls['aziza'] = $logoUrl;
@@ -199,7 +202,7 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
     <link rel="stylesheet" type="text/css" href="css/vendor.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" type="text/css" href="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/css/marketplace.css?v=premium-dark-checkout-2">
+    <link rel="stylesheet" type="text/css" href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/css/marketplace.css?v=premium-dark-checkout-2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -226,20 +229,20 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
     </svg>
 
     <header class="foovia-topbar">
-        <a href="/integration%20foovia/MVC/View/front_office/foovia.php" class="foovia-brand">
-            <img src="/integration%20foovia/MVC/View/front_office/assets/Plan%20de%20travail%201%20no%20bg%20(3)%20(1).png" alt="FOOVIA Logo" class="foovia-logo-img">
+        <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia.php" class="foovia-brand">
+            <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/assets/Plan%20de%20travail%201%20no%20bg%20(3)%20(1).png" alt="FOOVIA Logo" class="foovia-logo-img">
             FOOVIA
         </a>
 
         <nav class="foovia-nav" aria-label="Primary">
-            <a href="/integration%20foovia/MVC/View/front_office/foovia.php#features">Features</a>
-            <a href="/integration%20foovia/MVC/View/front_office/foovia.php#how">How it works</a>
+            <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia.php#features">Features</a>
+            <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia.php#how">How it works</a>
             <a href="marketplace.php">Marketplace</a>
             <a href="#aziza-map">Community</a>
         </nav>
 
         <div class="foovia-nav-actions">
-            <a href="/integration%20foovia/MVC/View/front_office/foovia-backoffice.php" class="foovia-nav-btn foovia-nav-backoffice">Backoffice</a>
+            <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/foovia-backoffice.php" class="foovia-nav-btn foovia-nav-backoffice">Backoffice</a>
             <button class="foovia-theme-toggle" type="button" aria-label="Switch display mode">
                 <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="12" cy="12" r="4"></circle>
@@ -254,9 +257,9 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
                     Welcome, <?php echo htmlspecialchars($userName !== '' ? $userName : 'User'); ?>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="marketUserMenu">
-                    <li><a class="dropdown-item" href="/integration%20foovia/MVC/View/front_office/profile.php">My Account</a></li>
+                    <li><a class="dropdown-item" href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/profile.php">My Account</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/integration%20foovia/MVC/View/front_office/logout.php">Logout</a></li>
+                    <li><a class="dropdown-item" href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/logout.php">Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -298,7 +301,7 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
                                             <span class="foovia-spotlight-floating foovia-spotlight-floating-top">Market fresh</span>
                                             <span class="foovia-spotlight-floating foovia-spotlight-floating-middle">Workout ready</span>
                                             <span class="foovia-spotlight-floating foovia-spotlight-floating-bottom">Fresh everyday</span>
-                                            <img src="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $spotlightProduct['id_march'] ?>" alt="<?= htmlspecialchars($spotlightProduct['name_march'], ENT_QUOTES) ?>">
+                                            <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $spotlightProduct['id_march'] ?>" alt="<?= htmlspecialchars($spotlightProduct['name_march'], ENT_QUOTES) ?>">
                                         </a>
                                     </article>
                                 <?php endforeach; ?>
@@ -316,17 +319,17 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
                             </div>
                             <div class="foovia-recommend-stats">
                                 <div>
-                                    <i><img src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/imges-autre/product-icon.svg" alt="Products"></i>
+                                    <i><img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/imges-autre/product-icon.svg" alt="Products"></i>
                                     <strong><?= count($products) ?></strong>
                                     <span>Products live</span>
                                 </div>
                                 <div>
-                                    <i><img src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/imges-autre/shop-icon.svg" alt="Stores"></i>
+                                    <i><img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/imges-autre/shop-icon.svg" alt="Stores"></i>
                                     <strong><?= count($stores) ?></strong>
                                     <span>Stores linked</span>
                                 </div>
                                 <div>
-                                    <i><img src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/imges-autre/package-delivery-icon.svg" alt="Stock"></i>
+                                    <i><img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/imges-autre/package-delivery-icon.svg" alt="Stock"></i>
                                     <strong><?= max(array_sum(array_map(static fn (array $product): int => (int) $product['quantity_march'], $products)), 0) ?></strong>
                                     <span>Total stock</span>
                                 </div>
@@ -379,10 +382,10 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
                                             data-product-category="<?= htmlspecialchars((string) ($recommendedProduct['category_names'] ?: 'Foovia pick'), ENT_QUOTES) ?>"
                                             data-product-stock="<?= (int) $recommendedProduct['quantity_march'] ?>"
                                             data-product-stores="<?= htmlspecialchars((string) ($recommendedProduct['store_names'] ?? 'Selected Foovia stores'), ENT_QUOTES) ?>"
-                                            data-product-image="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $recommendedProduct['id_march'] ?>"
+                                            data-product-image="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $recommendedProduct['id_march'] ?>"
                                         >
                                             <span class="foovia-mini-thumb">
-                                                <img src="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $recommendedProduct['id_march'] ?>" alt="<?= htmlspecialchars($recommendedProduct['name_march'], ENT_QUOTES) ?>">
+                                                <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $recommendedProduct['id_march'] ?>" alt="<?= htmlspecialchars($recommendedProduct['name_march'], ENT_QUOTES) ?>">
                                             </span>
                                             <span class="foovia-mini-name"><?= htmlspecialchars($recommendedProduct['name_march'], ENT_QUOTES) ?></span>
                                             <span class="foovia-mini-meta"><?= htmlspecialchars($formatPrice($recommendedProduct['price_march']), ENT_QUOTES) ?> TND</span>
@@ -436,7 +439,7 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
                                     'address' => (string) ($store['adress_mag'] ?? ''),
                                     'phone' => (string) ($store['phone_mag'] ?? ''),
                                     'email' => (string) ($store['email_mag'] ?? ''),
-                                    'image' => '/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=' . (int) $storeId,
+                                    'image' => foovia_url('MVC/Controller/MARKETPLACE_MODULE/Magasin_Controller.php?action=image&id=' . (int) $storeId),
                                 ];
                             }
                         ?>
@@ -448,12 +451,12 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
                                 data-product-id="<?= (int) $product['id_march'] ?>"
                                 data-product-name="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>"
                                 data-product-price="<?= htmlspecialchars($formatPrice($product['price_march']), ENT_QUOTES) ?>"
-                                data-product-image="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $product['id_march'] ?>"
+                                data-product-image="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $product['id_march'] ?>"
                                 data-product-stores="<?= htmlspecialchars(json_encode($storePayload), ENT_QUOTES) ?>"
                             >
                                 <div class="market-card-media">
                                     <a href="product-details.php?id=<?= (int) $product['id_march'] ?>" class="market-card-image-link">
-                                        <img src="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $product['id_march'] ?>" alt="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>">
+                                        <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $product['id_march'] ?>" alt="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>">
                                     </a>
                                 </div>
                                 <div class="market-card-body">
@@ -501,7 +504,7 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
                                                 data-product-id="<?= (int) $product['id_march'] ?>"
                                                 data-product-name="<?= htmlspecialchars($product['name_march'], ENT_QUOTES) ?>"
                                                 data-product-price="<?= htmlspecialchars($formatPrice($product['price_march']), ENT_QUOTES) ?>"
-                                                data-product-image="/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $product['id_march'] ?>"
+                                                data-product-image="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=image&id=<?= (int) $product['id_march'] ?>"
                                                 data-product-stores="<?= htmlspecialchars(json_encode($storePayload), ENT_QUOTES) ?>"
                                             >Add</button>
                                             <a href="product-details.php?id=<?= (int) $product['id_march'] ?>" class="btn btn-outline-success rounded-pill px-3">Details</a>
@@ -522,7 +525,7 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
                     <div class="market-empty">
                         <h3 class="h4 mb-2">No marketplace products yet</h3>
                         <p class="text-muted mb-4">Use the back office page to add your first product and it will appear here.</p>
-                        <a href="/integration%20foovia/MVC/View/back_office/MARKETPLACE_MODULE/products.php" class="btn btn-success rounded-pill px-4">Open Back Office</a>
+                        <a href="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/back_office/MARKETPLACE_MODULE/products.php" class="btn btn-success rounded-pill px-4">Open Back Office</a>
                     </div>
                 <?php endif; ?>
             </div>
@@ -567,8 +570,8 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
             <div class="container-lg">
                 <div class="foovia-footer-inner">
                     <a href="marketplace.php" class="foovia-footer-brand">
-                        <img src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/imges-autre/pic_logo.png" alt="Foovia logo">
-                        <img src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/imges-autre/pic_name.png" alt="Foovia">
+                        <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/imges-autre/pic_logo.png" alt="Foovia logo">
+                        <img src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/imges-autre/pic_name.png" alt="Foovia">
                     </a>
                     <p class="foovia-footer-copy">© 2026 Foovia. All rights reserved.</p>
                     <nav class="foovia-footer-nav" aria-label="Footer">
@@ -684,16 +687,17 @@ $recommendedPanels = array_slice($recommendedPanels, 0, 3);
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        window.FOOVIA_RESERVATION_ENDPOINT = '/integration%20foovia/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=reserve';
+        window.FOOVIA_APP_BASE = <?= json_encode($appBaseUrl, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+        window.FOOVIA_RESERVATION_ENDPOINT = '<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/Controller/MARKETPLACE_MODULE/Marchandise_Controller.php?action=reserve';
         window.FOOVIA_USER_SUBSCRIPTION = <?= json_encode($subscriptionUser, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
         window.FOOVIA_CAN_DELIVER = <?= $canUseDelivery ? 'true' : 'false' ?>;
     </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/frontoffice-filters.js"></script>
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/frontoffice-recommendations.js?v=smart-picks-1"></script>
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/foovia-cart.js?v=premium-gate-msg-1"></script>
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/aziza-map.js?v=pretty-map-8"></script>
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/marketplace-delivery-tracker.js?v=push-notify-3"></script>
-    <script src="/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/foovia-market-theme.js"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/frontoffice-filters.js"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/frontoffice-recommendations.js?v=smart-picks-1"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/foovia-cart.js?v=premium-gate-msg-1"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/aziza-map.js?v=pretty-map-8"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/marketplace-delivery-tracker.js?v=push-notify-3"></script>
+    <script src="<?= htmlspecialchars($appBaseUrl, ENT_QUOTES) ?>/MVC/View/front_office/MARKETPLACE_MODULE/assets/js/foovia-market-theme.js"></script>
 </body>
 </html>
