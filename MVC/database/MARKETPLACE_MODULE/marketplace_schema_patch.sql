@@ -1,4 +1,4 @@
-USE `foovia`;
+USE `foovia_db`;
 
 START TRANSACTION;
 
