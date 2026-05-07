@@ -1,5 +1,17 @@
 ﻿<?php
 session_start();
+if (!isset($_SESSION['user_id'])) {
+  header('Location: ../foovia-signin.php');
+  exit;
+}
+$userId = $_SESSION['user_id'];
+$is_logged_in = true;
+$user_name = $_SESSION['user_name'] ?? 'User';
+?>
+
+
+<?php
+session_start();
 require_once '../../../Controller/tracking/ObjectifLongTerme_Controller.php';
 require_once '../../../Controller/tracking/ObjectifHebdomadaire_Controller.php';
 
@@ -451,6 +463,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['weekly_delete_objecti
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>FOOVIA Tracking Module</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link id="foovia-style" rel="stylesheet" href="./styleT.css?v=20260426">
 <style>
@@ -655,6 +668,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['weekly_delete_objecti
 </head>
 <body<?php echo $goal_start_date ? ' data-goal-start-date="' . htmlspecialchars($goal_start_date) . '"' : ''; ?><?php echo $goal_end_date ? ' data-goal-end-date="' . htmlspecialchars($goal_end_date) . '"' : ''; ?><?php echo $weekly_has_record ? ' data-weekly-has-record="1" data-weekly-id="' . htmlspecialchars((string) $weekly_today_objectif['id_suiv']) . '"' : ' data-weekly-has-record="0"'; ?> data-has-long-term-goal="<?php echo !empty($current_user_goal) ? '1' : '0'; ?>" data-long-term-edit-mode="<?php echo $long_term_edit_mode ? '1' : '0'; ?>">
 
+
 <nav>
   <a href="foovia.html" class="nav-logo">
     <img src="../assets/Plan de travail 1 no bg (3) (1).png" alt="FOOVIA Logo" class="nav-logo-image">
@@ -666,8 +680,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['weekly_delete_objecti
     <li><a href="#progress">Progress</a></li>
     <li><a href="#history">History</a></li>
   </ul>
-  <div class="nav-actions">
-    <a href="../../back_office/index.html" class="nav-btn nav-backoffice">Backoffice</a> 
+ <div class="nav-actions">
+    <a href="../foovia-backoffice.php" class="nav-btn nav-backoffice">Backoffice</a>
     <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
       <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="4"></circle>
@@ -677,8 +691,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['weekly_delete_objecti
         <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
       </svg>
     </button>
-    <a href="signin.html" class="nav-btn nav-signin">Sign In</a>
-    <a href="signup.html" class="nav-btn nav-signup">Sign Up</a>
+    <?php if ($is_logged_in): ?>
+      <div class="dropdown">
+        <a href="#" class="nav-btn dropdown-toggle" role="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+          Welcome, <?php echo htmlspecialchars($user_name); ?>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+          <li><a class="dropdown-item" href="../profile.php">My Account</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="../logout.php">Logout</a></li>
+        </ul>
+      </div>
+    <?php else: ?>
+      <a href="../foovia-signin.php" class="nav-btn nav-signin">Sign In</a>
+      <a href="../../back_office/foovia-signup.php" class="nav-btn nav-signup">Sign Up</a>
+    <?php endif; ?>
   </div>
 </nav>
 
@@ -3733,6 +3760,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['weekly_delete_objecti
     window._matchWeeklyMealBtnTimeout = setTimeout(matchWeeklyMealButtonSizes, 120);
   });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

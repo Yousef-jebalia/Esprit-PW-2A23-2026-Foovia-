@@ -1,8 +1,8 @@
 <?php
 session_start();
-require_once '../../Controller/tracking/ObjectifLongTerme_Controller.php';
-require_once '../../Controller/tracking/ObjectifHebdomadaire_Controller.php';
-require_once '../../Model/config.php';
+require_once '../../../Controller/tracking/ObjectifLongTerme_Controller.php';
+require_once '../../../Controller/tracking/ObjectifHebdomadaire_Controller.php';
+require_once '../../../Model/config.php';
 
 $longTermController = new ObjectifLongTerme_Controller();
 $weeklyController = new ObjectifHebdomadaire_Controller();

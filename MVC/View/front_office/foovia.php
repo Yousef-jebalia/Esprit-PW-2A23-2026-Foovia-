@@ -144,7 +144,7 @@ $user_name = $_SESSION['user_name'] ?? '';
         <h3>Goals & Macros</h3>
         <p>Track macros, exercises, and supplements. Photograph your meal for instant nutritional estimates. Get hydration and medicine reminders.</p>
         <span class="feat-tag">Smart reminders</span>
-         <a href="tracking.html" class="feat-btn">Start Tracking</a>
+         <a href="TRACK_MODULE/tracking.php" class="feat-btn">Start Tracking</a>
       </div>
 
       <div class="feat-card photo-card photo-sport">

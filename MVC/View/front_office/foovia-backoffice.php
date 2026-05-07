@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signin_submit'])) {
             $_SESSION['user_email'] = $user['email_user'];
             $_SESSION['user_role'] = $user['role_user'];
 
-            header('Location: ../back_office/USER_MODULE/accordion.html');
+            header('Location: ../back_office/USER_MODULE/tabs.php');
             exit;
           } else {
             if ($role !== 'admin') {

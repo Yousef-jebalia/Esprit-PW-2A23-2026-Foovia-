@@ -189,17 +189,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $createdCategoryId = $categoryController->add_category(new Categorie($newCategoryName));
 
         if (is_int($createdCategoryId) && $createdCategoryId > 0) {
-            header('Location: ../../view/back_office/SPORT_MOULE/form-elements-component.php?section=workout&category_added=1&category_id=' . $createdCategoryId);
+            header('Location: ../../View/back_office/SPORT_MOULE/form-elements-component.php?section=workout&category_added=1&category_id=' . $createdCategoryId);
         } else {
             $error = urlencode((string)$createdCategoryId);
-            header('Location: ../../view/back_office/SPORT_MOULE/form-elements-component.php?section=workout&category_error=' . $error);
+            header('Location: ../../View/back_office/SPORT_MOULE/form-elements-component.php?section=workout&category_error=' . $error);
         }
         exit;
     }
 
     if ($action === 'delete') {
         $controller->delete_workout((int)$_POST['delete_id']);
-        header('Location: ../../view/back_office/SPORT_MOULE/form-elements-component.php');
+        header('Location: ../../View/back_office/SPORT_MOULE/form-elements-component.php');
         exit;
     }
 
@@ -208,10 +208,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $deleteResult = $categoryController->delete_category($idCat);
 
         if ($deleteResult === true) {
-            header('Location: ../../view/back_office/SPORT_MOULE/form-elements-component.php?section=workout&category_deleted=1');
+            header('Location: ../../View/back_office/SPORT_MOULE/form-elements-component.php?section=workout&category_deleted=1');
         } else {
             $error = urlencode((string)$deleteResult);
-            header('Location: ../../view/back_office/SPORT_MOULE/form-elements-component.php?section=workout&category_delete_error=' . $error);
+            header('Location: ../../View/back_office/SPORT_MOULE/form-elements-component.php?section=workout&category_delete_error=' . $error);
         }
         exit;
     }

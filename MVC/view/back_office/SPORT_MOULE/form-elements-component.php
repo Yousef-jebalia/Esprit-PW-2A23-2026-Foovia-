@@ -680,42 +680,7 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                         <div class="sidebar_toggle"><a href="#"><i class="icon-close icons"></i></a></div>
                         <div class="pcoded-inner-navbar main-menu">
                             <div class="">
-                                <div class="main-menu-header">
-                                    <img class="img-80 img-radius" src="assets/images/avatar-4.jpg" alt="User-Profile-Image">
-                                    <div class="user-details">
-                                        <span id="more-details">John Doe<i class="fa fa-caret-down"></i></span>
-                                    </div>
-                                </div>
-                                <div class="main-menu-content">
-                                    <ul>
-                                        <li class="more-details">
-                                            <a href="user-profile.html"><i class="ti-user"></i>View Profile</a>
-                                            <a href="#!"><i class="ti-settings"></i>Settings</a>
-                                            <a href="auth-normal-sign-in.html"><i class="ti-layout-sidebar-left"></i>Logout</a>
-                                        </li>
-                                    </ul>
-                                </div>
                             </div>
-                            <div class="p-15 p-b-0">
-                                <form class="form-material">
-                                    <div class="form-group form-primary">
-                                        <input type="text" name="footer-email" class="form-control">
-                                        <span class="form-bar"></span>
-                                        <label class="float-label"><i class="fa fa-search m-r-10"></i>Search Friend</label>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="pcoded-navigation-label">Navigation</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="index.html" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-home"></i><b>D</b></span>
-                                        <span class="pcoded-mtext">Dashboard</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <div class="pcoded-navigation-label">UI Element</div>
                              <ul class="pcoded-item pcoded-left-item">
                                 <li class="pcoded-hasmenu active pcoded-trigger">
                                     <a href="javascript:void(0)" class="waves-effect waves-dark">
@@ -732,7 +697,7 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                                             </a>
                                         </li>
                                         <li class=" ">
-                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
+                                            <a href="../TRACK_MODULE/tracking.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                                                 <span class="pcoded-mtext">TRACKING</span>
                                                 <span class="pcoded-mcaret"></span>
@@ -837,6 +802,7 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
             <div style="font-weight: 600; margin-bottom: 5px;">No Workouts Yet</div>
             <div style="font-size: 14px;">Add your first workout using the form on the right ==> </div>
         </div>
+
     <?php else: ?>
         <?php foreach ($workouts as $wk): ?>
             <div id="card-<?= $wk['id_work'] ?>" class="workout-card" style="background: white; border-radius: 6px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px;">
