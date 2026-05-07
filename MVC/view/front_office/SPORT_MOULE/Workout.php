@@ -110,7 +110,7 @@ $user_name = $_SESSION['user_name'] ?? 'User';
     <li><a href="custome_workout.php">Custom Workouts</a></li>
   </ul>
   <div class="nav-actions">
-    <a href="foovia-backoffice.php" class="nav-btn nav-backoffice">Backoffice</a>
+    <a href="../foovia-backoffice.php" class="nav-btn nav-backoffice">Backoffice</a>
     <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
       <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="4"></circle>
@@ -133,7 +133,7 @@ $user_name = $_SESSION['user_name'] ?? 'User';
       </div>
     <?php else: ?>
       <a href="foovia-signin.php" class="nav-btn nav-signin">Sign In</a>
-      <a href="../../backoffice/foovia-signup.php" class="nav-btn nav-signup">Sign Up</a>
+      <a href="../../back_office/USER_MODULE/foovia-signup.php" class="nav-btn nav-signup">Sign Up</a>
     <?php endif; ?>
   </div>
 </nav>

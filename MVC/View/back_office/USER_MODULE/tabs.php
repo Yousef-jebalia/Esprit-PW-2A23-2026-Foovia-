@@ -340,6 +340,13 @@ if (!empty($users)) {
             <ul class="nav-left">
               <li><div class="sidebar_toggle"><a href="javascript:void(0)"><i class="ti-menu"></i></a></div></li>
             </ul>
+            <ul class="nav-right">
+              <li>
+                <a href="../../front_office/foovia.php" class="waves-effect waves-light" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:#158fbe;color:#fff;font-weight:700;text-decoration:none;">
+                  <i class="ti-home"></i> Welcome page
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
       </nav>
@@ -399,13 +406,25 @@ if (!empty($users)) {
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
-                                        <li class=" ">
-                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
+                                        <li class="pcoded-hasmenu">
+                                            <a href="javascript:void(0)" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                                                 <span class="pcoded-mtext">MARKETPLACE</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
-                                        
+                                            <ul class="pcoded-submenu">
+                                                <li>
+                                                    <a href="../MARKETPLACE_MODULE/products.php" class="waves-effect waves-dark">
+                                                        <span class="pcoded-mtext">Products</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="../MARKETPLACE_MODULE/magasins.php" class="waves-effect waves-dark">
+                                                        <span class="pcoded-mtext">Magasins</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
                                     </ul>
                                 </li>
                             </ul>
@@ -443,7 +462,7 @@ if (!empty($users)) {
             ?>" class="btn-ghost">Users list</a>
           <?php endif; ?>
         </div>
-        <a href="../frontoffice/foovia.php" class="back-link">Back to Frontoffice</a>
+        <a href="../../front_office/foovia.php" class="back-link">Back to Frontoffice</a>
       </div>
 
       <div class="controls">

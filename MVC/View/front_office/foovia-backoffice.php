@@ -98,7 +98,7 @@ $is_locked = false;
 <div class="right-panel">
   <p class="form-eyebrow">Admin area</p>
   <h1 class="form-title">Sign in to<br>Backoffice</h1>
-  <p class="form-sub">Need an admin account? <a href="../backoffice/foovia-signup.php">Create one now</a></p>
+  <p class="form-sub">Need an admin account? <a href="../back_office/USER_MODULE/foovia-signup.php">Create one now</a></p>
 
   <?php if (!empty($warning_message)): ?>
     <div class="backoffice-alert backoffice-alert-warning"><?php echo htmlspecialchars($warning_message); ?></div>
@@ -148,7 +148,7 @@ $is_locked = false;
 
   <div class="social-btns">
     <a class="social-btn" href="foovia-signin.php">Sign in page</a>
-    <a class="social-btn" href="../back_office/foovia-signup.php">Sign up page</a>
+    <a class="social-btn" href="../back_office/USER_MODULE/foovia-signup.php">Sign up page</a>
   </div>
 </div>
 

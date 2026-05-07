@@ -25,7 +25,7 @@ $user_name = $_SESSION['user_name'] ?? '';
   <ul class="nav-links">
     <li><a href="#features">Features</a></li>
     <li><a href="#how">How it works</a></li>
-    <li><a href="#marketplace">Marketplace</a></li>
+    <li><a href="marketplace-gateway.php">Marketplace</a></li>
     <li><a href="#community">Community</a></li>
   </ul>
   <div class="nav-actions">
@@ -52,7 +52,7 @@ $user_name = $_SESSION['user_name'] ?? '';
       </div>
     <?php else: ?>
       <a href="foovia-signin.php" class="nav-btn nav-signin">Sign In</a>
-      <a href="../backoffice/foovia-signup.php" class="nav-btn nav-signup">Sign Up</a>
+      <a href="../back_office/USER_MODULE/foovia-signup.php" class="nav-btn nav-signup">Sign Up</a>
     <?php endif; ?>
   </div>
 </nav>
@@ -164,7 +164,7 @@ $user_name = $_SESSION['user_name'] ?? '';
         <h3>Fresh. Local. Zero-waste.</h3>
         <p>Connect directly with local producers. Buy surplus food before it's wasted, win for your wallet, win for the planet.</p>
         <span class="feat-tag">Eco-friendly</span>
-         <a href="marketplace.html" class="feat-btn">Browse Market</a>
+         <a href="marketplace-gateway.php" class="feat-btn">Browse Market</a>
       </div>
 
       <div class="feat-card photo-card photo-survey-user">
@@ -173,7 +173,7 @@ $user_name = $_SESSION['user_name'] ?? '';
         <h3>Built around you</h3>
         <p>Our intake survey understands your goals, health challenges, and lifestyle before your first session. Secured with 2FA from day one.</p>
         <span class="feat-tag">Personalised</span>
-         <a href="../backoffice/foovia-survey.php" class="feat-btn">Get Started</a>
+         <a href="../back_office/USER_MODULE/foovia-survey.php" class="feat-btn">Get Started</a>
       </div>
 
       <div class="feat-card photo-card photo-support">
@@ -227,7 +227,7 @@ $user_name = $_SESSION['user_name'] ?? '';
     <p class="section-label">Marketplace</p>
     <h2 class="section-title">Fresh from producer to plate.</h2>
     <p>Our marketplace connects you directly with local farmers and food producers. Buy surplus items at great prices — tackling food waste while keeping your kitchen stocked with quality ingredients.</p>
-    <a href="#" class="btn-primary btn-primary-start">Browse the market</a>
+    <a href="marketplace-gateway.php" class="btn-primary btn-primary-start">Browse the market</a>
   </div>
   <div class="mkt-visual">
     <div class="mkt-cards">

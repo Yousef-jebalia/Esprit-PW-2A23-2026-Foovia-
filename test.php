@@ -1,5 +1,5 @@
 <?php
-require 'MVC/Model/config.php';
+require 'model/config.php';
 $db = config::getConnexion();
 
 function columnExists(PDO $db, string $table, string $column): bool {

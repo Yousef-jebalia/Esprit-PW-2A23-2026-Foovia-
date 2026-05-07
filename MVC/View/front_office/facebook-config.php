@@ -15,8 +15,10 @@ $fb_app_id = $env['FACEBOOK_APP_ID'] ?? '';
 $fb_app_secret = $env['FACEBOOK_APP_SECRET'] ?? '';
 
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-$host = $_SERVER['HTTP_HOST'];
-$base_dir = dirname($_SERVER['PHP_SELF']);
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$base_dir = isset($_SERVER['PHP_SELF']) ? dirname($_SERVER['PHP_SELF']) : '/integration foovia/MVC/View/front_office';
+$base_dir = str_replace('\\', '/', $base_dir);
+if ($base_dir !== '' && $base_dir[0] !== '/') { $base_dir = '/' . $base_dir; }
 $fb_redirect_uri = $protocol . "://" . $host . $base_dir . '/facebook-callback.php';
 
 $fb_login_url = null;

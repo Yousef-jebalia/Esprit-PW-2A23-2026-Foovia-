@@ -27,8 +27,10 @@ $clientSecret = $env['GOOGLE_CLIENT_SECRET'] ?? '';
 
 // Get the base URL dynamically
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-$host = $_SERVER['HTTP_HOST'];
-$base_dir = dirname($_SERVER['PHP_SELF']);
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$base_dir = isset($_SERVER['PHP_SELF']) ? dirname($_SERVER['PHP_SELF']) : '/integration foovia/MVC/View/front_office';
+$base_dir = str_replace('\\', '/', $base_dir);
+if ($base_dir !== '' && $base_dir[0] !== '/') { $base_dir = '/' . $base_dir; }
 $redirectUri = $protocol . "://" . $host . $base_dir . '/google-callback.php';
 
 $client = null;

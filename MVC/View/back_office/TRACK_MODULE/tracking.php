@@ -156,8 +156,8 @@ function h($value): string {
                         </ul>
                         <ul class="nav-right">
                             <li>
-                                <a href="../back_office/tracking.php" class="nav-btn nav-frontoffice waves-effect waves-light" title="Open Front Office">
-                                    <i class="fa fa-home" aria-hidden="true"></i>&nbsp;Front Office
+                                <a href="../../front_office/foovia.php" class="nav-btn nav-frontoffice waves-effect waves-light" title="Open Welcome Page">
+                                    <i class="fa fa-home" aria-hidden="true"></i>&nbsp;Welcome page
                                 </a>
                             </li>
                             <li class="header-notification">
@@ -213,7 +213,7 @@ function h($value): string {
                                             </a>
                                         </li>
                                         <li class=" ">
-                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
+                                            <a href="tracking.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                                                 <span class="pcoded-mtext">TRACKING</span>
                                                 <span class="pcoded-mcaret"></span>
@@ -227,7 +227,7 @@ function h($value): string {
                                             </a>
                                         </li>
                                         <li class=" ">
-                                            <a href="form-elements-component.php" class="waves-effect waves-dark">
+                                            <a href="../SPORT_MOULE/form-elements-component.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                                                 <span class="pcoded-mtext">SPORT</span>
                                                 <span class="pcoded-mcaret"></span>
@@ -247,18 +247,27 @@ function h($value): string {
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
-                                        <li class=" ">
-                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
+                                        <li class="pcoded-hasmenu">
+                                            <a href="javascript:void(0)" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                                                 <span class="pcoded-mtext">MARKETPLACE</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
-                                        
-                                    </li></ul>
+                                            <ul class="pcoded-submenu">
+                                                <li>
+                                                    <a href="../MARKETPLACE_MODULE/products.php" class="waves-effect waves-dark">
+                                                        <span class="pcoded-mtext">Products</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="../MARKETPLACE_MODULE/magasins.php" class="waves-effect waves-dark">
+                                                        <span class="pcoded-mtext">Magasins</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
                                 </li>
-                            </ul>
-                                
-                                
                             </ul>
                         </div>
                     </nav>

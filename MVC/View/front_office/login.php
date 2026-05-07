@@ -186,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
             </form>
 
             <div class="signup-link">
-                Don't have an account? <a href="../backoffice/auth-sign-up.php">Sign Up</a>
+                Don't have an account? <a href="../back_office/USER_MODULE/auth-sign-up.php">Sign Up</a>
             </div>
         </div>
     </div>

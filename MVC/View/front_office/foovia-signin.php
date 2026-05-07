@@ -1,5 +1,5 @@
-﻿<?php
-session_start();
+<?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 include_once(__DIR__ . '/../../Model/config.php');
 include_once(__DIR__ . '/../../Controller/Controller_user.php');
 require_once __DIR__ . '/google-config.php';
@@ -10,6 +10,10 @@ $googleLoginUrl = ($client instanceof Google_Client) ? $client->createAuthUrl() 
 
 $error_message = '';
 $success_message = '';
+$redirect = $_POST['redirect'] ?? $_GET['redirect'] ?? '';
+$redirectUrl = $redirect === 'marketplace'
+    ? '/integration%20foovia/MVC/View/front_office/MARKETPLACE_MODULE/organic-1.0.0/marketplace.php'
+    : 'foovia.php';
 
 $controller = new Controller_user();
 $controller->release_expired_bans();
@@ -19,7 +23,7 @@ if (isset($_SESSION['error_message'])) {
     unset($_SESSION['error_message']);
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') == 'POST' && isset($_POST['signin_submit'])) {
     $email = strtolower(trim($_POST['email'] ?? ''));
     $password = $_POST['password'] ?? '';
 
@@ -47,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
                   $_SESSION['user_name'] = $user['name_user'];
                   $_SESSION['user_email'] = $user['email_user'];
                   $success_message = 'Connected successfully! Redirecting...';
-                  header('refresh:2;url=foovia.php');
+                  header('refresh:2;url=' . $redirectUrl);
                   exit;
                 } else {
                   $attemptState = $controller->register_failed_login_attempt((int) $user['id_user']);
@@ -133,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
 <div class="right-panel">
   <p class="form-eyebrow">Welcome back</p>
   <h1 class="form-title">Sign in to<br>Foovia</h1>
-  <p class="form-sub">Don't have an account? <a href="../backoffice/foovia-signup.php">Create one free â†’</a></p>
+  <p class="form-sub">Don't have an account? <a href="../back_office/USER_MODULE/foovia-signup.php">Create one free â†’</a></p>
 
   <?php if (!empty($error_message)): ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 20px; padding: 12px; background: #fee; color: var(--red); border: 1px solid var(--red); border-radius: 8px;">
@@ -173,6 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
   <div class="forgot-row"><a href="forgot-password.php">Forgot your password?</a></div>
 
   <button type="submit" name="signin_submit" class="btn-submit">Sign in to my account</button>
+  <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect); ?>">
   </form>
 
   <div class="divider">

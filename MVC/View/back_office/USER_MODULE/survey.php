@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['survey_submit'])) {
 
             $success_message = 'Survey completed successfully! Redirecting to login...';
             unset($_SESSION['signup_email']);
-            header('refresh:2;url=../frontoffice/login.php');
+            header('refresh:2;url=../../front_office/login.php');
         }
     } catch (Exception $e) {
         $error_message = 'An error occurred: ' . $e->getMessage();

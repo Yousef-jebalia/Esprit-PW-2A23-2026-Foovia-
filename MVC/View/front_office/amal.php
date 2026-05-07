@@ -342,7 +342,7 @@ $user_name = $_SESSION['user_name'] ?? '';
         </div>
     <?php else: ?>
         <a href="login.php" class="btn btn-outline-success btn-sm">Sign In</a>
-        <a href="../backoffice/auth-sign-up.php" class="btn btn-success btn-sm">Sign Up</a>
+        <a href="../back_office/USER_MODULE/auth-sign-up.php" class="btn btn-success btn-sm">Sign Up</a>
     <?php endif; ?>
 
     <a href="#" class="p-2">

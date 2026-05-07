@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role'] ?? '') !== 'admin') {
-  header('Location: ../frontoffice/foovia-backoffice.php');
+  header('Location: ../../front_office/foovia-backoffice.php');
   exit;
 }
 ?>

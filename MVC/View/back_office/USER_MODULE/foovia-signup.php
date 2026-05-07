@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
   <div class="blob blob-2"></div>
   <div class="blob blob-3"></div>
 
-  <a href="../frontoffice/foovia.php" class="left-logo"> FOOVIA</a>
+  <a href="../../front_office/foovia.php" class="left-logo"> FOOVIA</a>
 
   <div class="left-body">
     <h1>Your health<br>journey<br>starts <span class="gr">here.</span></h1>
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
 <div class="right-panel">
   <p class="form-eyebrow">Free forever</p>
   <h1 class="form-title">Create your<br>Foovia account</h1>
-  <p class="form-sub">Already have one? <a href="../frontoffice/foovia-signin.php">Sign in instead â†’</a></p>
+  <p class="form-sub">Already have one? <a href="../../front_office/foovia-signin.php">Sign in instead â†’</a></p>
 
   <?php if (!empty($error_message)): ?>
     <div style="background: #fee; color: #c33; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem;">

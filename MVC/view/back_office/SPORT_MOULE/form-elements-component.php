@@ -593,6 +593,11 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                             </li>
                         </ul>
                         <ul class="nav-right">
+                            <li>
+                                <a href="../../front_office/foovia.php" class="waves-effect waves-light" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:#158fbe;color:#fff;font-weight:700;text-decoration:none;">
+                                    <i class="ti-home"></i> Welcome page
+                                </a>
+                            </li>
                             <li class="header-notification">
                                 <a href="#!" class="waves-effect waves-light">
                                     <i class="ti-bell"></i>
@@ -731,13 +736,25 @@ function fillEditForm(id, name, type, muscle, cal, fatigue, description) {
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
-                                        <li class=" ">
-                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
+                                        <li class="pcoded-hasmenu">
+                                            <a href="javascript:void(0)" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                                                 <span class="pcoded-mtext">MARKETPLACE</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
-                                        
+                                            <ul class="pcoded-submenu">
+                                                <li>
+                                                    <a href="../MARKETPLACE_MODULE/products.php" class="waves-effect waves-dark">
+                                                        <span class="pcoded-mtext">Products</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="../MARKETPLACE_MODULE/magasins.php" class="waves-effect waves-dark">
+                                                        <span class="pcoded-mtext">Magasins</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
                                     </ul>
                                 </li>
                             </ul>

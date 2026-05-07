@@ -704,7 +704,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['weekly_delete_objecti
       </div>
     <?php else: ?>
       <a href="../foovia-signin.php" class="nav-btn nav-signin">Sign In</a>
-      <a href="../../back_office/foovia-signup.php" class="nav-btn nav-signup">Sign Up</a>
+      <a href="../../back_office/USER_MODULE/foovia-signup.php" class="nav-btn nav-signup">Sign Up</a>
     <?php endif; ?>
   </div>
 </nav>
