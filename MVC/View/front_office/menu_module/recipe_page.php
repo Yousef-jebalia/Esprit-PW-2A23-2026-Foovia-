@@ -92,6 +92,17 @@ foreach ($categoryRows as $categoryRow) {
 }
 ksort($categories);
 ?>
+
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+  header('Location: ../foovia-signin.php');
+  exit;
+}
+$userId = $_SESSION['user_id'];
+$is_logged_in = true;
+$user_name = $_SESSION['user_name'] ?? 'User';
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -230,31 +241,44 @@ ksort($categories);
     </div>
     
     <nav class="foovia-nav" data-theme="light" aria-label="Main navigation">
-      <a href="../foovia.html" class="nav-logo">
+      <a href="../foovia.php" class="nav-logo">
         <img src="../assets/Plan de travail 1 no bg (3) (1).png" alt="FOOVIA Logo">
         FOOVIA
       </a>
 
       <ul class="nav-links">
-        <li><a href="../foovia.html">Home</a></li>
+        <li><a href="../foovia.php">Home</a></li>
         <li><a href="#categories">Categories</a></li>
         <li><a href="#recipes">Recipes</a></li>
         <li><a href="#community">Community</a></li>
       </ul>
 
       <div class="nav-actions">
-        <a href="../../back_office/index.html" class="nav-btn nav-backoffice">Backoffice</a>
-        <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
-          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="4"></circle>
-            <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"></path>
-          </svg>
-          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
-          </svg>
+        <a href="../foovia-backoffice.php" class="nav-btn nav-backoffice">Backoffice</a>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"></path>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
+      </svg>
         </button>
-        <a href="../../back_office/auth-normal-sign-in.html" class="nav-btn nav-signin">Sign In</a>
-        <a href="../../back_office/auth-sign-up.html" class="nav-btn nav-signup">Sign Up</a>
+    <?php if ($is_logged_in): ?>
+      <div class="dropdown">
+        <a href="#" class="nav-btn dropdown-toggle" role="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+          Welcome, <?php echo htmlspecialchars($user_name); ?>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+          <li><a class="dropdown-item" href="../profile.php">My Account</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="../logout.php">Logout</a></li>
+        </ul>
+      </div>
+    <?php else: ?>
+      <a href="../foovia-signin.php" class="nav-btn nav-signin">Sign In</a>
+      <a href="../../back_office/USER_MODULE/foovia-signup.php" class="nav-btn nav-signup">Sign Up</a>
+    <?php endif; ?>
       </div>
     </nav>
     
@@ -1129,7 +1153,7 @@ ksort($categories);
             const formData = new FormData();
             formData.append('image', file, file.name || 'ingredient.jpg');
 
-            const response = await fetch('../../../controle/analyze_ingredients.php', {
+            const response = await fetch('../../../Controller/menu_module/analyze_ingredients.php', {
               method: 'POST',
               body: formData
             });

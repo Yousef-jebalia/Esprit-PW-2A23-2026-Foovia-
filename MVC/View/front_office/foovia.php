@@ -135,7 +135,7 @@ $user_name = $_SESSION['user_name'] ?? '';
         <h3>Recipes from your fridge</h3>
         <p>Snap a photo of your ingredients and Foovia generates personalised recipes instantly. Meals adapted to your dietary goals, allergies, and preferences, no guesswork needed.</p>
         <span class="feat-tag">AI-powered</span>
-         <a href="recipes.html" class="feat-btn">Explore Recipes</a>
+         <a href="menu_module/recipe_page.php" class="feat-btn">Explore Recipes</a>
       </div>
 
       <div class="feat-card photo-card photo-macro-tracking">
@@ -182,7 +182,7 @@ $user_name = $_SESSION['user_name'] ?? '';
         <h3>Support that never sleeps</h3>
         <p>Ticket-based issue tracking, AI chatbot, and user-led discussion threads. Earn rewards for being a helpful community member.</p>
         <span class="feat-tag">Hybrid support</span>
-         <a href="community.html" class="feat-btn">Join Community</a>
+         <a href="SUPPORT_MODULE/support_rec_page.php" class="feat-btn">Join Community</a>
       </div>
     </div>
 

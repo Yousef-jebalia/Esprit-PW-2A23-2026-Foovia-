@@ -393,14 +393,14 @@ if (!empty($users)) {
                                             </a>
                                         </li>
                                         <li class=" ">
-                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
+                                            <a href="../menu_module/form-elements-component.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                                                 <span class="pcoded-mtext">MENU</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
                                         <li class=" ">
-                                            <a href="hot_path_te3ek.php" class="waves-effect waves-dark">
+                                            <a href="../menu_module/form-elements-ingrediant.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                                                 <span class="pcoded-mtext">INGREDIANTS</span>
                                                 <span class="pcoded-mcaret"></span>

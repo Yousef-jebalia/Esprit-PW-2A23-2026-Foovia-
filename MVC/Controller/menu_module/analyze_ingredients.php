@@ -127,8 +127,9 @@ $payload = [
 
 $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . rawurlencode($apiKey);
 
-$ch = c;
+$ch = curl_init();
 curl_setopt_array($ch, [
+  CURLOPT_URL => $url,
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_POST => true,
   CURLOPT_HTTPHEADER => [
