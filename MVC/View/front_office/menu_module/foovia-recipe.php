@@ -224,7 +224,7 @@ if ($recipe) {
 <title>FOOVIA — <?php echo htmlspecialchars($recipeName); ?></title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="foovia-recipe.css">
+<link rel="stylesheet" href="foovia-recipe.css?v=market-badge-size-1">
 </head>
 <body>
 
