@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FOOVIA â€” Your Health Profile</title>
+<title>FOOVIA — Your Health Profile</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="foovia-survey.css">
@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <a href="../../front_office/foovia.php" class="topbar-logo">ðŸŒ¿ FOOV<span>IA</span></a>
+  <a href="../../front_office/foovia.php" class="topbar-logo">🌿 FOOV<span>IA</span></a>
   <div class="progress-wrap">
     <div class="progress-labels">
       <span id="pl-1" class="active">Profile</span>
@@ -134,26 +134,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
     </div>
   <?php endif; ?>
 
-  <!-- â•â• STEP 1 â€” Profile â•â• -->
+  <!-- STEP 1 — Profile -->
   <div class="step active" id="step-1">
-    <p class="step-eyebrow">Step 1 of 4 â€” About you</p>
+    <p class="step-eyebrow">Step 1 of 4 — About you</p>
     <h1 class="step-title">Tell us about<br><em>yourself</em></h1>
     <p class="step-desc">Help us personalise your experience. This takes less than 2 minutes.</p>
 
     <!-- GENDER -->
     <div class="card">
-      <div class="card-label">ðŸ‘¤ Gender</div>
+      <div class="card-label">👤 Gender</div>
       <div class="gender-grid">
         <div class="gender-tile" onclick="selectGender(this,'male')">
-          <span class="gt-icon">â™‚ï¸</span>
+          <span class="gt-icon">♂️</span>
           <span class="gt-label">Male</span>
         </div>
         <div class="gender-tile" onclick="selectGender(this,'female')">
-          <span class="gt-icon">â™€ï¸</span>
+          <span class="gt-icon">♀️</span>
           <span class="gt-label">Female</span>
         </div>
         <div class="gender-tile" onclick="selectGender(this,'other')">
-          <span class="gt-icon">âš§ï¸</span>
+          <span class="gt-icon">⚧️</span>
           <span class="gt-label">Other</span>
         </div>
       </div>
@@ -162,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
 
     <!-- BIRTHDAY -->
     <div class="card">
-      <div class="card-label">ðŸŽ‚ Date of birth</div>
+      <div class="card-label">🎂 Date of birth</div>
       <div class="field-row">
         <div class="field">
           <label>Day</label>
@@ -187,21 +187,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
     </div>
 
     <div class="nav-btns">
-      <button type="button" class="btn-next" onclick="goNext(1)">Continue â†’</button>
+      <button type="button" class="btn-next" onclick="goNext(1)">Continue →</button>
       <a href="../../front_office/foovia.php" class="btn-skip">Skip</a>
     </div>
   </div>
 
-  <!-- â•â• STEP 2 â€” Body Metrics â•â• -->
+  <!-- STEP 2 — Body Metrics -->
   <div class="step" id="step-2">
-    <p class="step-eyebrow">Step 2 of 4 â€” Body metrics</p>
+    <p class="step-eyebrow">Step 2 of 4 — Body metrics</p>
     <h1 class="step-title">Your <em>body</em><br>stats</h1>
     <p class="step-desc">Used to calculate your BMI and personalise your nutrition targets. All data stays private.</p>
 
     <!-- HEIGHT -->
     <div class="card">
       <div class="card-label space-between">
-        <span>ðŸ“ Height</span>
+        <span>📏 Height</span>
         <div class="unit-toggle">
           <button type="button" class="unit-btn active" id="h-cm" onclick="setHeightUnit('cm')">cm</button>
           <button type="button" class="unit-btn" id="h-ft" onclick="setHeightUnit('ft')">ft/in</button>
@@ -231,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
     <!-- WEIGHT -->
     <div class="card">
       <div class="card-label space-between">
-        <span>âš–ï¸ Weight</span>
+      <span>⚖️ Weight</span>
         <div class="unit-toggle">
           <button type="button" class="unit-btn active" id="w-kg" onclick="setWeightUnit('kg')">kg</button>
           <button type="button" class="unit-btn" id="w-lb" onclick="setWeightUnit('lb')">lb</button>
@@ -246,9 +246,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
 
     <!-- BMI -->
     <div class="card">
-      <div class="card-label">ðŸ“Š BMI â€” Body Mass Index</div>
+      <div class="card-label">📊 BMI — Body Mass Index</div>
       <div class="bmi-display">
-        <div class="bmi-num" id="bmi-val">â€”</div>
+        <div class="bmi-num" id="bmi-val">—</div>
         <div class="bmi-info">
           <div class="bmi-label" id="bmi-label">Enter height & weight</div>
           <div class="bmi-sub" id="bmi-sub">Your BMI will appear automatically</div>
@@ -265,23 +265,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
     </div>
 
     <div class="nav-btns">
-      <button type="button" class="btn-back" onclick="goBack(2)">â† Back</button>
-      <button type="button" class="btn-next" onclick="goNext(2)">Continue â†’</button>
+      <button type="button" class="btn-back" onclick="goBack(2)">← Back</button>
+      <button type="button" class="btn-next" onclick="goNext(2)">Continue →</button>
       <a href="../../front_office/foovia.php" class="btn-skip">Skip</a>
     </div>
   </div>
 
-  <!-- â•â• STEP 3 â€” Activity â•â• -->
+  <!-- STEP 3 — Activity -->
   <div class="step" id="step-3">
-    <p class="step-eyebrow">Step 3 of 4 â€” Lifestyle</p>
+    <p class="step-eyebrow">Step 3 of 4 — Lifestyle</p>
     <h1 class="step-title">How <em>active</em><br>are you?</h1>
-    <p class="step-desc">We use this to calculate your daily calorie needs. Be honest â€” this is for your benefit!</p>
+    <p class="step-desc">We use this to calculate your daily calorie needs. Be honest — this is for your benefit!</p>
 
     <div class="card">
-      <div class="card-label">ðŸƒ Activity level</div>
+      <div class="card-label">🏃 Activity level</div>
       <div class="activity-grid">
         <div class="activity-tile" onclick="selectActivity(this,'sedentary')">
-          <div class="at-icon sed">ðŸª‘</div>
+          <div class="at-icon sed">🛋️</div>
           <div class="at-body">
             <div class="at-title">Sedentary</div>
             <div class="at-sub">Little or no exercise, desk job</div>
@@ -289,7 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
           <div class="at-check"></div>
         </div>
         <div class="activity-tile" onclick="selectActivity(this,'light')">
-          <div class="at-icon light">ðŸš¶</div>
+          <div class="at-icon light">🚶</div>
           <div class="at-body">
             <div class="at-title">Lightly active</div>
             <div class="at-sub">Light exercise 1â€“3 days/week</div>
@@ -297,7 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
           <div class="at-check"></div>
         </div>
         <div class="activity-tile" onclick="selectActivity(this,'moderate')">
-          <div class="at-icon moderate">ðŸš´</div>
+          <div class="at-icon moderate">🏃</div>
           <div class="at-body">
             <div class="at-title">Moderately active</div>
             <div class="at-sub">Moderate exercise 3â€“5 days/week</div>
@@ -305,7 +305,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
           <div class="at-check"></div>
         </div>
         <div class="activity-tile" onclick="selectActivity(this,'very')">
-          <div class="at-icon very">ðŸ‹ï¸</div>
+          <div class="at-icon very">🏋️</div>
           <div class="at-body">
             <div class="at-title">Very active</div>
             <div class="at-sub">Hard exercise 6â€“7 days/week</div>
@@ -313,7 +313,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
           <div class="at-check"></div>
         </div>
         <div class="activity-tile" onclick="selectActivity(this,'extreme')">
-          <div class="at-icon extreme">ðŸ”¥</div>
+          <div class="at-icon extreme">🔥</div>
           <div class="at-body">
             <div class="at-title">Extremely active</div>
             <div class="at-sub">Athlete, physical job, or 2Ã— training</div>
@@ -325,24 +325,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
     </div>
 
     <div class="nav-btns">
-      <button type="button" class="btn-back" onclick="goBack(3)">â† Back</button>
-      <button type="button" class="btn-next" onclick="goNext(3)">Continue â†’</button>
+      <button type="button" class="btn-back" onclick="goBack(3)">← Back</button>
+      <button type="button" class="btn-next" onclick="goNext(3)">Continue →</button>
       <a href="../../front_office/foovia.php" class="btn-skip">Skip</a>
     </div>
   </div>
 
-  <!-- â•â• STEP 4 â€” Health â•â• -->
+  <!-- STEP 4 — Health -->
   <div class="step" id="step-4">
-    <p class="step-eyebrow">Step 4 of 4 â€” Health details</p>
+    <p class="step-eyebrow">Step 4 of 4 — Health details</p>
     <h1 class="step-title">Your <em>health</em><br>background</h1>
     <p class="step-desc">This helps us keep your meal and workout plans safe and appropriate. All information is confidential.</p>
 
     <!-- ILLNESSES -->
     <div class="card">
-      <div class="card-label">ðŸ¥ Illnesses / Conditions</div>
+      <div class="card-label">🩺 Illnesses / Conditions</div>
       <div class="tag-input-wrap" onclick="focusInput('illness-input')">
         <div id="illness-tags"></div>
-        <input class="tag-real-input" id="illness-input" placeholder="Type and press Enterâ€¦" onkeydown="handleTag(event,'illness')"/>
+        <input class="tag-real-input" id="illness-input" placeholder="Type and press Enter…" onkeydown="handleTag(event,'illness')"/>
       </div>
       <div class="tag-hint">Press Enter or comma to add. <strong>Suggestions:</strong></div>
       <div class="tag-suggestions">
@@ -362,10 +362,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
 
     <!-- ALLERGIES -->
     <div class="card">
-      <div class="card-label">âš ï¸ Food allergies & intolerances</div>
+      <div class="card-label">⚠️ Food allergies & intolerances</div>
       <div class="tag-input-wrap" onclick="focusInput('allergy-input')">
         <div id="allergy-tags"></div>
-        <input class="tag-real-input" id="allergy-input" placeholder="Type and press Enterâ€¦" onkeydown="handleTag(event,'allergy')"/>
+        <input class="tag-real-input" id="allergy-input" placeholder="Type and press Enter…" onkeydown="handleTag(event,'allergy')"/>
       </div>
       <div class="tag-hint">Press Enter or comma to add. <strong>Suggestions:</strong></div>
       <div class="tag-suggestions">
@@ -385,10 +385,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
 
     <!-- MEDICATIONS -->
     <div class="card">
-      <div class="card-label">ðŸ’Š Current medications</div>
+      <div class="card-label">💊 Current medications</div>
       <div class="tag-input-wrap" onclick="focusInput('medic-input')">
         <div id="medic-tags"></div>
-        <input class="tag-real-input" id="medic-input" placeholder="Type and press Enterâ€¦" onkeydown="handleTag(event,'medic')"/>
+        <input class="tag-real-input" id="medic-input" placeholder="Type and press Enter…" onkeydown="handleTag(event,'medic')"/>
       </div>
       <div class="tag-hint">Press Enter or comma to add. <strong>Suggestions:</strong></div>
       <div class="tag-suggestions">
@@ -406,19 +406,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['survey_submit'])) {
     </div>
 
     <div class="nav-btns">
-      <button type="button" class="btn-back" onclick="goBack(4)">â† Back</button>
-      <button type="button" class="btn-next finish" onclick="goNext(4)">Complete my profile âœ“</button>
+      <button type="button" class="btn-back" onclick="goBack(4)">← Back</button>
+      <button type="button" class="btn-next finish" onclick="goNext(4)">Complete my profile ✓</button>
       <a href="../../front_office/foovia.php" class="btn-skip">Skip</a>
     </div>
   </div>
 
   <!-- â•â• SUCCESS â•â• -->
   <div class="success-screen" id="success-screen">
-    <span class="success-big-icon">ðŸŽ‰</span>
+    <span class="success-big-icon">🎉</span>
     <h1>Profile <span>complete!</span></h1>
     <p>We've built your personalised plan based on your answers. Your nutrition targets, recipe suggestions, and workout plan are all ready.</p>
     <div class="success-chips" id="summary-chips"></div>
-    <a href="foovia-tracker.html" class="btn-go">Start tracking today â†’</a>
+    <a href="foovia-tracker.html" class="btn-go">Start tracking today →</a>
   </div>
 </form>
 
@@ -495,7 +495,7 @@ function recalcBMI() {
   if (wRaw > 0) weightKg = state.weightUnit === 'kg' ? wRaw : wRaw * 0.453592;
 
   if (!heightM || !weightKg) {
-    document.getElementById('bmi-val').textContent = 'â€”';
+    document.getElementById('bmi-val').textContent = '—';
     document.getElementById('bmi-label').textContent = 'Enter height & weight';
     document.getElementById('bmi-sub').textContent = 'Your BMI will appear automatically';
     return;
@@ -564,7 +564,7 @@ function toggleNone(type) {
   const row = document.getElementById('none-' + type);
   const box = document.getElementById('none-' + type + '-box');
   row.classList.toggle('active', state.none[type]);
-  box.textContent = state.none[type] ? 'âœ“' : '';
+  box.textContent = state.none[type] ? '✓' : '';
   if (state.none[type]) {
     state.tags[type] = [];
     renderTags(type);
@@ -699,13 +699,13 @@ function showSuccess() {
 
   // build summary chips
   const chips = [];
-  const gMap = { male:'â™‚ï¸ Male', female:'â™€ï¸ Female', other:'âš§ï¸ Other' };
+  const gMap = { male:'♂️ Male', female:'♀️ Female', other:'⚧️ Other' };
   if (state.gender) chips.push({ label: gMap[state.gender], color: '#4BAE52' });
 
   const bmi = document.getElementById('bmi-val').textContent;
-  if (bmi !== 'â€”') chips.push({ label: 'BMI ' + bmi, color: '#F0A830' });
+  if (bmi !== '—') chips.push({ label: 'BMI ' + bmi, color: '#F0A830' });
 
-  const aMap = { sedentary:'ðŸª‘ Sedentary', light:'ðŸš¶ Lightly active', moderate:'ðŸš´ Moderate', very:'ðŸ‹ï¸ Very active', extreme:'ðŸ”¥ Extreme' };
+  const aMap = { sedentary:'🛋️ Sedentary', light:'🚶 Lightly active', moderate:'🏃 Moderate', very:'🏋️ Very active', extreme:'🔥 Extreme' };
   if (state.activity) chips.push({ label: aMap[state.activity], color: '#D94F00' });
 
   const totalHealth = state.tags.illness.length + state.tags.allergy.length + state.tags.medic.length;

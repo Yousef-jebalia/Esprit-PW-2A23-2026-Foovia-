@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FOOVIA â€” Create Account</title>
+<title>FOOVIA — Create Account</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="foovia-signup.css">
@@ -83,10 +83,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
 <!-- SUCCESS OVERLAY -->
 <div class="success-overlay" id="success-overlay">
   <div class="success-box">
-    <div class="success-icon">ðŸŒ±</div>
+  <div class="success-icon">🌱</div>
     <h2>You're in, <span id="welcome-name">friend</span>!</h2>
     <p>Your Foovia account is ready. Let's set up your nutrition goals and get you started on your health journey.</p>
-    <a href="foovia-tracker.html" class="btn-go">Start tracking â†’</a>
+    <a href="foovia-tracker.html" class="btn-go">Start tracking →</a>
   </div>
 </div>
 
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
 
   <div class="left-body">
     <h1>Your health<br>journey<br>starts <span class="gr">here.</span></h1>
-    <p>Join thousands of people using Foovia to eat smarter, train better, and reduce food waste â€” one day at a time.</p>
+    <p>Join thousands of people using Foovia to eat smarter, train better, and reduce food waste — one day at a time.</p>
   </div>
 
   <div class="steps-preview">
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
 <div class="right-panel">
   <p class="form-eyebrow">Free forever</p>
   <h1 class="form-title">Create your<br>Foovia account</h1>
-  <p class="form-sub">Already have one? <a href="../../front_office/foovia-signin.php">Sign in instead â†’</a></p>
+  <p class="form-sub">Already have one? <a href="../../front_office/foovia-signin.php">Sign in instead →</a></p>
 
   <?php if (!empty($error_message)): ?>
     <div style="background: #fee; color: #c33; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem;">
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
       <label for="name">Full name</label>
       <div class="field-wrap">
         <input type="text" id="name" name="name" placeholder="Amine Trabelsi" autocomplete="name" value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>"/>
-        <span class="field-icon">ðŸ‘¤</span>
+        <span class="field-icon">👤</span>
       </div>
       <span class="field-error" id="err-name">Full name must be at least 3 characters long.</span>
     </div>
@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
       <label for="email">Email address</label>
       <div class="field-wrap">
         <input type="text" id="email" name="email" placeholder="you@gmail.com" autocomplete="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"/>
-        <span class="field-icon">âœ‰</span>
+        <span class="field-icon">✔️</span>
       </div>
       <span class="field-error" id="err-email">Email must be in format: example@gmail.com</span>
     </div>
@@ -163,16 +163,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
       <label for="phone">Phone number</label>
       <div class="field-wrap">
         <select id="phone-code" class="phone-code">
-          <option value="+216">ðŸ‡¹ðŸ‡³ +216</option>
-          <option value="+1">ðŸ‡ºðŸ‡¸ +1</option>
-          <option value="+44">ðŸ‡¬ðŸ‡§ +44</option>
-          <option value="+33">ðŸ‡«ðŸ‡· +33</option>
-          <option value="+49">ðŸ‡©ðŸ‡ª +49</option>
-          <option value="+212">ðŸ‡²ðŸ‡¦ +212</option>
-          <option value="+213">ðŸ‡©ðŸ‡¿ +213</option>
-          <option value="+20">ðŸ‡ªðŸ‡¬ +20</option>
-          <option value="+966">ðŸ‡¸ðŸ‡¦ +966</option>
-          <option value="+971">ðŸ‡¦ðŸ‡ª +971</option>
+          <option value="+216">🇹🇳 +216</option>
+          <option value="+1">🇺🇸 +1</option>
+          <option value="+44">🇬🇧 +44</option>
+          <option value="+33">🇫🇷 +33</option>
+          <option value="+49">🇩🇪 +49</option>
+          <option value="+212">🇲🇦 +212</option>
+          <option value="+213">🇩🇿 +213</option>
+          <option value="+20">🇪🇬 +20</option>
+          <option value="+966">🇸🇦 +966</option>
+          <option value="+971">🇦🇪 +971</option>
         </select>
         <input type="text" id="phone" name="phone" placeholder="XX XXX XXX" autocomplete="tel" style="padding-left:0; border-left:none; border-radius:0 14px 14px 0;" value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>"/>
       </div>
@@ -212,8 +212,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
 
   <!-- TERMS CHECKBOX -->
   <div class="checkbox-row" id="terms-row" onclick="toggleCheck()">
-    <div class="custom-check" id="custom-check">
-      <span class="check-mark">âœ“</span>
+      <div class="custom-check" id="custom-check">
+      <span class="check-mark">✓</span>
     </div>
     <div class="checkbox-text">
       I agree to Foovia's <a href="#" onclick="event.stopPropagation()">Terms of Service</a> and <a href="#" onclick="event.stopPropagation()">Privacy Policy</a>. I understand my data is used to personalise my experience.

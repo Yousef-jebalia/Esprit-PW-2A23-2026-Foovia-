@@ -310,7 +310,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['survey_submit'])) {
             else if (bmi < 30)   { category = 'Overweight'; color = '#f39c12'; }
             else                 { category = 'Obese'; color = '#e74c3c'; }
 
-            bmiLabel.textContent = 'BMI ' + bmi + ' â€” ' + category;
+            bmiLabel.textContent = 'BMI ' + bmi + ' — ' + category;
             bmiLabel.style.color = color;
             bmiLabel.style.display = 'block';
         } else {

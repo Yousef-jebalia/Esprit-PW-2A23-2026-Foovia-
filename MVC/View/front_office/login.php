@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
     <div class="login-container">
         <div class="login-card">
             <div class="back-link">
-                <a href="foovia.php">â† Back to Home</a>
+                <a href="foovia.php">← Back to Home</a>
             </div>
 
             <?php if (!empty($error_message)): ?>
