@@ -290,7 +290,7 @@ if (!empty($reclamations)) {
   </a>
   <ul class="nav-links">
     <li><a href="../foovia.php">Dashboard</a></li>
-    <li><a href="#marketplace">Marketplace</a></li>
+    <li><a href="../marketplace-gateway.php">Marketplace</a></li>
     <li><a href="support_rec_page.php">Support & Community</a></li>
   </ul>
   <div class="nav-actions">
