@@ -116,7 +116,7 @@ $threads    = $controller->get_threads_paged($page, $per_page);
   <ul class="nav-links">
     <li><a href="#features">Features</a></li>
     <li><a href="#how">How it works</a></li>
-    <li><a href="#marketplace">Marketplace</a></li>
+    <li><a href="../marketplace-gateway.php">Marketplace</a></li>
     <li><a href="#community">Community</a></li>
     <li><a href="support_rec_page.php">Support</a></li>
     <li><a href="threads_page.php" style="color:#4BAE52;font-weight:700">Threads</a></li>
