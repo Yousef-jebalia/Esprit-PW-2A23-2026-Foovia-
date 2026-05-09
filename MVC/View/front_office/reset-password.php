@@ -61,7 +61,7 @@ try {
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FOOVIA â€” Reset Password</title>
+<title>FOOVIA — Reset Password</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="foovia-signin.css">
@@ -79,7 +79,7 @@ try {
 <body>
 
 <div class="right-panel" style="width: 100%;">
-  <a href="foovia.php" class="left-logo" style="position: absolute; top: 40px; left: 40px; color: var(--green); text-decoration: none; font-family: 'Boldonse', sans-serif; font-size: 1.5rem;">ðŸŒ¿ FOOVIA</a>
+  <a href="foovia.php" class="left-logo" style="position: absolute; top: 40px; left: 40px; color: var(--green); text-decoration: none; font-family: 'Boldonse', sans-serif; font-size: 1.5rem;">🌿 FOOVIA</a>
   
   <h1 class="form-title"><?php echo $first_login ? 'Welcome!' : 'Reset Password'; ?></h1>
   <p class="form-sub"><?php echo $first_login ? 'Please set a password for your new account.' : 'Enter your new password below.'; ?></p>
@@ -124,7 +124,7 @@ try {
   <?php endif; ?>
   
   <div class="back-link">
-    <a href="foovia-signin.php">â† Back to Sign In</a>
+    <a href="foovia-signin.php">← Back to Sign In</a>
   </div>
 </div>
 

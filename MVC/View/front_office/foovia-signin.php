@@ -81,7 +81,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') == 'POST' && isset($_POST['signin_subm
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FOOVIA â€” Sign In</title>
+<title>FOOVIA — Sign In</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="foovia-signin.css">
@@ -91,10 +91,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') == 'POST' && isset($_POST['signin_subm
 <!-- SUCCESS OVERLAY -->
 <div class="success-overlay" id="success-overlay">
   <div class="success-box">
-    <div class="success-icon">ðŸŽ‰</div>
+  <div class="success-icon">🎉</div>
     <h2>Welcome back!</h2>
     <p>You've signed in successfully. Let's get back to crushing your goals.</p>
-    <a href="foovia.php" class="btn-go">Go to my tracker â†’</a>
+    <a href="foovia.php" class="btn-go">Go to my tracker →</a>
   </div>
 </div>
 
@@ -129,7 +129,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') == 'POST' && isset($_POST['signin_subm
 
   <div class="left-body">
     <h1>Good to have<br>you <span>back.</span></h1>
-    <p>Your nutrition goals, workout plans, and marketplace â€” all waiting for you. Sign in and keep the momentum going.</p>
+    <p>Your nutrition goals, workout plans, and marketplace — all waiting for you. Sign in and keep the momentum going.</p>
   </div>
 
   <div class="left-pills">
@@ -143,7 +143,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') == 'POST' && isset($_POST['signin_subm
 <div class="right-panel">
   <p class="form-eyebrow">Welcome back</p>
   <h1 class="form-title">Sign in to<br>Foovia</h1>
-  <p class="form-sub">Don't have an account? <a href="../back_office/USER_MODULE/foovia-signup.php">Create one free â†’</a></p>
+  <p class="form-sub">Don't have an account? <a href="../back_office/USER_MODULE/foovia-signup.php">Create one free →</a></p>
 
   <?php if (!empty($error_message)): ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 20px; padding: 12px; background: #fee; color: var(--red); border: 1px solid var(--red); border-radius: 8px;">
@@ -164,7 +164,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') == 'POST' && isset($_POST['signin_subm
       <label for="email">Email address</label>
       <div class="field-wrap">
         <input type="text" id="email" name="email" placeholder="you@example.com" autocomplete="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"/>
-        <span class="field-icon">âœ‰</span>
+        <span class="field-icon">✔️</span>
       </div>
       <span class="field-error" id="err-email">Please enter a valid email address (format: example@gmail.com).</span>
     </div>
@@ -212,7 +212,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') == 'POST' && isset($_POST['signin_subm
       </button>
     <?php endif; ?>
     <button type="button" class="social-btn" onclick="document.getElementById('wa-modal').style.display='flex'">
-      <span class="social-icon" style="color:#25D366;">ðŸ’¬</span> WhatsApp
+      <span class="social-icon" style="color:#25D366;">💬</span> WhatsApp
     </button>
   </div>
 </div>

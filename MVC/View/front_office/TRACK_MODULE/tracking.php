@@ -1309,6 +1309,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['weekly_delete_objecti
         <div class="history-page-meta" id="history-page-meta" aria-live="polite">Page 1 of 1</div>
         <button type="button" class="history-pagination-btn" id="history-next-btn">Next</button>
       </div>
+
+      <!-- Export history to PDF -->
+      <form method="POST" action="../../../Controller/tracking/export_pdf.php" style="margin-top: 20px; text-align: center;">
+        <input type="hidden" name="user_id" value="<?php echo htmlspecialchars((string) $current_user_id); ?>">
+        <button type="submit" class="btn-export-pdf" title="Download your tracking data as PDF" style="display: inline-block; margin-top: 12px; border-radius: 8px; padding: 8px 16px; background: #4BAE52; color: white; border: none; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s ease; white-space: nowrap;">
+          📥 Download as PDF
+        </button>
+      </form>
+      <style>
+        .btn-export-pdf:hover {
+          opacity: 0.9;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(75, 174, 82, 0.3) !important;
+        }
+        .btn-export-pdf:active {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      </style>
     <?php endif; ?>
   </div>
   

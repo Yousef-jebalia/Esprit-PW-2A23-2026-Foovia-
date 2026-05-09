@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['forgot_submit'])) {
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FOOVIA â€” Forgot Password</title>
+<title>FOOVIA — Forgot Password</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="foovia-signin.css">
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['forgot_submit'])) {
 <body>
 
 <div class="right-panel" style="width: 100%;">
-  <a href="foovia.php" class="left-logo" style="position: absolute; top: 40px; left: 40px; color: var(--green); text-decoration: none; font-family: 'Boldonse', sans-serif; font-size: 1.5rem;">ðŸŒ¿ FOOVIA</a>
+  <a href="foovia.php" class="left-logo" style="position: absolute; top: 40px; left: 40px; color: var(--green); text-decoration: none; font-family: 'Boldonse', sans-serif; font-size: 1.5rem;">🌿 FOOVIA</a>
   
   <h1 class="form-title">Forgot Password</h1>
   <p class="form-sub">Enter your email address to receive a password reset link.</p>
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['forgot_submit'])) {
         <label for="email">Email address</label>
         <div class="field-wrap">
           <input type="text" id="email" name="email" placeholder="you@example.com" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"/>
-          <span class="field-icon">âœ‰</span>
+          <span class="field-icon">✔️</span>
         </div>
           <span class="field-error" id="err-email">Email must be in format: example@gmail.com</span>
       </div>
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['forgot_submit'])) {
   </form>
   
   <div class="back-link">
-    <a href="foovia-signin.php">â† Back to Sign In</a>
+    <a href="foovia-signin.php">← Back to Sign In</a>
   </div>
 </div>
 

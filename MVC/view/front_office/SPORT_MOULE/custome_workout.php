@@ -13,7 +13,7 @@ $user_name = $_SESSION['user_name'] ?? 'User';
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FOOVIA â€” Custom Workouts</title>
+<title>FOOVIA — Custom Workouts</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
@@ -82,7 +82,7 @@ $user_name = $_SESSION['user_name'] ?? 'User';
       <span class="accent2">Routine.</span>
     </h1>
     <p class="cw-desc">
-      Design a workout that fits your goals â€” every rep, every set, every muscle.
+      Design a workout that fits your goals — every rep, every set, every muscle.
       Go fully manual or let our AI build a smart plan tailored to the muscles you want to train.
     </p>
   </div>
@@ -99,7 +99,7 @@ $user_name = $_SESSION['user_name'] ?? 'User';
       <div class="cw-card-icon">🖌</div>
       <div class="cw-card-body">
         <div class="cw-card-title">Build it Yourself</div>
-        <div class="cw-card-sub">Pick your exercises, set your reps and rest times â€” full control over every detail.</div>
+        <div class="cw-card-sub">Pick your exercises, set your reps and rest times — full control over every detail.</div>
       </div>
       <svg class="cw-card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -111,7 +111,7 @@ $user_name = $_SESSION['user_name'] ?? 'User';
       <div class="cw-card-icon">🤖</div>
       <div class="cw-card-body">
         <div class="cw-card-title">Generate with AI</div>
-        <div class="cw-card-sub">Tell us your workout name and target muscles â€” our AI crafts the perfect plan for you.</div>
+        <div class="cw-card-sub">Tell us your workout name and target muscles — our AI crafts the perfect plan for you.</div>
       </div>
       <svg class="cw-card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -138,7 +138,7 @@ $user_name = $_SESSION['user_name'] ?? 'User';
       <span class="dot"></span> AI Generator
     </div>
     <h2 class="ai-form-title">Design Your Workout</h2>
-    <p class="ai-form-subtitle">Name your session and pick the muscles you want to target â€” we'll handle the rest.</p>
+    <p class="ai-form-subtitle">Name your session and pick the muscles you want to target — we'll handle the rest.</p>
 
     <!-- Workout name -->
     <div class="form-group">
@@ -147,7 +147,7 @@ $user_name = $_SESSION['user_name'] ?? 'User';
         class="form-input"
         type="text"
         id="workoutName"
-        placeholder="e.g. Monday Push Day, Leg Destroyerâ€¦"
+        placeholder="e.g. Monday Push Day, Leg Destroyer…"
       />
       <div class="form-error" id="workoutNameError" aria-live="polite"></div>
     </div>
@@ -454,7 +454,7 @@ $user_name = $_SESSION['user_name'] ?? 'User';
           return;
         }
 
-        alert(`âœ… Workout "${workoutName}" created successfully!`);
+        alert(`✔️ Workout "${workoutName}" created successfully!`);
         closeAIForm();
         document.getElementById('workoutName').value = '';
         document.getElementById('work_picture').value = '';
