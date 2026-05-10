@@ -38,7 +38,7 @@ if ($imageBinary === false) {
   send_json_response(['success' => false, 'error' => 'Unable to decode image data.'], 400);
 }
 
-$apiKeyPath = dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'api tracking.txt';
+$apiKeyPath = dirname(__DIR__, 5) . DIRECTORY_SEPARATOR . 'api tracking.txt';
 $apiKey = read_api_key_from_file($apiKeyPath);
 if ($apiKey === '') {
   send_json_response(['success' => false, 'error' => 'AI API key is missing.'], 500);
