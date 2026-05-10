@@ -163,12 +163,37 @@ function generateAIWorkout($workoutName, $targetMuscles, $aiService = 'gemini') 
     ];
 }
 
+function getAIWorkoutCategoryId(PDO $db): int {
+    $categoryName = 'Custom by AI';
+
+    $stmt = $db->prepare(
+        "SELECT id_cat
+         FROM work_categorie
+         WHERE LOWER(TRIM(name_cat)) IN ('custom by ai', 'custom ai', 'ai generated', 'ai workout')
+         ORDER BY id_cat
+         LIMIT 1"
+    );
+    $stmt->execute();
+    $existingId = $stmt->fetchColumn();
+
+    if ($existingId !== false) {
+        return (int) $existingId;
+    }
+
+    $insert = $db->prepare("INSERT INTO work_categorie (name_cat) VALUES (:name_cat)");
+    $insert->execute([':name_cat' => $categoryName]);
+
+    return (int) $db->lastInsertId();
+}
+
 function saveAIWorkout($workoutName, $aiOutput, $userId, $picWork = null) {
     require_once __DIR__ . '/../../Model/SPORT_MOULE/workout.php';
     
     if (!$aiOutput || empty($aiOutput['exercises'])) return null;
     
     $db = config::getConnexion();
+    $aiCategoryId = getAIWorkoutCategoryId($db);
+    $picWork = $picWork ?? '';
     
     // Create workout object
     $workout = new Workout(
@@ -177,7 +202,7 @@ function saveAIWorkout($workoutName, $aiOutput, $userId, $picWork = null) {
         $aiOutput['calories'],
         $aiOutput['duration_minutes'],
         $userId,
-        6 // id_cat for "custom by ai"
+        $aiCategoryId
     );
     
     // Insert workout
@@ -213,6 +238,6 @@ function saveAIWorkout($workoutName, $aiOutput, $userId, $picWork = null) {
         'name_work' => $workoutName,
         'cal_work' => $aiOutput['calories'],
         'duree_work' => $aiOutput['duration_minutes'],
-        'id_cat' => 6
+        'id_cat' => $aiCategoryId
     ];
 }

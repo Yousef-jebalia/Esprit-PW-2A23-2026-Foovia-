@@ -15,18 +15,23 @@ try {
     }
 
     $db = config::getConnexion();
+    require_once __DIR__ . '/ai_workout.php';
+    $aiCategoryId = getAIWorkoutCategoryId($db);
 
-    // Fetch workouts with category id = 6 only
+    // Fetch workouts saved under the current AI category.
     $stmt = $db->prepare("
         SELECT w.id_work, w.name_work, w.cal_work, w.duree_work, COUNT(b.id_ex) as exercises_count
         FROM workout w
         LEFT JOIN belong b ON w.id_work = b.id_work
-        WHERE w.id_user = :user_id AND w.id_cat = 6
+        WHERE w.id_user = :user_id AND w.id_cat = :id_cat
         GROUP BY w.id_work
         ORDER BY w.id_work DESC
     ");
 
-    $stmt->execute([':user_id' => $userId]);
+    $stmt->execute([
+        ':user_id' => $userId,
+        ':id_cat' => $aiCategoryId,
+    ]);
     $workouts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode($workouts ?: []);

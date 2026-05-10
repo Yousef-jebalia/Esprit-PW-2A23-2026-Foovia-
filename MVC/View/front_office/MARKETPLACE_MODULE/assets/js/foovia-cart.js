@@ -296,9 +296,6 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const estimateDeliveryMinutes = (hub, destination) => {
-    if (hub.id === 'aziza_test_nearby') {
-      return 20 / 60;
-    }
     const km = haversineKm(hub, destination);
 
     if (km <= 1) {
@@ -347,17 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
       activeDeliveryHubs = deliveryHubs.slice();
     }
 
-    if (Number.isFinite(deliveryDestination.lat) && Number.isFinite(deliveryDestination.lng)) {
-      const testHub = {
-        id: 'aziza_test_nearby',
-        name: 'Aziza Test Nearby',
-        brand: 'Aziza',
-        lat: 36.901755,
-        lng: 10.185466
-      };
-
-      activeDeliveryHubs = [testHub, ...activeDeliveryHubs.filter((hub) => hub.id !== testHub.id)];
-    }
   };
 
   const drawRouteLine = (coordinates) => {
@@ -488,13 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     updateDeliverySummary();
 
-    if (selectedHub.id === 'aziza_test_nearby') {
-      drawRouteLine(null);
-      fitPlannerToSelection(selectedHub, deliveryDestination);
-      if (deliveryFeedbackNode) {
-        deliveryFeedbackNode.textContent = `Aziza Test Nearby selected. Foovia is using a 20-second delivery test timer. Delivery fee: ${formatPrice(currentDeliveryFee)} TND.`;
-      }
-    } else if (!isSelectionDeliverable()) {
+    if (!isSelectionDeliverable()) {
       drawRouteLine(null);
       fitPlannerToSelection(selectedHub, deliveryDestination);
       if (deliveryFeedbackNode) {

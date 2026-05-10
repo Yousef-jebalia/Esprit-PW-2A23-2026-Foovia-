@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const storageKey = 'fooviaDeliveryTracker';
+  const resetKey = 'fooviaDeliveryTrackerReset';
+  const resetVersion = 'clear-progress-2026-05-10';
   const noticeButton = document.querySelector('[data-delivery-notice]');
   const noticeTitle = document.querySelector('[data-delivery-notice-title]');
   const noticeText = document.querySelector('[data-delivery-notice-text]');
@@ -66,6 +68,15 @@ document.addEventListener('DOMContentLoaded', () => {
       window.clearTimeout(deliveredCleanupId);
       deliveredCleanupId = null;
     }
+  };
+
+  const clearExistingProgressOnce = () => {
+    if (localStorage.getItem(resetKey) === resetVersion) {
+      return;
+    }
+
+    localStorage.removeItem(storageKey);
+    localStorage.setItem(resetKey, resetVersion);
   };
 
   const formatRemaining = (milliseconds) => {
@@ -245,6 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  clearExistingProgressOnce();
   render();
   intervalId = window.setInterval(render, 1000);
   window.addEventListener('beforeunload', () => {
