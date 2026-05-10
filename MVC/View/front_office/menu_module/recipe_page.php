@@ -93,6 +93,7 @@ foreach ($categoryRows as $categoryRow) {
 }
 ksort($categories);
 ?>
+<?php
 session_start();
 if (!isset($_SESSION['user_id'])) {
   header('Location: ../foovia-signin.php');
