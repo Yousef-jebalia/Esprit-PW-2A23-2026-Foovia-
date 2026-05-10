@@ -205,6 +205,33 @@ $user_name = $_SESSION['user_name'] ?? 'User';
   const userId = <?php echo json_encode($userId); ?>;
   console.log('✓ userId loaded:', userId);
 
+  function showWorkoutToast(message, type = 'success') {
+    let toast = document.querySelector('[data-workout-toast]');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.setAttribute('data-workout-toast', '');
+      document.body.appendChild(toast);
+    }
+
+    toast.className = `workout-toast workout-toast--${type}`;
+    toast.innerHTML = `
+      <span class="workout-toast__icon">${type === 'success' ? '✓' : '!'}</span>
+      <span>${message}</span>
+    `;
+
+    window.clearTimeout(toast.hideTimer);
+    requestAnimationFrame(() => toast.classList.add('is-visible'));
+
+    toast.hideTimer = window.setTimeout(() => {
+      toast.classList.remove('is-visible');
+      window.setTimeout(() => {
+        if (!toast.classList.contains('is-visible')) {
+          toast.remove();
+        }
+      }, 260);
+    }, 2000);
+  }
+
   function showCopyModal(title, message) {
     const modalOverlay = document.createElement('div');
     modalOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;';
@@ -408,7 +435,7 @@ $user_name = $_SESSION['user_name'] ?? 'User';
   function submitAIWorkout(button) {
     const validated = validateAIWorkoutForm();
     if (!validated.valid) {
-      alert(validated.message);
+      showWorkoutToast(validated.message, 'error');
       return;
     }
 
@@ -454,7 +481,7 @@ $user_name = $_SESSION['user_name'] ?? 'User';
           return;
         }
 
-        alert(`✔️ Workout "${workoutName}" created successfully!`);
+        showWorkoutToast(`Workout "${workoutName}" created successfully.`, 'success');
         closeAIForm();
         document.getElementById('workoutName').value = '';
         document.getElementById('work_picture').value = '';

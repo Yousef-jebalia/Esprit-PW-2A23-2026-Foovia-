@@ -767,4 +767,70 @@
     .workouts-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
   }
   
-  
+  .workout-toast {
+    position: fixed;
+    right: 24px;
+    top: 92px;
+    z-index: 1400;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    max-width: min(420px, calc(100vw - 32px));
+    padding: 14px 18px 14px 14px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(75, 174, 82, 0.22);
+    box-shadow: 0 22px 55px rgba(15, 23, 42, 0.18);
+    color: #122018;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 800;
+    line-height: 1.35;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-12px) scale(0.96);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+  }
+
+  .workout-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .workout-toast__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--green), #2f8f45);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+  }
+
+  .workout-toast--error {
+    border-color: rgba(214, 72, 72, 0.28);
+  }
+
+  .workout-toast--error .workout-toast__icon {
+    background: linear-gradient(135deg, #ef6a5b, #c73939);
+  }
+
+  :root[data-theme="dark"] .workout-toast {
+    background: rgba(24, 26, 22, 0.96);
+    border-color: rgba(253, 248, 238, 0.12);
+    box-shadow: 0 24px 58px rgba(0, 0, 0, 0.38);
+    color: var(--page-text);
+  }
+
+  @media (max-width: 900px) {
+    .workout-toast {
+      left: 16px;
+      right: 16px;
+      top: 82px;
+      max-width: none;
+    }
+  }
