@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
     $illness   = $_POST['illness'] ?? '';
     $allergie  = $_POST['allergie'] ?? '';
     $medicament = $_POST['medicament'] ?? '';
+    $terms_accepted = isset($_POST['terms_accepted']) && $_POST['terms_accepted'] == '1' ? 1 : 0;
 
     if (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
         $error_message = 'Please fill in all required fields.';
@@ -28,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
         $error_message = 'Full name must be at least 3 characters long.';
     } elseif ($password !== $confirm_password) {
         $error_message = 'Passwords do not match.';
-    } elseif (!isset($_POST['terms_accepted'])) {
+    } elseif (!$terms_accepted) {
         $error_message = 'You must accept the Terms & Conditions.';
     } else {
         try {
@@ -76,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
 <title>FOOVIA — Create Account</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="foovia-signup.css">
+  <link rel="stylesheet" href="./foovia-signup.css">
 </head>
 <body>
 
@@ -134,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
     </div>
 <?php endif; ?>
 
-  <form id="signupForm" action="" method="POST" novalidate>
+  <form id="signupForm" action="" method="POST" novalidate onsubmit="return handleSignUp()">
   <div class="field-group">
 
     <!-- NAME -->
@@ -317,9 +318,7 @@ function validateEmail() {
   return validate('email', v => /^[a-zA-Z0-9._%+\-]+@gmail\.com$/.test(v), 'err-email');
 }
 
-function validatePhone() {
-  return validate('phone', v => /^\+\d{3}\d{8}$/.test(v), 'phone-error');
-}
+
 
 function validatePassword() {
   return validate('password', v => v.length >= 8, 'password-error');
@@ -331,33 +330,52 @@ function validateConfirm() {
 }
 
 function handleSignUp() {
-  // Combine phone code and number
-  const phoneCode = document.getElementById('phone-code').value;
-  const phoneNumber = document.getElementById('phone').value;
-  document.getElementById('phone').value = phoneCode + phoneNumber;
-
   const nameOk    = validateName();
   const emailOk   = validateEmail();
-  const phoneOk   = validatePhone();
+  const phoneOk   = validatePhoneSignup();
   const passOk    = validatePassword();
   const confirmOk = validateConfirm();
 
-  const terms = document.getElementById('terms_accepted');
-  const termsError = document.getElementById('terms-error');
   let termsOk = true;
-  if (!terms.checked) {
-    termsError.style.display = 'block';
+  if (!termsChecked) {
+    document.getElementById('err-terms').style.display = 'block';
     termsOk = false;
   } else {
-    termsError.style.display = 'none';
+    document.getElementById('err-terms').style.display = 'none';
+    document.getElementById('terms_hidden').value = '1';
   }
 
   if (!nameOk || !emailOk || !phoneOk || !passOk || !confirmOk || !termsOk) {
-    // Restore original phone value if validation failed
-    document.getElementById('phone').value = phoneNumber;
     return false;
   }
+
+  // Combine phone code and number before final submission
+  const phoneCode = document.getElementById('phone-code')?.value || '';
+  const phoneNum = document.getElementById('phone')?.value || '';
+  const phoneField = document.getElementById('phone');
+  if (phoneField) {
+    phoneField.value = phoneCode + phoneNum;
+  }
+
   return true;
+}
+
+function validatePhoneSignup() {
+  const phoneCode = document.getElementById('phone-code')?.value || '';
+  const phoneNum = document.getElementById('phone')?.value || '';
+  const fullPhone = phoneCode + phoneNum;
+  const isValid = /^\+\d{3}\d{8}$/.test(fullPhone);
+
+  const field = document.getElementById('phone');
+  const err = document.getElementById('err-phone');
+  if (!isValid) {
+    if (field) field.classList.add('invalid');
+    if (err) err.style.display = 'block';
+  } else {
+    if (field) field.classList.remove('invalid');
+    if (err) err.style.display = 'none';
+  }
+  return isValid;
 }
 </script>
 
