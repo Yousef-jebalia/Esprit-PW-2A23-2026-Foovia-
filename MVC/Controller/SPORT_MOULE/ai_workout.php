@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../Model/config.php';
 
 function generateAIWorkout($workoutName, $targetMuscles, $aiService = 'gemini') {
-    $keyFilePath = '/../../../sport_api';//****************************************************************************************************** */
+    $keyFilePath = realpath(__DIR__ . '/../../../sport_api');
     if (empty($workoutName) || empty($targetMuscles)) return null;
 
     // Fetch exercises from database
