@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 ob_start();
 session_start();
 include(__DIR__ . '/../../../Controller/Controller_user.php');
@@ -729,6 +729,3 @@ function showSuccess() {
 </script>
 </body>
 </html>
-
-
-
