@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signin_submit'])) {
     }
 }
 ?>
-<!DOCTYPE html>>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
