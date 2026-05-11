@@ -1,2 +1,5 @@
 .env
-vendor/
+ingrediant_api
+sport_api
+support_api
+tracking_api
