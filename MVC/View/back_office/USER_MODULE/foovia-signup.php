@@ -128,12 +128,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup_submit'])) {
   <p class="form-eyebrow">Free forever</p>
   <h1 class="form-title">Create your<br>Foovia account</h1>
   <p class="form-sub">Already have one? <a href="../../front_office/foovia-signin.php">Sign in instead →</a></p>
-
-  <?php if (!empty($error_message)): ?>
+<?php if (!empty($error_message)): ?>
     <div style="background: #fee; color: #c33; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem;">
       <?php echo htmlspecialchars($error_message); ?>
     </div>
-  <?php endif; ?>
+<?php endif; ?>
 
   <form id="signupForm" action="" method="POST" novalidate>
   <div class="field-group">
