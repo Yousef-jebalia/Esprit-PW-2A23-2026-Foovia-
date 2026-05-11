@@ -99,15 +99,12 @@ $is_locked = false;
   <p class="form-eyebrow">Admin area</p>
   <h1 class="form-title">Sign in to<br>Backoffice</h1>
   <p class="form-sub">Need an admin account? <a href="../back_office/USER_MODULE/foovia-signup.php">Create one now</a></p>
-
   <?php if (!empty($warning_message)): ?>
     <div class="backoffice-alert backoffice-alert-warning"><?php echo htmlspecialchars($warning_message); ?></div>
   <?php endif; ?>
-
   <?php if (!empty($error_message)): ?>
     <div class="backoffice-alert backoffice-alert-error"><?php echo htmlspecialchars($error_message); ?></div>
   <?php endif; ?>
-
   <?php /* if ($tries_left > 0): ?>
     <p class="tries-note">Security notice: you have <?php echo $tries_left; ?> <?php echo $tries_left === 1 ? 'try' : 'tries'; ?> left.</p>
   <?php else: ?>
